@@ -1,13 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components/native';
-import { Modal, Text, View}  from 'react-native';
 import { COLORS } from '../../constant/color';
 
 export default class LoginScreen extends React.Component {
+	
 	// set up navigation
 	static navigationOptions = {
 		title: 'Login',
 	};
+
 	// set up state
 	constructor(props) {
 		super(props);
@@ -29,7 +30,7 @@ export default class LoginScreen extends React.Component {
 				this.props.navigation.navigate('Home')
 			} else {
 				if (password === '' || username === ''){
-					this.setState({errorMsg: 'Please Enter your Username or Password...'})
+					this.setState({errorMsg: 'Please Enter Your Username Or Password...'})
 				} else if (result == null){
 					this.setState({errorMsg: 'No Such User...'})
 				} else {
@@ -45,20 +46,15 @@ export default class LoginScreen extends React.Component {
 		return (
 			<Container>
 				<Logo />
-				<Modal animationType="fade" transparent={true} 
-				visible={this.state.errorMsgVisible}>
-					<ErrorMsgView>
-						<ErrorMsgTouchableOpacity onPress={()=> this.setState({errorMsgVisible: false})}>
-							<ErrorMsgText>{this.state.errorMsg}</ErrorMsgText>
-						</ErrorMsgTouchableOpacity>
-					</ErrorMsgView>
-				</Modal>
 				<InputArea>
 				    <Prompt> Username </Prompt>
 					<Input onChangeText={(username) => this.setState({username: username})} />
 					<Prompt> Password </Prompt>
 					<Input secureTextEntry={true} onChangeText={(password) => this.setState({password: password})} />
 				</InputArea>
+				<ErrorMsg>
+					<ErrorMsgText>{this.state.errorMsg}</ErrorMsgText>
+				</ErrorMsg>
 				<ButtonArea>
 					<LoginButton onPress={() => this.checkLogin(this.state.username, this.state.password)} >
 						<LoginButtonText> SIGN IN </LoginButtonText>
@@ -82,18 +78,18 @@ const Container = styled.View`
 const Logo = styled.View`
 	border: 2px dotted gray;
 	border-radius: 5px;
-	height: 30%;
+	height: 35%;
 	width: 75%;
 	margin-left: 12.5%;
-	margin-top: 30%;
+	margin-top: 25%;
 	background-color: white;
 `;
 
 const InputArea = styled.View`
-	height: 25%;
+	height: 20%;
 	width: 75%;
 	margin-left: 12.5%;
-	margin-top: 10%;
+	top: 5%;
 `;
 
 const Prompt = styled.Text`
@@ -113,24 +109,38 @@ const Input = styled.TextInput`
 	font-size: 15px;
 `;
 
+const ErrorMsg = styled.View`
+	height: 5%;
+	width: 75%;
+	top: 6%;
+	margin-left: 12.5%;
+`;
+
+const ErrorMsgText = styled.Text`
+    font-family: Bradley Hand;
+	font-size: 15px;
+	color: darkred;
+	padding-left: 2.5px;
+`;
+
 const ButtonArea = styled.View`
 	height: 10%;
 	width: 75%;
 	margin-left: 12.5%;
-	margin-top: 2.5%;
+	top: 6%;
 `;
 
 const LoginButton = styled.TouchableOpacity`
 	height: 60%;
 	background-color: skyblue;
 	border-radius: 5px;
+	justify-content: center;
 `;
 
 const LoginButtonText = styled.Text`
 	align-self: center;
 	font-family: Gill Sans;
 	font-size: 20px;
-	padding-top: 2.5%;
 `;
 
 const RegisterButton = styled.TouchableOpacity`
@@ -145,31 +155,5 @@ const RegisterButtonText = styled.Text`
 	font-family: Gill Sans;
 	font-size: 15px;
 	padding-top: 12.5%;
-`;
-
-const ErrorMsgView = styled.View`
-	margin-top: 50%
-	height: 50%;
-	width: 100%
-`;
-
-const ErrorMsgTouchableOpacity = styled.TouchableOpacity`
-	border: 2px solid gray;
-	border-radius: 5px;
-	height: 40%;
-	width: 75%;
-	margin-top: 30%;
-	margin-left: 12.5%
-	background-color: white;
-	z-index:2;
-`;
-
-const ErrorMsgText = styled.Text`
-	align-self: center;
-	padding-top: 5%;
-	padding-left: 3%;
-	font-family: Gill Sans;
-	font-size: 18px;
-	color: black;
-	z-index: 1;
+	text-decorationLine: underline;
 `;

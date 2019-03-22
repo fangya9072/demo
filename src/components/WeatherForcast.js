@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components/native';
 import { withNavigation } from 'react-navigation';
 import { ICONS } from '../constant/icon';
@@ -10,6 +10,7 @@ provide general weather information from Open Weather API call
 */
 
 class WeatherForcast extends React.Component {
+
 	// set up state
 	constructor(props) {
 		super(props);
@@ -235,6 +236,7 @@ class WeatherForcast extends React.Component {
 			],
 		};
 	}
+	
 	//rendering
 	render(){
 		return(

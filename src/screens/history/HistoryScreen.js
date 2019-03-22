@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components/native';
 import TopBanner from '../../components/TopBanner';
 import { Modal }  from 'react-native';
@@ -45,7 +45,6 @@ export default class HistoryScreen extends React.Component {
 			5. then for each key/value pair in Day Dict
 			   create a { date: key, Posts: value } object
 			   add this object into this.state.daysHavePost
-
 			*/
 			daysHavePost: [
 				{ date: 'Mar 1 2019',
@@ -59,7 +58,7 @@ export default class HistoryScreen extends React.Component {
 					{ postId: 3,
 					  postType: 'weather',
 					  image: require('../../../assets/icon/role-icon/pikachu.png'),
-					  extraInfo: [1, 0.4, 0.6, 0.8], },
+					  weatherInfo: [1, 0.4, 0.6, 0.8], },
 					{ postId: 4,
 					  postType: 'outfit',
 					  image: require('../../../assets/icon/role-icon/trump.jpg'), },
@@ -149,16 +148,16 @@ export default class HistoryScreen extends React.Component {
 							<DailyPosts key={dayKey}>
 								<Date><DateText>{dayItem.date}</DateText></Date>
 								<Posts horizontal={true} showsHorizontalScrollIndicator={false}>
-								    {dayItem.Posts.map((postItem, postKey) => {
-								        return (
+								  {dayItem.Posts.map((postItem, postKey) => {
+							      return (
 											<Post key ={postKey}>
 												<PostImage source={postItem.image} />
 											</Post>
-				        		        );
-							        })}
-						       </Posts>
-					        </DailyPosts>					
-				        );
+				        		);
+							    })}
+						   </Posts>
+				      </DailyPosts>					
+		        );
 					})}
 				</History>
 			</Container>

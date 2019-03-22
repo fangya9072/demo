@@ -8,6 +8,7 @@ import { COLORS } from '../../constant/color';
 	
 
 export default class HomeScreen extends React.Component {
+	
 		// set up navigation
 		static navigationOptions = {
 				title: 'Home',

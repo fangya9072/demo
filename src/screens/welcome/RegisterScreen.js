@@ -3,10 +3,12 @@ import styled from 'styled-components/native';
 import { COLORS } from '../../constant/color';
 
 export default class RegisterScreen extends React.Component {
+	
 	// set up navigation
 	static navigationOptions = {
 		title: 'Register',
 	};
+	
 	// set up state
 	constructor(props) {
 		super(props);
@@ -23,7 +25,7 @@ export default class RegisterScreen extends React.Component {
 	//function of creating a user calling api
 	createUser(username, password, phone, email, confirmedPass){
 		if (username === '' || password === ''){
-			this.setState({errorMsg: 'Please Enter Your Username and Password'})
+			this.setState({errorMsg: 'Please Enter Your Username Or Password...'})
 		} else if (password !== confirmedPass){
 			this.setState({errorMsg: 'Confirmed Password Is Different...'})
 		} else {
@@ -76,11 +78,19 @@ export default class RegisterScreen extends React.Component {
 						<Input secureTextEntry={true} onChangeText={(confirmedPass) => this.setState({confirmedPass: confirmedPass})} />
 					</Item>
 				</Form>
-				<ErrorMsg>{this.state.errorMsg}</ErrorMsg>
-				<ConfirmButton onPress={() => this.createUser(this.state.username, 
-					this.state.password, this.state.phone, this.state.email, this.state.confirmedPass)} >
-						<ConfirmButtonText> CREATE  ACCOUNT </ConfirmButtonText>
-				</ConfirmButton>
+				<ErrorMsg>
+					<ErrorMsgText>{this.state.errorMsg}</ErrorMsgText>
+				</ErrorMsg>
+				<ButtonArea>
+				    <ConfirmButton onPress={() => this.createUser(this.state.username, 
+					    this.state.password, this.state.phone, this.state.email, this.state.confirmedPass)} >
+						<ConfirmButtonText> COMFIRM </ConfirmButtonText>
+				    </ConfirmButton>
+					<BackButton onPress={() => this.props.navigation.navigate('Login')} >
+						<BackButtonText> BACK </BackButtonText>
+				    </BackButton>
+
+				</ButtonArea>
 			</Container>
 		);
 	}
@@ -141,25 +151,53 @@ const Input = styled.TextInput`
 	flex: 3;
 `;
 
-const ConfirmButton = styled.TouchableOpacity`
+const ErrorMsg = styled.View`
+	margin-left: 10%;
+	width: 80%;
+	height: 5%;
+	top: 5%;
+`;
+
+const ErrorMsgText = styled.Text`
+	font-family: Bradley Hand;
+	font-size: 15px;
+	padding-left: 2.5px;
+	color: darkred;
+`;
+
+const ButtonArea = styled.View`
     height: 6%;
     width: 80%;
-    top: 3%;
-    left: 10%;
+    top: 10%;
+	left: 5.5%;
+	flex-direction: row;
+`;
+
+const ConfirmButton = styled.TouchableOpacity`
+    flex: 1;
 	background-color: skyblue;
 	border-radius: 5px;
+	margin-right: 1px
+	justify-content: center;
 `;
 
 const ConfirmButtonText = styled.Text`
 	align-self: center;
 	font-family: Gill Sans;
-	font-size: 17.5px;
-	padding-top: 3.5%;
+	font-size: 15px;
 `;
 
-const ErrorMsg = styled.Text`
-	margin-left: 10%;
-	margin-top: 12%;
-	font-family: Bradley Hand;
+const BackButton = styled.TouchableOpacity`
+    flex: 1;
+	border-radius: 5px;
+	margin-left: 1px
+	justify-content: center;
+	background-color: lightgray;
+`;
+
+const BackButtonText = styled.Text`
+	align-self: center;
+	font-family: Gill Sans;
 	font-size: 15px;
+	color: dimgray;
 `;

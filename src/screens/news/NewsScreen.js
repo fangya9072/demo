@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components/native';
 import TopBanner from '../../components/TopBanner';
 import { Modal }  from 'react-native';

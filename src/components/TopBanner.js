@@ -1,14 +1,15 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components/native';
 import { withNavigation } from 'react-navigation';
 import { COLORS } from '../constant/color';
 
 /* 
-buttom menu bar Component 
-enable users to switch between home, weather, news, history page
+Top banner Component 
+show on top of screen
 */
 
 class TopBanner extends React.Component {
+
 	// set up state
 	constructor(props) {
 		super(props);
@@ -16,6 +17,7 @@ class TopBanner extends React.Component {
 			userIcon: '',
 		};
 	}
+	
 	//rendering
 	render(){
 		return(
