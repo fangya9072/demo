@@ -56,7 +56,7 @@ export default class LoginScreen extends React.Component {
 					<ErrorMsgText>{this.state.errorMsg}</ErrorMsgText>
 				</ErrorMsg>
 				<ButtonArea>
-				    <LoginButton onPress={() => this.props.navigation.navigate('Home')} >
+				    <LoginButton onPress={() => this.checkLogin(this.state.username, this.state.password)} >
 						<LoginButtonText> SIGN IN </LoginButtonText>
 					</LoginButton>
 					<RegisterButton onPress={() => this.props.navigation.navigate('Register')} >
