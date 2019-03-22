@@ -1,17 +1,75 @@
 import React from 'react';
-import { createBottomTabNavigator } from 'react-navigation';
+import { createBottomTabNavigator, createStackNavigator } from 'react-navigation';
 import { Image } from 'react-native';
 
 import HomeScreen from '../screens/home/HomeScreen';
 import WeatherScreen from '../screens/weather/WeatherScreen';
 import HistoryScreen from '../screens/history/HistoryScreen';
 import NewsScreen from '../screens/news/NewsScreen';
+import OutfitPostScreen from '../screens/post/OutfitPostScreen';
+import WeatherPostScreen from '../screens/post/WeatherPostScreen';
 
+
+const HomeStack = createStackNavigator(
+  {
+    Home: HomeScreen,
+    OutfitPost: OutfitPostScreen,
+    WeatherPost: WeatherPostScreen,
+  },
+  {
+    headerMode: 'none',
+    navigationOptions: {
+      headerVisible: false,
+    },
+  },
+);
+
+const WeatherStack = createStackNavigator(
+  {
+    Weather: WeatherScreen,
+    OutfitPost: OutfitPostScreen,
+    WeatherPost: WeatherPostScreen,
+  },
+  {
+    headerMode: 'none',
+    navigationOptions: {
+      headerVisible: false,
+    },
+  },
+);
+
+const NewsStack = createStackNavigator(
+  {
+    News: NewsScreen,
+    OutfitPost: OutfitPostScreen,
+    WeatherPost: WeatherPostScreen,
+  },
+  {
+    headerMode: 'none',
+    navigationOptions: {
+      headerVisible: false,
+    },
+  },
+);
+
+const HistoryStack = createStackNavigator(
+  {
+    History: HistoryScreen,
+    OutfitPost: OutfitPostScreen,
+    WeatherPost: WeatherPostScreen,
+  },
+  {
+    headerMode: 'none',
+    navigationOptions: {
+      headerVisible: false,
+    },
+  },
+);
 
 export default createBottomTabNavigator(
   {
     Home: {
-      screen: HomeScreen,
+      screen: HomeStack,
       navigationOptions: {
         tabBarLabel: 'Home',
         tabBarIcon: ({ tintColor }) => (
@@ -22,7 +80,7 @@ export default createBottomTabNavigator(
       },
     },
     Weather: {
-      screen: WeatherScreen,
+      screen: WeatherStack,
       navigationOptions: {
         tabBarLabel: 'Weather',
         tabBarIcon: ({ tintColor }) => (
@@ -33,7 +91,7 @@ export default createBottomTabNavigator(
       },
     },
     News: {
-      screen: NewsScreen,
+      screen: NewsStack,
       navigationOptions: {
         tabBarLabel: 'News',
         tabBarIcon: ({ tintColor }) => (
@@ -44,7 +102,7 @@ export default createBottomTabNavigator(
       },
     },
     History: {
-      screen: HistoryScreen,
+      screen: HistoryStack,
       navigationOptions: {
         tabBarLabel: 'History',
         tabBarIcon: ({ tintColor }) => (
