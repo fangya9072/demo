@@ -59,7 +59,7 @@ export default createBottomTabNavigator(
     tabBarOptions: {
       showIcon: true,
       activeTintColor: 'whitesmoke',
-      activeBackgroundColor: 'skyblue',
+      activeBackgroundColor: 'lightblue',
       inactiveTintColor: 'whitesmoke',
       labelStyle: {
         paddingBottom: 2.5,

@@ -3,6 +3,8 @@ import styled from 'styled-components/native';
 import TopBanner from '../../components/TopBanner';
 import WeatherForcast from '../../components/WeatherForcast';
 import { MapView, Location, Permissions } from "expo";
+import TopLeftMenu from '../../components/TopLeftMenu';
+import TopLocationMenu from '../../components/TopLocationMenu';
 import { Modal }  from 'react-native';
 
 export default class WeatherScreen extends React.Component {
@@ -16,6 +18,8 @@ export default class WeatherScreen extends React.Component {
 	constructor(props) {
 		super(props);
 	    this.state = {
+			topLeftMenuVisible: false,
+			topLocationMenuVisible: false,
 	    	weatherPostModalViewVisible: false,
 			mapRegion: null,
 			errorMessage: null,
@@ -34,6 +38,11 @@ export default class WeatherScreen extends React.Component {
 				   src: "https://s3-ap-southeast-1.amazonaws.com/so-srilanka/any/female.png", },
 			],
 		};
+	}
+
+	// function to update state
+	updateState (data) {
+		this.setState(data);
 	}
 	
 	// functions that open and closes weather post madal view
@@ -73,10 +82,7 @@ export default class WeatherScreen extends React.Component {
 	render(){
 		return(
 			<Container>
-				<TopBanner />
-				<WeatherForcastContainer>
-					<WeatherForcast />
-				</WeatherForcastContainer>
+				<TopBanner updateParentState={this.updateState.bind(this)} />
 				<MapContainer> 
 				    <Map>
 					    <MapView style={{ flex: 1 }} initialRegion={this.state.mapRegion}>
@@ -97,6 +103,11 @@ export default class WeatherScreen extends React.Component {
 		    			</MapView>
 					</Map>
 				</MapContainer>
+				<WeatherForcastContainer>
+					<WeatherForcast />
+				</WeatherForcastContainer>
+				{this.state.topLeftMenuVisible && <TopLeftMenu />}
+				{this.state.topLocationMenuVisible && <TopLocationMenu />}
 			</Container>
 		);
 	}
@@ -116,15 +127,16 @@ const WeatherForcastContainer = styled.View`
 `;
 
 const MapContainer = styled.View`
-    height: 100%;
+    height: 55.5%;
     width: 100%;
 	background-color: white;
 `;
 
 const Map = styled.View`
-    height: 52.5%;
-    width: 95%;
-    left: 2.5%;
+    top: 2%;
+    height: 100%;
+    width: 96%;
+    left: 2%;
     border-radius: 25px;
 	overflow: hidden;
 `

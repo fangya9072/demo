@@ -175,7 +175,7 @@ const ButtonArea = styled.View`
 
 const ConfirmButton = styled.TouchableOpacity`
     flex: 1;
-	background-color: skyblue;
+	background-color: lightblue;
 	border-radius: 5px;
 	margin-right: 1px
 	justify-content: center;

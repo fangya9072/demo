@@ -320,10 +320,10 @@ export default withNavigation(WeatherForcast);
 
 // css
 const ForcastContainer = styled.View`
-    height: 90%;
-	width: 95%;
-	left:  2.5%;
-	top: 5%;
+  height: 91%;
+	width: 96%;
+	left:  2%;
+	top: 3%;
 	padding: 7.5px 10px;
 	background-color: aliceblue;
 	border-radius: 25px;
@@ -404,7 +404,7 @@ const Button = styled.TouchableOpacity`
 	top: 15%;
 	align-items: center;
 	justify-content: center;
-	background-color: skyblue;
+	background-color: lightblue;
 	border: 2.5px aliceblue;
 	border-radius: 5px;
 `;

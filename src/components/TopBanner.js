@@ -15,14 +15,24 @@ class TopBanner extends React.Component {
 		super(props);
 		this.state = {
 			userIcon: '',
+			topLeftMenuVisible: false,
+			topLocationMenuVisible: false,
 		};
 	}
 	
+	// function to update parent component's state
+	updateParentState(data) {
+        this.props.updateParentState(data);
+    }
+
 	//rendering
 	render(){
 		return(
 			<Container>
-				<MenuButton>
+				<MenuButton onPress={() => { 
+					this.setState({ topLeftMenuVisible: !this.state.topLeftMenuVisible, }); 
+					this.updateParentState({topLeftMenuVisible: !this.state.topLeftMenuVisible, }) 
+				}}>
 					<MenuButtonIcon source={require('../../assets/icon/function-icon/menu.png')} />
 				</MenuButton>
 				<BannerText> HOME </BannerText>
@@ -38,7 +48,10 @@ class TopBanner extends React.Component {
 				<RefreshButton>
 				    <RefreshButtonIcon source={require('../../assets/icon/function-icon/refresh.png')} />
 				</RefreshButton>
-				<LocationButton>
+				<LocationButton onPress={() => { 
+					this.setState({ topLocationMenuVisible: !this.state.topLocationMenuVisible, }); 
+					this.updateParentState({topLocationMenuVisible: !this.state.topLocationMenuVisible, }) 
+				}}>
 				    <LocationButtonIcon source={require('../../assets/icon/function-icon/location-pin.png')} />
 				</LocationButton>
 			</Container>
@@ -64,9 +77,10 @@ const MenuButton = styled.TouchableOpacity`
 `;
 
 const MenuButtonIcon = styled.Image`
-	width: 30px;
+	width: 37.5px;
 	height: 25px;
 	resize-mode: stretch;
+	margin-left: 2.5px;
 `;
 
 const BannerText = styled.Text`

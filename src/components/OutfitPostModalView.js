@@ -135,15 +135,19 @@ const CloseButtonArea = styled.View`
 `;
 
 const CloseButton = styled.TouchableOpacity`
-	width: 30px;
-	height: 100%;
-	backgroundColor: skyblue;
+	width: 25px;
+	height: 25px;
+	backgroundColor: lightblue;
+	border-radius: 25px
+	align-items: center;
+	justify-content: center;
+	margin-right: 5px;
+	margin-top: 5px;
 `;
 
 const CloseButtonIcon = styled.Image`
-	width: 27.5px;
-	height: 27.5px;
-	margin-left: 1.5px;
+	width: 30px;
+	height: 30px;
 `;
 	
 const UsernameArea = styled.View`
@@ -180,7 +184,7 @@ const FriendArea = styled.View`
 const FriendButton = styled.TouchableOpacity`
 	width: 45%;
 	height: 100%;
-	backgroundColor: skyblue;
+	backgroundColor: lightblue;
 	border-radius: 5px;
 	flex-direction: row;
 	align-items: center;
@@ -258,7 +262,7 @@ const CommentTime = styled.Text`
 
 const CommentWrite = styled.View`
 	flex: 1;
-	background-color: skyblue;
+	background-color: lightblue;
 	flex-direction: row;
 `;
 

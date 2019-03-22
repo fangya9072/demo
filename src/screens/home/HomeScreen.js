@@ -4,6 +4,8 @@ import { MapView, Location, Permissions } from "expo";
 import { Modal }  from 'react-native';
 import OutfitPostModalView from '../../components/OutfitPostModalView';
 import TopBanner from '../../components/TopBanner';
+import TopLeftMenu from '../../components/TopLeftMenu';
+import TopLocationMenu from '../../components/TopLocationMenu';
 import { COLORS } from '../../constant/color';
 	
 
@@ -18,6 +20,8 @@ export default class HomeScreen extends React.Component {
 		constructor(props) {
 				super(props);
 			  this.state = {
+						topLeftMenuVisible: false,
+						topLocationMenuVisible: false,
 					  outfitPostModalViewVisible: false,
 						mapRegion: null,
 						errorMessage: null,
@@ -36,6 +40,11 @@ export default class HomeScreen extends React.Component {
 									src: "https://s3-ap-southeast-1.amazonaws.com/so-srilanka/any/female.png", },
     				],
 				};
+		}
+
+		// function to update state
+		updateState (data) {
+			this.setState(data);
 		}
 
   	/* 
@@ -76,7 +85,7 @@ export default class HomeScreen extends React.Component {
 		render(){
 				return (
 					  <Container>
-								<TopBanner />
+								<TopBanner updateParentState={this.updateState.bind(this)} />
 								<Map>
 								    <MapView style={{ flex: 1 }} initialRegion={this.state.mapRegion}>
 										    {this.state.outfitPostMarkers.map((item, key) => {
@@ -96,6 +105,8 @@ export default class HomeScreen extends React.Component {
 								        <OutfitPostModalView close={() => { this.closePost(); }} />
 							    	</Modal>
 					    	</Map>
+								{this.state.topLeftMenuVisible && <TopLeftMenu />}
+								{this.state.topLocationMenuVisible && <TopLocationMenu />}
 				  	</Container>
 		    );
 		}
