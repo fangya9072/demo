@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components/native';
+import { Modal, Text, View}  from 'react-native';
 import { COLORS } from '../../constant/color';
 
 export default class LoginScreen extends React.Component {
@@ -13,21 +14,53 @@ export default class LoginScreen extends React.Component {
 		this.state = {
 			username: '',
 			password: '',
+			errorMsgVisible: false,
+			errorMsg:''
 		};
 	}
+
+  	//check login username and password function
+	checkLogin(username, password){
+		fetch('http://3.93.183.130:3000/login?username=' + username + '&password=' +password, {
+			method: 'GET'
+		}).then((response) => {
+			let result = JSON.parse(response._bodyText)
+			if (result == true) {
+				this.props.navigation.navigate('Home')
+			} else {
+				if (password === '' || username === ''){
+					this.setState({errorMsg: 'Please Enter your Username or Password...'})
+				} else if (result == null){
+					this.setState({errorMsg: 'No Such User...'})
+				} else {
+					this.setState({errorMsg: 'Password Incorrect!'})
+				}
+				this.setState({errorMsgVisible: true})
+			}
+		})
+	}
+
 	// rendering 
 	render(){
 		return (
 			<Container>
 				<Logo />
+				<Modal animationType="fade" transparent={true} 
+				visible={this.state.errorMsgVisible}>
+					<ErrorMsgView>
+						<ErrorMsgTouchableOpacity onPress={()=> this.setState({errorMsgVisible: false})}>
+							<ErrorMsgText>{this.state.errorMsg}</ErrorMsgText>
+						</ErrorMsgTouchableOpacity>
+					</ErrorMsgView>
+				</Modal>
 				<InputArea>
 				    <Prompt> Username </Prompt>
-					<Input onChangeText={(username) => this.setState({username})} />
+					<Input onChangeText={(username) => this.setState({username: username})} />
 					<Prompt> Password </Prompt>
-					<Input secureTextEntry={true} onChangeText={(password) => this.setState({password})} />
+					<Input secureTextEntry={true} onChangeText={(password) => this.setState({password: password})} />
 				</InputArea>
 				<ButtonArea>
-					<LoginButton onPress={() => this.props.navigation.navigate('Home')} >
+					<LoginButton onPress={() => this.checkLogin(this.state.username, this.state.password)} >
 						<LoginButtonText> SIGN IN </LoginButtonText>
 					</LoginButton>
 					<RegisterButton onPress={() => this.props.navigation.navigate('Register')} >
@@ -112,4 +145,31 @@ const RegisterButtonText = styled.Text`
 	font-family: Gill Sans;
 	font-size: 15px;
 	padding-top: 12.5%;
+`;
+
+const ErrorMsgView = styled.View`
+	margin-top: 50%
+	height: 50%;
+	width: 100%
+`;
+
+const ErrorMsgTouchableOpacity = styled.TouchableOpacity`
+	border: 2px solid gray;
+	border-radius: 5px;
+	height: 40%;
+	width: 75%;
+	margin-top: 30%;
+	margin-left: 12.5%
+	background-color: white;
+	z-index:2;
+`;
+
+const ErrorMsgText = styled.Text`
+	align-self: center;
+	padding-top: 5%;
+	padding-left: 3%;
+	font-family: Gill Sans;
+	font-size: 18px;
+	color: black;
+	z-index: 1;
 `;
