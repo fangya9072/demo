@@ -3,8 +3,6 @@ import styled from 'styled-components/native';
 import TopBanner from '../../components/TopBanner';
 import WeatherForcast from '../../components/WeatherForcast';
 import { MapView, Location, Permissions } from "expo";
-import TopLeftMenu from '../../components/TopLeftMenu';
-import TopLocationMenu from '../../components/TopLocationMenu';
 import { Modal }  from 'react-native';
 
 export default class WeatherScreen extends React.Component {
@@ -18,8 +16,7 @@ export default class WeatherScreen extends React.Component {
 	constructor(props) {
 		super(props);
 	    this.state = {
-			topLeftMenuVisible: false,
-			topLocationMenuVisible: false,
+			pageType: 'WEATHER',
 	    	weatherPostModalViewVisible: false,
 			mapRegion: null,
 			errorMessage: null,
@@ -39,11 +36,6 @@ export default class WeatherScreen extends React.Component {
 			],
 		};
 	}
-
-	// function to update state
-	updateState (data) {
-		this.setState(data);
-	}
 	
 	// functions that open and closes weather post madal view
 	openPost(id) {
@@ -53,10 +45,7 @@ export default class WeatherScreen extends React.Component {
 		this.setState({ weatherPostModalViewVisible: false });
     }
 
-	/* 
-	functions that runs whenever user is in weather screen, including:
-	get user's current location
-	*/
+	// functions that will run whenever WeatherPage is rerendered in DOM
 	componentDidMount() {
 		this.getCurrentLocation();
 	}
@@ -82,7 +71,6 @@ export default class WeatherScreen extends React.Component {
 	render(){
 		return(
 			<Container>
-				<TopBanner updateParentState={this.updateState.bind(this)} />
 				<MapContainer> 
 				    <Map>
 					    <MapView style={{ flex: 1 }} initialRegion={this.state.mapRegion}>
@@ -106,8 +94,8 @@ export default class WeatherScreen extends React.Component {
 				<WeatherForcastContainer>
 					<WeatherForcast />
 				</WeatherForcastContainer>
-				{this.state.topLeftMenuVisible && <TopLeftMenu />}
-				{this.state.topLocationMenuVisible && <TopLocationMenu />}
+				{/* put components with absolute position at the bottom */}
+				<TopBanner pageType={this.state.pageType} />
 			</Container>
 		);
 	}
@@ -120,20 +108,21 @@ const Container = styled.View`
 	background-color: whitesmoke;
 `;
 
+const MapContainer = styled.View`
+    top: 11%;
+    height: 66%;
+    width: 100%;
+	background-color: white;
+`;
+
 const WeatherForcastContainer = styled.View`
     height: 35%;
 	width: 100%;
 	background-color: white;
 `;
 
-const MapContainer = styled.View`
-    height: 55.5%;
-    width: 100%;
-	background-color: white;
-`;
-
 const Map = styled.View`
-    top: 2%;
+    top: 1.5%;
     height: 100%;
     width: 96%;
     left: 2%;

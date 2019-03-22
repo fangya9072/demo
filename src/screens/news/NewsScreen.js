@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import TopBanner from '../../components/TopBanner';
-import TopLeftMenu from '../../components/TopLeftMenu';
-import TopLocationMenu from '../../components/TopLocationMenu';
 import { Modal }  from 'react-native';
 
 export default class NewsScreen extends React.Component {
@@ -16,25 +14,18 @@ export default class NewsScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			topLeftMenuVisible: false,
-			topLocationMenuVisible: false,
+			pageType: 'NEWS',
 		};
-	}
-
-	// function to update state
-	updateState (data) {
-		this.setState(data);
 	}
 
 	// rendering
 	render(){
 		return(
 			<Container>
-				<TopBanner updateParentState={this.updateState.bind(this)} />
 				<News>	
 				</News>
-				{this.state.topLeftMenuVisible && <TopLeftMenu />}
-				{this.state.topLocationMenuVisible && <TopLocationMenu />}
+				{/* put components with absolute position at the bottom */}
+				<TopBanner pageType={this.state.pageType} />
 			</Container>
 		);
 	}
@@ -48,6 +39,7 @@ const Container = styled.View`
 `;
 
 const News = styled.ScrollView`
+    top: 11%;
     height: 90%;
 	width: 100%;
 	background-color: white;

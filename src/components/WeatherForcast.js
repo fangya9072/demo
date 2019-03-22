@@ -10,7 +10,6 @@ provide general weather information from Open Weather API call
 */
 
 class WeatherForcast extends React.Component {
-
 	// set up state
 	constructor(props) {
 		super(props);

@@ -9,7 +9,6 @@ appears when user click the icon of a person nearby on the map
 */
 
 export default class OutfitPostModalView extends React.Component {
-
 	// set up state
 	constructor(props) {
 		super(props);

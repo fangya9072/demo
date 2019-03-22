@@ -10,13 +10,11 @@ will show after user clicked on the right location icon on Top Banner
 */
 
 class TopLocationMenu extends React.Component {
-
     // set up state
 	constructor(props) {
 		super(props);
 		this.state = {};
     }
-    
     //rendering
 	render(){
         return(
@@ -60,14 +58,15 @@ export default withNavigation(TopLocationMenu);
 
 // css
 const Container = styled.View`
-    height: 325px;
+    height: 345px;
     width: 60px;
     position: absolute;;
     left: 315px;
-    top: 64px;
+    top: 45px;
     flex-direction: column;
     background-color: rgba(255,255,255,0.85);
     border-radius: 12.5px;
+    zIndex: 0;
 `
 const ButtonArea = styled.View`
     flex: 1;

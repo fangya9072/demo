@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { withNavigation } from 'react-navigation';
+import TopLeftSubMenu from '../components/TopLeftSubMenu';
 import { COLORS } from '../constant/color';
 
 /*
@@ -10,11 +11,12 @@ will show after user clicked on the left menu icon on Top Banner
 */
 
 class TopLeftMenu extends React.Component {
-
     // set up state
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+            topLeftSubMenuVisible: false,
+        };
     }
     
     //rendering
@@ -22,7 +24,7 @@ class TopLeftMenu extends React.Component {
         return(
             <Container>
                 <ButtonArea>
-                    <Button>
+                    <Button onPress={() => { this.setState({ topLeftSubMenuVisible: !this.state.topLeftSubMenuVisible, });  }}>
                         <ButtonIcon source={require('../../assets/icon/function-icon/camera.png')}/>
                     </Button>
                 </ButtonArea>
@@ -31,6 +33,8 @@ class TopLeftMenu extends React.Component {
                         <ButtonIcon source={require('../../assets/icon/function-icon/friend.png')}/>
                     </Button>
                 </ButtonArea>
+                {/* put components with absolute position at the bottom*/}
+                {this.state.topLeftSubMenuVisible && <TopLeftSubMenu />}
             </Container>
         );
     }
@@ -44,9 +48,9 @@ const Container = styled.View`
     width: 60px;
     position: absolute;;
     left: 0px;
-    top: 64px;
+    top: 45px;
     flex-direction: column;
-    background-color: rgba(255,255,255,0.85)
+    background-color: rgba(255,255,255,0.85);
     border-radius: 12.5px;
     zIndex: 0;
 `

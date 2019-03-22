@@ -1,13 +1,11 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import TopBanner from '../../components/TopBanner';
-import TopLeftMenu from '../../components/TopLeftMenu';
-import TopLocationMenu from '../../components/TopLocationMenu';
 import { Modal }  from 'react-native';
 
 export default class HistoryScreen extends React.Component {
 
-    // set up navigation
+  // set up navigation
 	static navigationOptions = {
 		title: 'History',
 	};
@@ -16,8 +14,10 @@ export default class HistoryScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			pageType: 'HISTORY',
 			topLeftMenuVisible: false,
-			topLocationMenuVisible: false,
+			topLeftSubMenuVisible: false,
+			topLeftMenuVisible: false,
 			/* 
 			two ways to update state:
 
@@ -141,16 +141,10 @@ export default class HistoryScreen extends React.Component {
 		};
 	}
 
-	// function to update state
-	updateState (data) {
-		this.setState(data);
-	}
-
 	// rendering
 	render(){
 		return(
 			<Container>
-				<TopBanner updateParentState={this.updateState.bind(this)} />
 				<History>
 					{this.state.daysHavePost.map((dayItem, dayKey) => {
 						return (
@@ -169,8 +163,8 @@ export default class HistoryScreen extends React.Component {
 		        );
 					})}
 				</History>
-				{this.state.topLeftMenuVisible && <TopLeftMenu />}
-				{this.state.topLocationMenuVisible && <TopLocationMenu />}
+				{/* put components with absolute position at the bottom */}
+				<TopBanner pageType={this.state.pageType} />
 			</Container>
 		);
 	}
@@ -178,13 +172,14 @@ export default class HistoryScreen extends React.Component {
 
 // css
 const Container = styled.View`
-    height: 100%;
+  height: 100%;
 	width: 100%;
 	background-color: whitesmoke;
 `;
 
 const History = styled.ScrollView`
-    height: 90%;
+  top: 11%;
+  height: 90%;
 	width: 100%;
 	background-color: white;
 `;

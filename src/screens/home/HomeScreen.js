@@ -4,8 +4,6 @@ import { MapView, Location, Permissions } from "expo";
 import { Modal }  from 'react-native';
 import OutfitPostModalView from '../../components/OutfitPostModalView';
 import TopBanner from '../../components/TopBanner';
-import TopLeftMenu from '../../components/TopLeftMenu';
-import TopLocationMenu from '../../components/TopLocationMenu';
 import { COLORS } from '../../constant/color';
 	
 
@@ -20,8 +18,7 @@ export default class HomeScreen extends React.Component {
 		constructor(props) {
 				super(props);
 			  this.state = {
-						topLeftMenuVisible: false,
-						topLocationMenuVisible: false,
+					  pageType: 'HOME',
 					  outfitPostModalViewVisible: false,
 						mapRegion: null,
 						errorMessage: null,
@@ -42,16 +39,7 @@ export default class HomeScreen extends React.Component {
 				};
 		}
 
-		// function to update state
-		updateState (data) {
-			this.setState(data);
-		}
-
-  	/* 
-		functions that runs whenever user is in home screen, including:
-		get user's current location
-		get realtime locations of people nearby, as well as their posts
-		*/
+  	// functions that runs whenever HomePage is rerendered in DOM
 		componentDidMount() {
 				this.getCurrentLocation();
 		}
@@ -85,7 +73,6 @@ export default class HomeScreen extends React.Component {
 		render(){
 				return (
 					  <Container>
-								<TopBanner updateParentState={this.updateState.bind(this)} />
 								<Map>
 								    <MapView style={{ flex: 1 }} initialRegion={this.state.mapRegion}>
 										    {this.state.outfitPostMarkers.map((item, key) => {
@@ -105,8 +92,8 @@ export default class HomeScreen extends React.Component {
 								        <OutfitPostModalView close={() => { this.closePost(); }} />
 							    	</Modal>
 					    	</Map>
-								{this.state.topLeftMenuVisible && <TopLeftMenu />}
-								{this.state.topLocationMenuVisible && <TopLocationMenu />}
+								{/* put components with absolute position at the bottom */}
+								<TopBanner pageType={this.state.pageType} />
 				  	</Container>
 		    );
 		}
@@ -121,8 +108,9 @@ const Container = styled.View`
 `;
 
 const Map = styled.View`
+    top: 11%;
     height: 90%;
-	  width: 100%;
+		width: 100%;
 `;
 
 const MarkerImage = styled.Image`
