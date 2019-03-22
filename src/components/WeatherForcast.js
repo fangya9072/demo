@@ -272,7 +272,7 @@ class WeatherForcast extends React.Component {
 						</ButtonArea> 
 					</ForcastTypePicker>
 					<ForcastContent>
-						{this.state.dayForcastVisible && <Forcast horizontal={true}> 
+						{this.state.dayForcastVisible && <Forcast horizontal={true} showsHorizontalScrollIndicator={false}> 
 						  {/* 
 							make API call to Open weather API to get real daily forcast 
 							set retrived daily forcast into this.state.dailyForcast
@@ -290,7 +290,7 @@ class WeatherForcast extends React.Component {
 				        		);
 							})}
 						</Forcast>}
-						{this.state.hourForcastVisible && <Forcast horizontal={true}> 
+						{this.state.hourForcastVisible && <Forcast horizontal={true} showsHorizontalScrollIndicator={false}> 
 						  {/* 
 							make API call to Open weather API to get real hourly forcast 
 							set retrived hourly forcast into this.state.hourlyForcast

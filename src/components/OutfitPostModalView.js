@@ -93,7 +93,7 @@ export default class OutfitPostModalView extends React.Component {
 											<Username> {item.username} </Username>
 										</UserInfoArea>
 										<CommentContent> 
-											<CommentText> {item.text} </CommentText> 
+											<CommentText>{item.text} </CommentText> 
 											<CommentTime> {item.date}</CommentTime>
 								        </CommentContent>
 							        </CommentItem>  	
@@ -214,7 +214,7 @@ const CommentView = styled.ScrollView`
 `;
 
 const CommentItem = styled.View`
-    margin-top: 10px;
+  margin-top: 15px;
 	flex-direction: row;
 `;
 
@@ -241,12 +241,13 @@ const Username = styled.Text`
 
 const CommentContent = styled.Text`
 	flex: 5;
-	padding-left: 10px
+	padding-left: 17.5px
 	padding-right: 15px;
+	padding-top: 5px;
 `;
 
 const CommentText = styled.Text`
-    color: black;
+  color: black;
 	font-size: 12px;
 `;
 

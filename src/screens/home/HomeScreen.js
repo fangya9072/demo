@@ -25,11 +25,11 @@ export default class HomeScreen extends React.Component {
 						make API call to rethinkDB to get real user data
 						*/
 						outfitPostMarkers: [ 
-							  { id: 1, 
+							  { userID: 1, 
 				  			  latitude: 35.909995043008486,
 								  longitude: -79.05328273773193,
 								  src: "https://s3-ap-southeast-1.amazonaws.com/so-srilanka/any/boy.png", },
-								{ id: 2, 
+								{ userID: 2, 
 									latitude: 35.910551182261656,
 				  			  longitude: -79.07154321670532,
 									src: "https://s3-ap-southeast-1.amazonaws.com/so-srilanka/any/female.png", },
@@ -63,7 +63,7 @@ export default class HomeScreen extends React.Component {
 				});
 		};
 
-		// functions that open and closes outfit post madal view
+		// functions that open and close outfit post madal view
 		openPost(id) {
 			  this.setState({ outfitPostModalViewVisible: true });
 		}
