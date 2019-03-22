@@ -16,7 +16,7 @@ export default createBottomTabNavigator(
         tabBarLabel: 'Home',
         tabBarIcon: ({ tintColor }) => (
           <Image source={require('../../assets/icon/function-icon/map.png')}
-            style= {{width:15, height:15, tintColor:'black'}}>
+            style= {{width:22.5, height:22.5, marginTop: 5,tintColor:'black'}}>
           </Image>
         )
       },
@@ -27,7 +27,7 @@ export default createBottomTabNavigator(
         tabBarLabel: 'Weather',
         tabBarIcon: ({ tintColor }) => (
         <Image source={require('../../assets/icon/function-icon/weather.png')}
-        style= {{width:15, height:15, tintColor:'black'}}>
+        style= {{width:25, height:25, marginTop: 5,tintColor:'black'}}>
         </Image>
         )
       },
@@ -38,7 +38,7 @@ export default createBottomTabNavigator(
         tabBarLabel: 'News',
         tabBarIcon: ({ tintColor }) => (
         <Image source={require('../../assets/icon/function-icon/news.png')}
-        style= {{width:15, height:15, tintColor:'black'}}>
+        style= {{width:25, height:25, marginTop: 5,tintColor:'black'}}>
         </Image>
         )
       },
@@ -49,7 +49,7 @@ export default createBottomTabNavigator(
         tabBarLabel: 'History',
         tabBarIcon: ({ tintColor }) => (
         <Image source={require('../../assets/icon/function-icon/history.png')}
-        style= {{width:15, height:15, tintColor:'black'}}>
+        style= {{width:25, height:25, marginTop: 5, tintColor:'black'}}>
         </Image>
         )
       },
@@ -70,7 +70,7 @@ export default createBottomTabNavigator(
       style: {        
         height: 55,              
         backgroundColor: 'fff',  
-       }, 
+      }, 
   }
 });
 
