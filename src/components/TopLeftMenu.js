@@ -19,11 +19,6 @@ class TopLeftMenu extends React.Component {
         };
     }
 
-    // function to pass state to parent componnet
-    updateParentState(data) {
-        this.props.updateParentState(data);
-    }
-
     //rendering
     render() {
         return (

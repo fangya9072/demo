@@ -3,6 +3,7 @@ import styled from 'styled-components/native';
 import { withNavigation } from 'react-navigation';
 import TopLeftMenu from '../components/TopLeftMenu';
 import TopLocationMenu from '../components/TopLocationMenu';
+import { NavigationEvents } from 'react-navigation';
 import { COLORS } from '../constant/color';
 
 /* 
@@ -22,22 +23,17 @@ class TopBanner extends React.Component {
 		};
 	}
 
-	// nned to rerender top banner when navigating between bottom tap bar 
-	//componentDidMount() {
-	//	this._navListener = this.props.navigation.addListener('didFocus', () => {
-	//		if (!this.state.isGoBack) { // no need to rerender when going back from stack page
-	//			this.setState({
-					// topLeftMenuVisible: false,
-					// topLocationMenuVisible: false,
-	//			});
-	//		}
-	//	});
-	//}
-
-	// state update fucntion, used for getting state from child component 
-	updateState (data) {
-        this.setState(data);
-    }
+	/*
+    rerender top banner expanded sub menu when switching between pages
+	*/
+	componentDidMount() {
+		this._navListener = this.props.navigation.addListener('willFocus', () => {
+			this.setState({
+				topLeftMenuVisible: false,
+				topLocationMenuVisible: false,
+			})
+		});
+	}
 
 	//rendering
 	render() {
@@ -45,8 +41,7 @@ class TopBanner extends React.Component {
 		get isMainView parameter from navigation, default is true if not available 
 	    used to determine what kind of banner should be rendered
 		*/
-		const { navigation } = this.props;
-		const isMainView = navigation.getParam('isMainView', true);
+		const isMainView = this.props.navigation.getParam('isMainView', true);
 		
 		return (
 			<Container>
@@ -89,12 +84,7 @@ class TopBanner extends React.Component {
 				{/* 
 				expandable sub menus
 				*/}
-				{this.state.topLeftMenuVisible && 
-				<TopLeftMenu 
-				navigation={this.props.navigation} 
-				updateParentState={this.updateState.bind(this)} // get state passed from chil component
-				isMainView={this.state.isMainView} 
-				/>}
+				{this.state.topLeftMenuVisible && <TopLeftMenu navigation={this.props.navigation} isMainView={this.state.isMainView} />}
 				{this.state.topLocationMenuVisible && <TopLocationMenu />}
 			</Container>
 		);
