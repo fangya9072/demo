@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components/native';
 import { MapView, Location, Permissions } from "expo";
 import { Modal }  from 'react-native';
+import {SafeAreaView} from 'react-navigation';
 import OutfitPostModalView from '../../components/OutfitPostModalView';
 import TopBanner from '../../components/TopBanner';
 import { COLORS } from '../../constant/color';
@@ -11,14 +12,14 @@ export default class HomeScreen extends React.Component {
 	
 		// set up navigation
 		static navigationOptions = {
-				title: 'Home',
+				title: 'HOME',
 		};
 
 	  // set up state
 		constructor(props) {
 				super(props);
 			  this.state = {
-					  pageType: 'HOME',
+					  pageTitle: 'HOME',
 					  outfitPostModalViewVisible: false,
 						mapRegion: null,
 						errorMessage: null,
@@ -72,6 +73,7 @@ export default class HomeScreen extends React.Component {
 		// rendering 
 		render(){
 				return (
+					<SafeAreaView style={{ backgroundColor: 'whitesmoke', flex: 1}}>
 					  <Container>
 								<Map>
 								    <MapView style={{ flex: 1 }} initialRegion={this.state.mapRegion}>
@@ -93,8 +95,9 @@ export default class HomeScreen extends React.Component {
 							    	</Modal>
 					    	</Map>
 								{/* put components with absolute position at the bottom */}
-								<TopBanner pageType={this.state.pageType} />
+								<TopBanner pageTitle={this.state.pageTitle} navigation={this.props.navigation} navigation={this.state.navigation}/>
 				  	</Container>
+					</SafeAreaView>
 		    );
 		}
 }
@@ -108,8 +111,8 @@ const Container = styled.View`
 `;
 
 const Map = styled.View`
-    top: 11%;
-    height: 90%;
+    top: 45px;
+    height: 93.5%;
 		width: 100%;
 `;
 

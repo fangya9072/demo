@@ -69,7 +69,7 @@ const HistoryStack = createStackNavigator(
 export default createBottomTabNavigator(
   {
     Home: {
-      screen: HomeStack,
+      screen: HomeScreen,
       navigationOptions: {
         tabBarLabel: 'Home',
         tabBarIcon: ({ tintColor }) => (
@@ -80,7 +80,7 @@ export default createBottomTabNavigator(
       },
     },
     Weather: {
-      screen: WeatherStack,
+      screen: WeatherScreen,
       navigationOptions: {
         tabBarLabel: 'Weather',
         tabBarIcon: ({ tintColor }) => (
@@ -91,7 +91,7 @@ export default createBottomTabNavigator(
       },
     },
     News: {
-      screen: NewsStack,
+      screen: NewsScreen,
       navigationOptions: {
         tabBarLabel: 'News',
         tabBarIcon: ({ tintColor }) => (
@@ -102,7 +102,7 @@ export default createBottomTabNavigator(
       },
     },
     History: {
-      screen: HistoryStack,
+      screen: HistoryScreen,
       navigationOptions: {
         tabBarLabel: 'History',
         tabBarIcon: ({ tintColor }) => (

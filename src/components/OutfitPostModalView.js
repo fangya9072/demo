@@ -268,7 +268,7 @@ const CommentWrite = styled.View`
 const CommentInput = styled.TextInput`
 	flex: 8;
 	background-color: white;
-	margin: 1px 1px 1px 1px;
+	margin: 1px 1px 2px 1px;
 	padding-left: 10px;
 	font-family: Bradley Hand;
 `;

@@ -1,13 +1,14 @@
 import React from 'react';
 import styled from 'styled-components/native';
+import { SafeAreaView } from 'react-navigation';
 import TopBanner from '../../components/TopBanner';
-import { Modal }  from 'react-native';
+import { Modal } from 'react-native';
 
 export default class HistoryScreen extends React.Component {
 
-  // set up navigation
+	// set up navigation
 	static navigationOptions = {
-		title: 'History',
+		title: 'HISTORY',
 	};
 
 	// set up state
@@ -51,121 +52,175 @@ export default class HistoryScreen extends React.Component {
 			   add this object into this.state.daysHavePost
 			*/
 			daysHavePost: [
-				{ date: 'Mar 1 2019',
-				  Posts: [
-					{ postId: 1,
-					  postType: 'outfit',
-					  image: require('../../../assets/icon/role-icon/pikachu.png'), },
-					{ postId: 2,
-					  postType: 'outfit',
-					  image: require('../../../assets/icon/role-icon/trump.jpg'), }, 
-					{ postId: 3,
-					  postType: 'weather',
-					  image: require('../../../assets/icon/role-icon/pikachu.png'),
-					  weatherInfo: [1, 0.4, 0.6, 0.8], },
-					{ postId: 4,
-					  postType: 'outfit',
-					  image: require('../../../assets/icon/role-icon/trump.jpg'), },
-					{ postId: 5,
-					  postType: 'weather',
-					  image: require('../../../assets/icon/role-icon/pikachu.png'),
-					  weatherInfo: [0.2, 1, 0.6, 0.2], },
-					{ postId: 6,
-					  postType: 'outfit',
-					  image: require('../../../assets/icon/role-icon/trump.jpg'), },
-				  ],},
-				{ date: 'Feb 28 2019',
-			      Posts: [
-					{ postId: 1,
-					  postType: 'outfit',
-					  image: require('../../../assets/icon/role-icon/trump.jpg'), },
-				  ],},
-				{ date: 'Feb 26 2019',
-			      Posts: [
-					{ postId: 1,
-					  postType: 'weather',
-					  image: require('../../../assets/icon/role-icon/pikachu.png'),
-					  weatherInfo: [0.5, 0.2, 1, 0.6], },
-					{ postId: 2,
-					  postType: 'outfit',
-					  image: require('../../../assets/icon/role-icon/trump.jpg'), },
-				  ],},
-				{ date: 'Feb 23 2019',
-			      Posts: [
-					{ postId: 1,
-					  postType: 'weather',
-						image: require('../../../assets/icon/role-icon/pikachu.png'),
-						weatherInfo: [1, 0.8, 0.2, 0.2], },
-					{ postId: 2,
-					  postType: 'outfit',
-					  image: require('../../../assets/icon/role-icon/trump.jpg'), },
-				  ],},
-				{ date: 'Feb 22 2019',
-			      Posts: [
-					{ postId: 1,
-					  postType: 'outfit',
-					  image: require('../../../assets/icon/role-icon/trump.jpg'), },
-					{ postId: 2,
-					  postType: 'weather',
-					  image: require('../../../assets/icon/role-icon/pikachu.png'),
-					  weatherInfo: [0, 0.8, 1, 0], }, 
-					{ postId: 3,
-					  postType: 'outfit',
-					  image: require('../../../assets/icon/role-icon/trump.jpg'),  },
-					{ postId: 4,
-					  postType: 'outfit',
-					  image: require('../../../assets/icon/role-icon/pikachu.png'), },
-					{ postId: 5,
-					  postType: 'weather',
-					  image: require('../../../assets/icon/role-icon/trump.jpg'),
-					  weatherInfo: [1, 0, 0, 1], }, 
-				  ],},
-				{ date: 'Feb 13 2019',
-			      Posts: [
-					{ postId: 1,
-					  postType: 'outfit',
-						image: require('../../../assets/icon/role-icon/pikachu.png'),
-						extraInfo: null, },
-					{ postId: 2,
-					  postType: 'weather',
-					  image: require('../../../assets/icon/role-icon/trump.jpg'),
-					  weatherInfo: [0.2, 1, 0.5, 0.8], }, 
-				  ],},
-				{ date: 'Feb 8 2019',
-			      Posts: [
-					{ postId: 1,
-					  postType: 'outfit',
-						image: require('../../../assets/icon/role-icon/trump.jpg'), },
-				  ],},
+				{
+					date: 'Mar 1 2019',
+					Posts: [
+						{
+							postId: 1,
+							postType: 'outfit',
+							image: require('../../../assets/icon/role-icon/pikachu.png'),
+						},
+						{
+							postId: 2,
+							postType: 'outfit',
+							image: require('../../../assets/icon/role-icon/trump.jpg'),
+						},
+						{
+							postId: 3,
+							postType: 'weather',
+							image: require('../../../assets/icon/role-icon/pikachu.png'),
+							weatherInfo: [1, 0.4, 0.6, 0.8],
+						},
+						{
+							postId: 4,
+							postType: 'outfit',
+							image: require('../../../assets/icon/role-icon/trump.jpg'),
+						},
+						{
+							postId: 5,
+							postType: 'weather',
+							image: require('../../../assets/icon/role-icon/pikachu.png'),
+							weatherInfo: [0.2, 1, 0.6, 0.2],
+						},
+						{
+							postId: 6,
+							postType: 'outfit',
+							image: require('../../../assets/icon/role-icon/trump.jpg'),
+						},
+					],
+				},
+				{
+					date: 'Feb 28 2019',
+					Posts: [
+						{
+							postId: 1,
+							postType: 'outfit',
+							image: require('../../../assets/icon/role-icon/trump.jpg'),
+						},
+					],
+				},
+				{
+					date: 'Feb 26 2019',
+					Posts: [
+						{
+							postId: 1,
+							postType: 'weather',
+							image: require('../../../assets/icon/role-icon/pikachu.png'),
+							weatherInfo: [0.5, 0.2, 1, 0.6],
+						},
+						{
+							postId: 2,
+							postType: 'outfit',
+							image: require('../../../assets/icon/role-icon/trump.jpg'),
+						},
+					],
+				},
+				{
+					date: 'Feb 23 2019',
+					Posts: [
+						{
+							postId: 1,
+							postType: 'weather',
+							image: require('../../../assets/icon/role-icon/pikachu.png'),
+							weatherInfo: [1, 0.8, 0.2, 0.2],
+						},
+						{
+							postId: 2,
+							postType: 'outfit',
+							image: require('../../../assets/icon/role-icon/trump.jpg'),
+						},
+					],
+				},
+				{
+					date: 'Feb 22 2019',
+					Posts: [
+						{
+							postId: 1,
+							postType: 'outfit',
+							image: require('../../../assets/icon/role-icon/trump.jpg'),
+						},
+						{
+							postId: 2,
+							postType: 'weather',
+							image: require('../../../assets/icon/role-icon/pikachu.png'),
+							weatherInfo: [0, 0.8, 1, 0],
+						},
+						{
+							postId: 3,
+							postType: 'outfit',
+							image: require('../../../assets/icon/role-icon/trump.jpg'),
+						},
+						{
+							postId: 4,
+							postType: 'outfit',
+							image: require('../../../assets/icon/role-icon/pikachu.png'),
+						},
+						{
+							postId: 5,
+							postType: 'weather',
+							image: require('../../../assets/icon/role-icon/trump.jpg'),
+							weatherInfo: [1, 0, 0, 1],
+						},
+					],
+				},
+				{
+					date: 'Feb 13 2019',
+					Posts: [
+						{
+							postId: 1,
+							postType: 'outfit',
+							image: require('../../../assets/icon/role-icon/pikachu.png'),
+							extraInfo: null,
+						},
+						{
+							postId: 2,
+							postType: 'weather',
+							image: require('../../../assets/icon/role-icon/trump.jpg'),
+							weatherInfo: [0.2, 1, 0.5, 0.8],
+						},
+					],
+				},
+				{
+					date: 'Feb 8 2019',
+					Posts: [
+						{
+							postId: 1,
+							postType: 'outfit',
+							image: require('../../../assets/icon/role-icon/trump.jpg'),
+						},
+					],
+				},
 			],
 		};
 	}
 
 	// rendering
-	render(){
-		return(
-			<Container>
-				<History>
-					{this.state.daysHavePost.map((dayItem, dayKey) => {
-						return (
-							<DailyPosts key={dayKey}>
-								<Date><DateText>{dayItem.date}</DateText></Date>
-								<Posts horizontal={true} showsHorizontalScrollIndicator={false}>
-								  {dayItem.Posts.map((postItem, postKey) => {
-							      return (
-											<Post key ={postKey}>
-												<PostImage source={postItem.image} />
-											</Post>
-				        		);
-							    })}
-						   </Posts>
-				      </DailyPosts>					
-		        );
-					})}
-				</History>
-				{/* put components with absolute position at the bottom */}
-				<TopBanner pageType={this.state.pageType} />
-			</Container>
+	render() {
+		return (
+			<SafeAreaView style={{ backgroundColor: 'whitesmoke', flex: 1}}>
+				<Container>
+					<History>
+						{this.state.daysHavePost.map((dayItem, dayKey) => {
+							return (
+								<DailyPosts key={dayKey}>
+									<Date><DateText>{dayItem.date}</DateText></Date>
+									<Posts horizontal={true} showsHorizontalScrollIndicator={false}>
+										{dayItem.Posts.map((postItem, postKey) => {
+											return (
+												<Post key={postKey}>
+													<PostImage source={postItem.image} />
+												</Post>
+											);
+										})}
+									</Posts>
+								</DailyPosts>
+							);
+						})}
+					</History>
+					{/* put components with absolute position at the bottom */}
+					<TopBanner pageType={this.state.pageType} navigation={this.state.navigation}/>
+				</Container>
+			</SafeAreaView>
 		);
 	}
 }
@@ -178,8 +233,8 @@ const Container = styled.View`
 `;
 
 const History = styled.ScrollView`
-  top: 11%;
-  height: 90%;
+  top: 45px;
+  height: 93.5%;
 	width: 100%;
 	background-color: white;
 `;

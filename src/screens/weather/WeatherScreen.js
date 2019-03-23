@@ -1,49 +1,54 @@
 import React from 'react';
 import styled from 'styled-components/native';
+import { SafeAreaView } from 'react-navigation';
 import TopBanner from '../../components/TopBanner';
 import WeatherForcast from '../../components/WeatherForcast';
 import { MapView, Location, Permissions } from "expo";
-import { Modal }  from 'react-native';
+import { Modal } from 'react-native';
 
 export default class WeatherScreen extends React.Component {
 
-    // set up navigation
+	// set up navigation
 	static navigationOptions = {
-		title: 'Weather',
+		title: 'WEATHER',
 	};
 
 	// set up state
 	constructor(props) {
 		super(props);
-	    this.state = {
-			pageType: 'WEATHER',
-	    	weatherPostModalViewVisible: false,
+		this.state = {
+			pageTitle: 'WEATHER',
+			weatherPostModalViewVisible: false,
 			mapRegion: null,
 			errorMessage: null,
 			/*  
 		    markers below for people nearby are only for test purpose, 
 			make API call to rethinkDB to get real user data
 			*/
-			weatherPostMarkers: [ 
-	   		    { id: 1, 
-				  latitude: 35.909995043008486,
-				  longitude: -79.05328273773193,
-				  src: "https://s3-ap-southeast-1.amazonaws.com/so-srilanka/any/boy.png", },
-				{ id: 2, 
-				  latitude: 35.910551182261656,
-				  longitude: -79.07154321670532,
-				   src: "https://s3-ap-southeast-1.amazonaws.com/so-srilanka/any/female.png", },
+			weatherPostMarkers: [
+				{
+					id: 1,
+					latitude: 35.909995043008486,
+					longitude: -79.05328273773193,
+					src: "https://s3-ap-southeast-1.amazonaws.com/so-srilanka/any/boy.png",
+				},
+				{
+					id: 2,
+					latitude: 35.910551182261656,
+					longitude: -79.07154321670532,
+					src: "https://s3-ap-southeast-1.amazonaws.com/so-srilanka/any/female.png",
+				},
 			],
 		};
 	}
-	
+
 	// functions that open and closes weather post madal view
 	openPost(id) {
 		this.setState({ weatherPostModalViewVisible: true });
-    }
-    closePost() {
+	}
+	closePost() {
 		this.setState({ weatherPostModalViewVisible: false });
-    }
+	}
 
 	// functions that will run whenever WeatherPage is rerendered in DOM
 	componentDidMount() {
@@ -56,7 +61,7 @@ export default class WeatherScreen extends React.Component {
 		if (status !== 'granted') {
 			this.setState({
 				errorMessage: 'Permission to access location was denied',
-		  });
+			});
 		}
 		let location = await Location.getCurrentPositionAsync({});
 		this.setState({
@@ -68,35 +73,37 @@ export default class WeatherScreen extends React.Component {
 	};
 
 	// rendering
-	render(){
-		return(
-			<Container>
-				<MapContainer> 
-				    <Map>
-					    <MapView style={{ flex: 1 }} initialRegion={this.state.mapRegion}>
-					        {this.state.weatherPostMarkers.map((item, key) => {
-    						    return (
-	    	    					<MapView.Marker
-		    						    coordinate={{
-			    							longitude: Number(item.longitude),
-				    					    latitude: Number(item.latitude)
-					    	    		}}
-						    	    	title={item.title}
-							    		key={key}
-								    >
-                                        <MarkerImage source={{ uri: item.src }}/>
-			    				    </MapView.Marker>
-				        		);
-					    	})}
-		    			</MapView>
-					</Map>
-				</MapContainer>
-				<WeatherForcastContainer>
-					<WeatherForcast />
-				</WeatherForcastContainer>
-				{/* put components with absolute position at the bottom */}
-				<TopBanner pageType={this.state.pageType} />
-			</Container>
+	render() {
+		return (
+			<SafeAreaView style={{ backgroundColor: 'whitesmoke', flex: 1}}>
+				<Container>
+					<MapContainer>
+						<Map>
+							<MapView style={{ flex: 1 }} initialRegion={this.state.mapRegion}>
+								{this.state.weatherPostMarkers.map((item, key) => {
+									return (
+										<MapView.Marker
+											coordinate={{
+												longitude: Number(item.longitude),
+												latitude: Number(item.latitude)
+											}}
+											title={item.title}
+											key={key}
+										>
+											<MarkerImage source={{ uri: item.src }} />
+										</MapView.Marker>
+									);
+								})}
+							</MapView>
+						</Map>
+					</MapContainer>
+					<WeatherForcastContainer>
+						<WeatherForcast />
+					</WeatherForcastContainer>
+					{/* put components with absolute position at the bottom */}
+					<TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} />
+				</Container>
+			</SafeAreaView>
 		);
 	}
 }
@@ -109,14 +116,14 @@ const Container = styled.View`
 `;
 
 const MapContainer = styled.View`
-    top: 11%;
-    height: 66%;
+    top: 45px;
+    height: 65%;
     width: 100%;
 	background-color: white;
 `;
 
 const WeatherForcastContainer = styled.View`
-    height: 35%;
+    height: 36%;
 	width: 100%;
 	background-color: white;
 `;

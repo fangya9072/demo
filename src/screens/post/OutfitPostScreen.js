@@ -1,11 +1,13 @@
 import React from 'react';
 import styled from 'styled-components/native';
+import { SafeAreaView } from 'react-navigation';
+import TopBanner from '../../components/TopBanner';
 
 export default class OutfitPostScreen extends React.Component {
 
     // set up navigation
 	static navigationOptions = {
-		title: 'OutfitPost',
+		title: 'My Outfit Today',
 	};
 
 	// set up state
@@ -19,8 +21,11 @@ export default class OutfitPostScreen extends React.Component {
 	// rendering
 	render(){
 		return(
-			<Container>
-			</Container>
+			<SafeAreaView style={{ backgroundColor: 'whitesmoke', flex: 1}}>
+			    <Container>
+				    <TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} />
+			    </Container>
+			</SafeAreaView>
 		);
 	}
 }
@@ -29,4 +34,5 @@ export default class OutfitPostScreen extends React.Component {
 const Container = styled.View`
     height: 100%;
 	width: 100%;
+	background-color: white;
 `;
