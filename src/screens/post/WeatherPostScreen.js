@@ -293,8 +293,8 @@ const ImageWrapper = styled.TouchableOpacity`
 	overflow: hidden;
 `
 const UploadedImage = styled.Image`
-	height: 100px;
-	width: 100px;
+	height: 150px;
+	width: 150px;
 	border-radius: 5px;
 	resize-mode: contain;
 `
