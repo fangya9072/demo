@@ -124,7 +124,7 @@ export default class WeatherPostScreen extends React.Component {
 
 	// function to save outfit post to database
 	sendPost = async (uri) => {
-		if (!this.state.uri) {
+		if (!this.state.image) {
 			this.setState({
 				errorMessage: 'Please Choose A Picture',
 			});
