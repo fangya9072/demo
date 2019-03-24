@@ -63,8 +63,17 @@ export default class OutfitPostScreen extends React.Component {
 				errorMessage: 'Please Choose A Picture',
 			});
 		}else{		
-		    // code conneting to backend starts here
-
+		    /* code conneting to backend starts here
+			t
+			e
+			s
+			t
+			
+			d
+			a
+			t
+			a
+		    end of code */
 		    this.props.navigation.goBack();
 		}
 	}
@@ -82,7 +91,7 @@ export default class OutfitPostScreen extends React.Component {
 					</ImageWrapper>
 					<ButtonArea>
 						<Button onPress={() => {this.pickImage()}}>
-							<ButtonText> Choose a Picture </ButtonText>
+							<ButtonText> Choose A Picture </ButtonText>
 						</Button>
 						<Button style={{top:30}} onPress={() => { this.sendPost(this.state.image); }}>
 						    <ButtonText> Update Your Outfit </ButtonText>

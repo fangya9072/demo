@@ -14,7 +14,7 @@ include expandable sub menus
 class TopBanner extends React.Component {
 	// set up state
 	constructor(props) {
-		super(props);
+		super(props); // parent should have passed pageTitle and navigation props to this component
 		this.state = {
 			userIcon: '',
 			topLeftMenuVisible: false,

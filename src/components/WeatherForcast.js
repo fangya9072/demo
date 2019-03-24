@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { withNavigation } from 'react-navigation';
+import { Location } from 'expo';
 import { ICONS } from '../constant/icon';
 import { COLORS } from '../constant/color';
 
@@ -12,18 +13,11 @@ provide general weather information from Open Weather API call
 class WeatherForcast extends React.Component {
 	// set up state
 	constructor(props) {
-		super(props);
+		super(props); // parent should have passed cityName and cityForcast props to this component
 		this.state = {
 			forcastType: 'hour',
 			dayForcastVisible: true,
 			hourForcastVisible: false,
-			city: {
-				name: 'Chapel Hill',
-				weatherType: 'Rainy',
-				minTemperature: 45,
-				maxTemperature: 60,
-				currentTemperature: 55,
-			},
 			/*  
 			daily forcast below are only for test purpose
 			make API call to Open Weather API to get daily forcast
@@ -245,17 +239,17 @@ class WeatherForcast extends React.Component {
 				set retrived weather info as this.state.city.[property]
 				*/}
 				<CityName>
-					<CityNameText> {this.state.city.name} </CityNameText>
+					<CityNameText> {this.props.cityName} </CityNameText>
 				</CityName>
 				<CurrentWeather>
 					<WeatherType>
-						<WeatherTypeText> {this.state.city.weatherType} </WeatherTypeText>
+						<WeatherTypeText> {this.props.cityForcast.weatherType} </WeatherTypeText>
 					</WeatherType>
 					<TemperetureRange>
-						<TemperatureRangeText> {this.state.city.minTemperature}° | {this.state.city.maxTemperature}° </TemperatureRangeText>
+						<TemperatureRangeText> {this.props.cityForcast.minTemperature}° | {this.props.cityForcast.maxTemperature}° </TemperatureRangeText>
 					</TemperetureRange>
 					<Temperature>
-					    <TemperatureText> {this.state.city.currentTemperature}° </TemperatureText>
+					    <TemperatureText> {this.props.cityForcast.currentTemperature}° </TemperatureText>
 					</Temperature>
 				</CurrentWeather>
 				

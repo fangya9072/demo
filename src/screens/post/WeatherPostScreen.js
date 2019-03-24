@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
-import { ImagePicker, Permissions } from 'expo';
+import { ImagePicker, Permissions, Location } from 'expo';
 import { Alert, Linking } from 'react-native';
+import LocationView from "react-native-location-view";
 import TopBanner from '../../components/TopBanner';
 import { ICONS } from '../../constant/icon';
 
@@ -10,6 +11,7 @@ export default class WeatherPostScreen extends React.Component {
 	// set up navigation
 	static navigationOptions = {
 		title: 'How Is The Weather?',
+		mapViewVisible: false,
 	};
 
 	// set up state
@@ -18,8 +20,11 @@ export default class WeatherPostScreen extends React.Component {
 		this.state = {
 			pageTitle: 'How Is The Weather?',
 			image: null,
-			location: 'Add Location',
-			coordinate: '',
+			locationText: '',
+			coordinate: {
+				latitude: 0,
+				longitude: 0,
+			},
 			errorMessage: '',
 			temperature: 3,
 			humidity: 3,
@@ -28,6 +33,54 @@ export default class WeatherPostScreen extends React.Component {
 		};
 	}
 
+	// function to update state, used to get state passed by child component
+	updateState (data) {
+        this.setState(data);
+	}
+	
+	// funtion to update locationText state after selecting a location on map view
+	updateLocationName = async (coordinate) => {
+		let locationInfo = await Location.reverseGeocodeAsync(coordinate); 
+		this.setState({
+			locationText: locationInfo[0].city+', '+locationInfo[0].region,
+		});
+	}
+
+	// functions that runs whenever WeatherPostScreen is rerendered in DOM
+	componentWillMount() {
+		this.getCurrentLocation();
+	}
+
+	// funtion to get current location
+	getCurrentLocation = async () => {
+		let { status } = await Permissions.askAsync(Permissions.LOCATION);
+		if (status !== 'granted') {
+			Alert.alert(
+				'Please Allow Access',
+				[
+					'This applicaton needs access to your current location.',
+					'\n',
+					'Please go to Settings of your device and grant permissions to Location Service.',
+				].join(''),
+				[
+					{ text: 'Not Now', style: 'cancel' },
+					{ text: 'Settings', onPress: () => Linking.openURL('app-settings:') },
+				],
+			);
+		}
+		let location = await Location.getCurrentPositionAsync({}); // get coordinates of current location 
+		this.setState({
+			coordinate:{
+				latitude: location.coords.latitude,
+				longitude: location.coords.longitude,
+			},
+		});
+		let locationInfo = await Location.reverseGeocodeAsync(this.state.coordinate);  // get city name of current location by coordinates
+		this.setState({
+			locationText: locationInfo[0].city+', '+locationInfo[0].region,
+		});
+	};
+
 	/* 
 	function to pick picture from phone's photo library
 	ask permission to grant acess to photo library
@@ -35,7 +88,7 @@ export default class WeatherPostScreen extends React.Component {
 	*/
 	pickImage = async () => {
 		const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-		if(status !== 'granted'){
+		if (status !== 'granted') {
 			Alert.alert(
 				'Please Allow Access',
 				[
@@ -53,21 +106,41 @@ export default class WeatherPostScreen extends React.Component {
 			mediaTypes: 'Images',
 			allowsEditing: true,
 		});
-		if(!result.cancelled){
+		if (!result.cancelled) {
 			this.setState({ image: result.uri });
 		}
 	}
 
+	/* 
+	function that allow user to pick a location in map view
+	hide <PostContainer>, show <MapContainer>
+	in <LocationView>, we set coordinate of picked location as this.state.coordinate, city and region name as this.state.locationText
+	*/
+	pickLocation = async () => {
+		this.setState({
+			mapViewVisible: true,
+		});
+	}
+
 	// function to save outfit post to database
 	sendPost = async (uri) => {
-		if(!this.state.coordinate){
+		if (!this.state.uri) {
 			this.setState({
-				errorMessage: 'Please Set Up Your Location',
+				errorMessage: 'Please Choose A Picture',
 			});
-		}else{
-			 // code conneting to backend starts here
-
-			 this.props.navigation.goBack();
+		} else {
+			/* code conneting to backend starts here
+			t
+			e
+			s
+			t
+			
+			d
+			a
+			t
+			a
+		    end of code */
+			this.props.navigation.goBack();
 		}
 	}
 
@@ -103,10 +176,9 @@ export default class WeatherPostScreen extends React.Component {
 
 	// reset all four weather values to default: 3
 	resetState = () => {
+		this.getCurrentLocation();
 		this.setState({
 			image: null,
-			location: 'Add Location',
-			coordinate: '',
 			errorMessage: '',
 			temperature: 3,
 			humidity: 3,
@@ -119,17 +191,16 @@ export default class WeatherPostScreen extends React.Component {
 	render() {
 		return (
 			<SafeAreaView style={{ backgroundColor: 'whitesmoke', flex: 1 }}>
-				<Container>
+				{!this.state.mapViewVisible && <PostContainer>
 					<TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} />
 					<ImageWrapper onPress={() => { this.pickImage() }}>
 						{this.state.image && < UploadedImage source={{ uri: this.state.image }} />}
 						{!this.state.image && <DefaultImage source={require('../../../assets/icon/function-icon/upload-photo.png')} />}
 					</ImageWrapper>
-					<LocationSelector>
+					<LocationSelector onPress={() => { this.pickLocation() }}>
 						<PinButton><PinButtonIcon source={require('../../../assets/icon/function-icon/add-location.png')} /></PinButton>
-						<PinText>{this.state.location} </PinText>
+						<PinText>{this.state.locationText} </PinText>
 					</LocationSelector>
-					<ErrorMessage><ErrorMessageText> {this.state.errorMessage} </ErrorMessageText></ErrorMessage>
 					<SliderWrapper>
 						<WeatherSlider
 							minimumTrackTintColor={'lightblue'}
@@ -172,25 +243,42 @@ export default class WeatherPostScreen extends React.Component {
 							onValueChange={this.updateWind.bind(this)}
 						/>
 					</SliderWrapper>
+					<ErrorMessage><ErrorMessageText> {this.state.errorMessage} </ErrorMessageText></ErrorMessage>
 					<ButtonArea>
-						<PostButton onPress={() => {this.sendPost()}}>
+						<PostButton onPress={() => { this.sendPost() }}>
 							<PostButtonText> POST </PostButtonText>
 						</PostButton>
-						<ClearButton onPress={() => {this.resetState()}}>
+						<ClearButton onPress={() => { this.resetState() }}>
 							<ClearButtonText> RESET </ClearButtonText>
 						</ClearButton>
 					</ButtonArea>
-				</Container>
+				</PostContainer>}
+
+				{this.state.mapViewVisible && <MapContainer>
+					<LocationView
+						apiKey={"https://maps.googleapis.com/maps/api/js?key=AIzaSyAn9ZMMpbWB4cZClgqctFmP8LE9W5sONXk"}
+						initialLocation={{
+							latitude: this.state.coordinate.latitude,
+							longitude: this.state.coordinate.longitude,
+						}}
+						updateParentState={this.updateState.bind(this)} // get state passed by child component
+						updateLocationName={this.updateLocationName.bind(this)} 
+					/>
+				</MapContainer>}
 			</SafeAreaView>
 		);
 	}
 }
 
 // css
-const Container = styled.View`
+const MapContainer = styled.View`
+	flex: 1;
+`;
+
+const PostContainer = styled.View`
     height: 100%;
-	width: 100%;
-	background-color: white;
+    width: 100%;
+    background-color: white;
 `;
 
 const ImageWrapper = styled.TouchableOpacity`
@@ -219,9 +307,10 @@ const DefaultImage = styled.Image`
 const LocationSelector = styled.TouchableOpacity`
     height: 25px;
     width: 40%;
-    top: 25%;
+    top: 27.5%;
 	left: 17.5%;
 	flex-direction: row;
+	overflow: visible;
 `
 const PinButton = styled.View`
 	height: 25px;
@@ -237,17 +326,27 @@ const PinButtonIcon = styled.Image`
 	resize-mode: stretch;
 `
 const PinText = styled.Text`
-    width: 100px;
     font-family: Optima;
 	font-size: 15px;
 	padding-top: 2.5px;
 	padding_left: 5px;
 `;
 
+const SliderWrapper = styled.View`
+	width: 80%;
+	height: 35%;
+	top: 19.5%;
+	left:10%;
+`;
+
+const WeatherSlider = styled.Slider`
+    flex: 1;
+`;
+
 const ErrorMessage = styled.View`
     height: 5%;
 	width: 100%;
-    top: 17.5%;
+    top: 20.5%;
 	justify-content: center;
 	align-items: center;
 `
@@ -256,17 +355,6 @@ const ErrorMessageText = styled.Text`
     font-family: Bradley Hand;
 	font-size: 15px;
 	color: darkred;
-`;
-
-const SliderWrapper = styled.View`
-	width: 80%;
-	height: 35%;
-	top: 17.5%;
-	left:10%;
-`;
-
-const WeatherSlider = styled.Slider`
-    flex: 1;
 `;
 
 const ButtonArea = styled.View`

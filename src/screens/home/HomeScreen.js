@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import { MapView, Location, Permissions } from "expo";
+import { Location, Permissions } from "expo";
+import  MapView  from 'react-native-maps'
 import { Modal }  from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { Alert, Linking } from 'react-native';
@@ -23,6 +24,10 @@ export default class HomeScreen extends React.Component {
 					  pageTitle: 'HOME',
 					  outfitPostModalViewVisible: false,
 						mapRegion: null,
+						coordinate: {
+							longitude: 0,
+							latitude: 0,
+						},
 						/*  
 					  markers below for people nearby are only for test purpose, 
 						make API call to rethinkDB to get real user data
@@ -65,7 +70,7 @@ export default class HomeScreen extends React.Component {
 				let location = await Location.getCurrentPositionAsync({});
 				this.setState({
 						mapRegion: { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 },
-						currentLocation: { latitude: location.coords.latitude, longitude: location.coords.longitude }
+						coordinate: { latitude: location.coords.latitude, longitude: location.coords.longitude }
 		    });
 		};
 

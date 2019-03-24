@@ -4,7 +4,8 @@ import { SafeAreaView } from 'react-navigation';
 import { Alert, Linking } from 'react-native';
 import TopBanner from '../../components/TopBanner';
 import WeatherForcast from '../../components/WeatherForcast';
-import { MapView, Location, Permissions } from "expo";
+import { Location, Permissions } from "expo";
+import  MapView  from 'react-native-maps'
 import { Modal } from 'react-native';
 
 export default class WeatherScreen extends React.Component {
@@ -21,6 +22,17 @@ export default class WeatherScreen extends React.Component {
 			pageTitle: 'WEATHER',
 			weatherPostModalViewVisible: false,
 			mapRegion: null,
+			coordinate: {
+				latitude: 0,
+				longitude: 0,
+			},
+			cityName: '',
+			cityForcast:{
+				weatherType: 'Rainy',
+				minTemperature: 45,
+				maxTemperature: 60,
+				currentTemperature: 55,
+			},
 			errorMessage: null,
 			/*  
 		    markers below for people nearby are only for test purpose, 
@@ -52,7 +64,7 @@ export default class WeatherScreen extends React.Component {
 	}
 
 	// functions that will run whenever WeatherPage is rerendered in DOM
-	componentDidMount() {
+	componentWillMount() {
 		this.getCurrentLocation();
 	}
 
@@ -73,10 +85,14 @@ export default class WeatherScreen extends React.Component {
 				],
 			);
 		}
-		let location = await Location.getCurrentPositionAsync({});
+		let location = await Location.getCurrentPositionAsync({}); // get coordinates of current location
 		this.setState({
 			mapRegion: { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 },
-			currentLocation: { latitude: location.coords.latitude, longitude: location.coords.longitude }
+			coordinate: { latitude: location.coords.latitude, longitude: location.coords.longitude }
+		});
+		let locationInfo = await Location.reverseGeocodeAsync(this.state.coordinate); // get city name of current location by coordinates
+		this.setState({
+			cityName: locationInfo[0].city,
 		});
 	};
 
@@ -106,7 +122,7 @@ export default class WeatherScreen extends React.Component {
 						</Map>
 					</MapContainer>
 					<WeatherForcastContainer>
-						<WeatherForcast />
+						<WeatherForcast cityName={this.state.cityName} cityForcast={this.state.cityForcast} />
 					</WeatherForcastContainer>
 					{/* put components with absolute position at the bottom */}
 					<TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} />
