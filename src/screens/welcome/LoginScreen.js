@@ -30,9 +30,9 @@ export default class LoginScreen extends React.Component {
 				this.props.navigation.navigate('Home')
 			} else {
 				if (password === '' || username === ''){
-					this.setState({errorMsg: 'Please Enter Your Username Or Password...'})
+					this.setState({errorMsg: 'Please Enter Your Username Or Password'})
 				} else if (result == null){
-					this.setState({errorMsg: 'No Such User...'})
+					this.setState({errorMsg: 'No Such User'})
 				} else {
 					this.setState({errorMsg: 'Password Incorrect!'})
 				}

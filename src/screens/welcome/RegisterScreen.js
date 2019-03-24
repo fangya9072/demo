@@ -25,9 +25,9 @@ export default class RegisterScreen extends React.Component {
 	//function of creating a user calling api
 	createUser(username, password, phone, email, confirmedPass){
 		if (username === '' || password === ''){
-			this.setState({errorMsg: 'Please Enter Your Username Or Password...'})
+			this.setState({errorMsg: 'Please Enter Your Username Or Password'})
 		} else if (password !== confirmedPass){
-			this.setState({errorMsg: 'Confirmed Password Is Different...'})
+			this.setState({errorMsg: 'Confirmed Password Is Different'})
 		} else {
 			fetch('http://3.93.183.130:3000/users', {
 				method: 'PUT',

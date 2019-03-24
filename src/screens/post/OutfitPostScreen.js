@@ -84,7 +84,6 @@ export default class OutfitPostScreen extends React.Component {
 			<SafeAreaView style={{ backgroundColor: 'whitesmoke', flex: 1 }}>
 				<Container>
 					<TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} />
-					
 					<ImageWrapper>
 						{this.state.image && < UploadedImage source={{ uri: this.state.image }} />}
 						{!this.state.image && <DefaultImage source={require('../../../assets/icon/function-icon/upload-photo.png')} />}

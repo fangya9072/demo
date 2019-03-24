@@ -293,8 +293,8 @@ const ImageWrapper = styled.TouchableOpacity`
 	overflow: hidden;
 `
 const UploadedImage = styled.Image`
-	height: 150px;
-	width: 150px;
+	height: 100px;
+	width: 100px;
 	border-radius: 5px;
 	resize-mode: contain;
 `
@@ -308,14 +308,13 @@ const LocationSelector = styled.TouchableOpacity`
     height: 25px;
     width: 40%;
     top: 27.5%;
-	left: 17.5%;
+	left: 112.5px;
 	flex-direction: row;
 	overflow: visible;
 `
 const PinButton = styled.View`
 	height: 25px;
 	width: 25px;
-	margin-left: 0px;
 	justify-content: center;
 	align-items: center;
 `
