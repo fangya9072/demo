@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
+import { Alert, Linking } from 'react-native';
 import TopBanner from '../../components/TopBanner';
 import WeatherForcast from '../../components/WeatherForcast';
 import { MapView, Location, Permissions } from "expo";
@@ -59,15 +60,22 @@ export default class WeatherScreen extends React.Component {
 	getCurrentLocation = async () => {
 		let { status } = await Permissions.askAsync(Permissions.LOCATION);
 		if (status !== 'granted') {
-			this.setState({
-				errorMessage: 'Permission to access location was denied',
-			});
+			Alert.alert(
+				'Please Allow Access',
+				[
+					'This applicaton needs access to your current location.',
+					'\n',
+					'Please go to Settings of your device and grant permissions to Location Service.',
+				].join(''),
+				[
+					{ text: 'Not Now', style: 'cancel' },
+					{ text: 'Settings', onPress: () => Linking.openURL('app-settings:') },
+				],
+			);
 		}
 		let location = await Location.getCurrentPositionAsync({});
 		this.setState({
 			mapRegion: { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 },
-		});
-		this.setState({
 			currentLocation: { latitude: location.coords.latitude, longitude: location.coords.longitude }
 		});
 	};

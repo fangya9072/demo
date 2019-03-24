@@ -83,13 +83,12 @@ export default class RegisterScreen extends React.Component {
 				</ErrorMsg>
 				<ButtonArea>
 				    <ConfirmButton onPress={() => this.createUser(this.state.username, 
-					    this.state.password, this.state.phone, this.state.email, this.state.confirmedPass)} >
+					    this.state.password, this.state.phone, this.state.email, this.state.confirmedPass)}>
 						<ConfirmButtonText> COMFIRM </ConfirmButtonText>
 				    </ConfirmButton>
-					<BackButton onPress={() => this.props.navigation.navigate('Login')} >
+					<BackButton onPress={() => this.props.navigation.navigate('Login')}>
 						<BackButtonText> BACK </BackButtonText>
 				    </BackButton>
-
 				</ButtonArea>
 			</Container>
 		);

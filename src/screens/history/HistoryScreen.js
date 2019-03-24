@@ -16,9 +16,6 @@ export default class HistoryScreen extends React.Component {
 		super(props);
 		this.state = {
 			pageType: 'HISTORY',
-			topLeftMenuVisible: false,
-			topLeftSubMenuVisible: false,
-			topLeftMenuVisible: false,
 			/* 
 			two ways to update state:
 

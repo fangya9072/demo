@@ -3,7 +3,6 @@ import styled from 'styled-components/native';
 import { withNavigation } from 'react-navigation';
 import TopLeftMenu from '../components/TopLeftMenu';
 import TopLocationMenu from '../components/TopLocationMenu';
-import { NavigationEvents } from 'react-navigation';
 import { COLORS } from '../constant/color';
 
 /* 
@@ -22,10 +21,8 @@ class TopBanner extends React.Component {
 			topLocationMenuVisible: false,
 		};
 	}
-
-	/*
-    rerender top banner expanded sub menu when switching between pages
-	*/
+	
+    //rerender top banner expanded sub menu when switching between pages
 	componentDidMount() {
 		this._navListener = this.props.navigation.addListener('willFocus', () => {
 			this.setState({

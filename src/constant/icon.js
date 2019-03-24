@@ -1,5 +1,5 @@
 export const ICONS = {
-	function:{
+    function: {
         // top banner
         menu: require('../../assets/icon/function-icon/menu.png'),
         refresh: require('../../assets/icon/function-icon/refresh.png'),
@@ -16,7 +16,7 @@ export const ICONS = {
         mark: require('../../assets/icon/function-icon/mark.png'),
         plus: require('../../assets/icon/function-icon/plus.png'),
         send: require('../../assets/icon/function-icon/send.png'),
-	},
+    },
     weather: {
         sunnyDay: require('../../assets/icon/weather-icon/sunny-day.png'),
         sunnyNight: require('../../assets/icon/weather-icon/sunny-night.png'),
@@ -32,5 +32,27 @@ export const ICONS = {
         snowNight: require('../../assets/icon/weather-icon/snow-night.png'),
         stormDay: require('../../assets/icon/weather-icon/storm-day.png'),
         stormNight: require('../../assets/icon/weather-icon/storm-night.png'),
+    },
+    weatherSlider: {
+        temperature1: require('../../assets/icon/test/1.png'),
+        temperature2: require('../../assets/icon/test/2.png'),
+        temperature3: require('../../assets/icon/test/3.png'),
+        temperature4: require('../../assets/icon/test/4.png'),
+        temperature5: require('../../assets/icon/test/5.png'),
+        humidity1: require('../../assets/icon/test/1.png'),
+        humidity2: require('../../assets/icon/test/2.png'),
+        humidity3: require('../../assets/icon/test/3.png'),
+        humidity4: require('../../assets/icon/test/4.png'),
+        humidity5: require('../../assets/icon/test/5.png'),
+        cloud1: require('../../assets/icon/test/1.png'),
+        cloud2: require('../../assets/icon/test/2.png'),
+        cloud3: require('../../assets/icon/test/3.png'),
+        cloud4: require('../../assets/icon/test/4.png'),
+        cloud5: require('../../assets/icon/test/5.png'),
+        wind1: require('../../assets/icon/test/1.png'),
+        wind2: require('../../assets/icon/test/2.png'),
+        wind3: require('../../assets/icon/test/3.png'),
+        wind4: require('../../assets/icon/test/4.png'),
+        wind5: require('../../assets/icon/test/5.png'),
     },
 };
