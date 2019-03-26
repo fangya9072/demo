@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-navigation';
 import { Alert, Linking } from 'react-native';
 import TopBanner from '../../components/TopBanner';
 import WeatherForcast from '../../components/WeatherForcast';
+import Entypo from "react-native-vector-icons/Entypo";
 import { Location, Permissions } from "expo";
 import  MapView  from 'react-native-maps'
 import { Modal } from 'react-native';
@@ -104,6 +105,12 @@ export default class WeatherScreen extends React.Component {
 					<MapContainer>
 						<Map>
 							<MapView style={{ flex: 1 }} initialRegion={this.state.mapRegion}>
+							    <MapView.Marker	
+								coordinate={{ longitude: this.state.coordinate.longitude, latitude: this.state.coordinate.latitude }}
+						    	title={"my location"}
+		    					>
+                     				<Entypo name={'location-pin'} size={30} color={'black'} style={{backgroundColor: 'transparent'}}/>
+								</MapView.Marker>
 								{this.state.weatherPostMarkers.map((item, key) => {
 									return (
 										<MapView.Marker
