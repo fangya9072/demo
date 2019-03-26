@@ -3,6 +3,8 @@ import styled from 'styled-components/native';
 import { withNavigation } from 'react-navigation';
 import TopLeftMenu from '../components/TopLeftMenu';
 import TopLocationMenu from '../components/TopLocationMenu';
+import Entypo from "react-native-vector-icons/Entypo";
+import Feather from "react-native-vector-icons/Feather";
 import { COLORS } from '../constant/color';
 
 /* 
@@ -47,7 +49,7 @@ class TopBanner extends React.Component {
 				*/}
 				{isMainView && <MainBanner>
 					<MenuButton onPress={() => { this.setState({ topLeftMenuVisible: !this.state.topLeftMenuVisible, }); }}>
-						<MenuButtonIcon source={require('../../assets/icon/function-icon/menu.png')} />
+					    <Entypo name={'menu'} size={45} />
 					</MenuButton>
 					<BannerText> {this.props.pageTitle} </BannerText>
 					<UserButton>
@@ -58,10 +60,10 @@ class TopBanner extends React.Component {
 						<UserButtonIcon source={require('../../assets/icon/role-icon/pikachu.png')} />
 					</UserButton>
 					<RefreshButton>
-						<RefreshButtonIcon source={require('../../assets/icon/function-icon/refresh.png')} />
+						<Entypo name={'cw'} size={30} />
 					</RefreshButton>
 					<LocationButton onPress={() => { this.setState({ topLocationMenuVisible: !this.state.topLocationMenuVisible, }); }}>
-						<LocationButtonIcon source={require('../../assets/icon/function-icon/location-pin.png')} />
+					    <Entypo name={'location'} size={25} />
 					</LocationButton>
 				</MainBanner>}
 
@@ -72,8 +74,7 @@ class TopBanner extends React.Component {
 					<BackButton onPress={() => {
 						this.props.navigation.goBack();
 					}}>
-						<BackButtonIcon source={require('../../assets/icon/function-icon/back.png')}>
-						</BackButtonIcon>
+					    <Feather name={'arrow-left'} size={30} />
 					</BackButton>
 					<TextArea><Text> {this.props.pageTitle} </Text></TextArea>
 				</StackBanner>}
@@ -109,14 +110,6 @@ const MainBanner = styled.View`
 const MenuButton = styled.TouchableOpacity`
 	flex: 2;
 	align-items: center;
-	padding-top: 10px;
-`;
-
-const MenuButtonIcon = styled.Image`
-	width: 37.5px;
-	height: 25px;
-	resize-mode: stretch;
-	margin-left: 2.5px;
 `;
 
 const BannerText = styled.Text`
@@ -128,14 +121,9 @@ const BannerText = styled.Text`
 
 const RefreshButton = styled.TouchableOpacity`
     flex: 2;
-    align-items: center;
-    padding-top: 10px;
-`;
-
-const RefreshButtonIcon = styled.Image`
-	width: 25px;
-	height: 25px;
-	resize-mode: stretch;
+	align-items: center;
+	padding-top: 7.5px;
+	padding-left: 5px;
 `;
 
 const UserButton = styled.TouchableOpacity`
@@ -154,13 +142,7 @@ const UserButtonIcon = styled.Image`
 const LocationButton = styled.TouchableOpacity`
     flex: 2;
     align-items: center;
-	padding-top: 7.5px;
-`;
-
-const LocationButtonIcon = styled.Image`
-	width: 35px;																																					px;
-	height: 30px;
-	resize-mode: stretch;
+	padding-top: 8.5px;
 `;
 
 const StackBanner = styled.View`

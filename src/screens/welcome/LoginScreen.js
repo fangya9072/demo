@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/native';
+import { KeyboardAvoidingView } from 'react-native';
 import { COLORS } from '../../constant/color';
 
 export default class LoginScreen extends React.Component {
@@ -45,6 +46,7 @@ export default class LoginScreen extends React.Component {
 	render(){
 		return (
 			<Container>
+				<KeyboardAvoidingView style={{height: "75%"}} behavior="padding">
 				<Logo />
 				<InputArea>
 				    <Prompt> Username </Prompt>
@@ -52,6 +54,7 @@ export default class LoginScreen extends React.Component {
 					<Prompt> Password </Prompt>
 					<Input secureTextEntry={true} onChangeText={(password) => this.setState({password: password})} />
 				</InputArea>
+				</KeyboardAvoidingView>
 				<ErrorMsg>
 					<ErrorMsgText>{this.state.errorMsg}</ErrorMsgText>
 				</ErrorMsg>
@@ -78,7 +81,7 @@ const Container = styled.View`
 const Logo = styled.View`
 	border: 2px dotted gray;
 	border-radius: 5px;
-	height: 35%;
+	height: 40%;
 	width: 75%;
 	margin-left: 12.5%;
 	margin-top: 25%;
@@ -86,10 +89,10 @@ const Logo = styled.View`
 `;
 
 const InputArea = styled.View`
-	height: 20%;
+	height: 30%;
 	width: 75%;
 	margin-left: 12.5%;
-	top: 5%;
+	top: 7.5%;
 `;
 
 const Prompt = styled.Text`
@@ -100,7 +103,7 @@ const Prompt = styled.Text`
 `;
 
 const Input = styled.TextInput`
-	height: 25%;
+	height: 22.5%;
 	border-radius: 5px;
     background-color: #F3F3F3;
 	color: gray;
@@ -110,10 +113,11 @@ const Input = styled.TextInput`
 `;
 
 const ErrorMsg = styled.View`
-	height: 5%;
-	width: 75%;
-	top: 6%;
-	margin-left: 12.5%;
+	position: absolute;
+	top: 490px;
+	height: 25px;
+	width: 275px;
+	margin-left: 50px;
 `;
 
 const ErrorMsgText = styled.Text`
@@ -127,7 +131,7 @@ const ButtonArea = styled.View`
 	height: 10%;
 	width: 75%;
 	margin-left: 12.5%;
-	top: 6%;
+	top: 4%;
 `;
 
 const LoginButton = styled.TouchableOpacity`

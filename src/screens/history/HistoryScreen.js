@@ -15,7 +15,7 @@ export default class HistoryScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			pageType: 'HISTORY',
+			pageTitle: 'HISTORY',
 			/* 
 			two ways to update state:
 
@@ -215,7 +215,7 @@ export default class HistoryScreen extends React.Component {
 						})}
 					</History>
 					{/* put components with absolute position at the bottom */}
-					<TopBanner pageType={this.state.pageType} navigation={this.state.navigation}/>
+					<TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation}/>
 				</Container>
 			</SafeAreaView>
 		);

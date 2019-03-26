@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/native';
+import { KeyboardAvoidingView } from 'react-native';
 import { COLORS } from '../../constant/color';
 
 export default class RegisterScreen extends React.Component {
@@ -56,6 +57,7 @@ export default class RegisterScreen extends React.Component {
 			<Container>
 				<WelcomeText> WELCOME </WelcomeText>
 				<WelcomeSubText> Tell us a little more about you . . .  </WelcomeSubText>
+				<KeyboardAvoidingView style={{height: "50%", top: "5%"}} behavior="padding">
 				<Form>
 					<Item>
 						<Prompt> Username </Prompt>
@@ -78,6 +80,7 @@ export default class RegisterScreen extends React.Component {
 						<Input secureTextEntry={true} onChangeText={(confirmedPass) => this.setState({confirmedPass: confirmedPass})} />
 					</Item>
 				</Form>
+				</KeyboardAvoidingView>
 				<ErrorMsg>
 					<ErrorMsgText>{this.state.errorMsg}</ErrorMsgText>
 				</ErrorMsg>
@@ -121,9 +124,8 @@ const WelcomeSubText = styled.Text`
 `;
 
 const Form = styled.View`
-    height: 50%;
+    height: 100%;
 	width: 80%;
-	top: 5%;
 	left: 10%;
 `;
 
@@ -135,9 +137,9 @@ const Item = styled.View`
 const Prompt = styled.Text`
 	font-family: Didot;
 	font-size: 15px;
-	padding-top: 2px;
+	padding-bottom: 10px;
 	padding-left: 2px;
-	flex: 2;
+	flex: 3;
 `;
 
 const Input = styled.TextInput`
@@ -147,7 +149,7 @@ const Input = styled.TextInput`
 	font-family: Didot;
 	font-size: 15px;
 	padding-left: 8px;
-	flex: 3;
+	flex: 5;
 `;
 
 const ErrorMsg = styled.View`
@@ -160,6 +162,7 @@ const ErrorMsg = styled.View`
 const ErrorMsgText = styled.Text`
 	font-family: Bradley Hand;
 	font-size: 15px;
+	padding-top: 10px;
 	padding-left: 2.5px;
 	color: darkred;
 `;
@@ -167,7 +170,7 @@ const ErrorMsgText = styled.Text`
 const ButtonArea = styled.View`
     height: 6%;
     width: 80%;
-    top: 10%;
+    top: 12.5%;
 	left: 5.5%;
 	flex-direction: row;
 `;

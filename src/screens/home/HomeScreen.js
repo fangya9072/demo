@@ -5,7 +5,6 @@ import  MapView  from 'react-native-maps'
 import { Modal }  from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { Alert, Linking } from 'react-native';
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Entypo from "react-native-vector-icons/Entypo";
 import OutfitPostModalView from '../../components/OutfitPostModalView';
 import TopBanner from '../../components/TopBanner';

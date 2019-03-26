@@ -3,7 +3,9 @@ import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
 import { ImagePicker, Permissions } from 'expo';
 import { Alert, Linking } from 'react-native';
+import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import TopBanner from '../../components/TopBanner';
+
 
 export default class OutfitPostScreen extends React.Component {
 
@@ -85,8 +87,8 @@ export default class OutfitPostScreen extends React.Component {
 				<Container>
 					<TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} />
 					<ImageWrapper>
-						{this.state.image && < UploadedImage source={{ uri: this.state.image }} />}
-						{!this.state.image && <DefaultImage source={require('../../../assets/icon/function-icon/upload-photo.png')} />}
+						{this.state.image && <UploadedImage source={{ uri: this.state.image }} />}
+						{!this.state.image && <SimpleLineIcons name={'picture'} size={50} />}
 					</ImageWrapper>
 					<ButtonArea>
 						<Button onPress={() => {this.pickImage()}}>

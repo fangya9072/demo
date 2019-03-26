@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { withNavigation } from 'react-navigation';
-// import TopLeftSubMenu from '../components/TopLeftSubMenu';
+import Feather from "react-native-vector-icons/Feather";
+import AntDesign from "react-native-vector-icons/AntDesign";
 import { COLORS } from '../constant/color';
 
 /*
@@ -25,12 +26,12 @@ class TopLeftMenu extends React.Component {
             <Container>
                 <ButtonArea>
                     <Button onPress={() => this.setState({ topLeftSubMenuVisible: !this.state.topLeftSubMenuVisible })}>
-                        <ButtonIcon source={require('../../assets/icon/function-icon/camera.png')} />
+                        <Feather name={'camera'} size={30} />
                     </Button>
                 </ButtonArea>
                 <ButtonArea>
                     <Button>
-                        <ButtonIcon source={require('../../assets/icon/function-icon/friend.png')} />
+                        <AntDesign name={'contacts'} size={30} />
                     </Button>
                 </ButtonArea>
                 {/* put components with absolute position at the bottom*/}
@@ -80,10 +81,6 @@ const Button = styled.TouchableOpacity`
     justify-content: center;
 `
 
-const ButtonIcon = styled.Image`
-    height: 30px;
-    width: 30px;
-`
 const TopLeftSubMenu = styled.View`
     height: 65px;
     width: 150px;

@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/native';
+import Feather from "react-native-vector-icons/Feather";
+import Entypo from "react-native-vector-icons/Entypo";
 import { COLORS } from '../constant/color';
 
 /* 
@@ -53,7 +55,7 @@ export default class OutfitPostModalView extends React.Component {
 				<ModalView>
 					<CloseButtonArea>
 						<CloseButton onPress={this.props.close} >
-						    <CloseButtonIcon source={require('../../assets/icon/function-icon/close.png')} />
+						    <Feather name={'x-circle'} size={26}  style= {{marginTop: -1, marginLeft: -1}}/>
 						</CloseButton>
 					</CloseButtonArea>
 					{/* 
@@ -73,7 +75,7 @@ export default class OutfitPostModalView extends React.Component {
 					</PhotoArea>
 					<FriendArea>
 						<FriendButton>
-							<FriendButtonIcon source={require('../../assets/icon/function-icon/plus.png')} />
+						  <Entypo name={'plus'} size={25}  style= {{marginLeft: 10}}/>
 							<FriendButtonText> Request </FriendButtonText>
 						</FriendButton>
 					</FriendArea>
@@ -102,7 +104,7 @@ export default class OutfitPostModalView extends React.Component {
 						<CommentWrite>
 							<CommentInput></CommentInput>
 							<SendButton>
-								<SendButtonIcon source={require('../../assets/icon/function-icon/send.png')}  />
+								<Feather name={'send'} size={20} />
 							</SendButton>
 						</CommentWrite>
 					</CommentArea>
@@ -137,16 +139,9 @@ const CloseButton = styled.TouchableOpacity`
 	width: 25px;
 	height: 25px;
 	backgroundColor: lightblue;
-	border-radius: 25px
-	align-items: center;
-	justify-content: center;
+	border-radius: 25px;
 	margin-right: 5px;
 	margin-top: 5px;
-`;
-
-const CloseButtonIcon = styled.Image`
-	width: 30px;
-	height: 30px;
 `;
 	
 const UsernameArea = styled.View`
@@ -190,19 +185,13 @@ const FriendButton = styled.TouchableOpacity`
 	justify-content: center;
 `;
 
-const FriendButtonIcon = styled.Image`
-    flex: 1;
-	height: 16.5px;
-	margin-left: 12.5px;
-`;
-
 const FriendButtonText = styled.Text`
-    flex: 5;
+  flex: 5;
 	font-size: 16px;
 	font-family: Courier;
 	font-weight: bold;
 	padding-top: 1px;
-	margin_left: 10px;
+	margin_left: 2.5px;
 `;
 
 const CommentArea = styled.View`

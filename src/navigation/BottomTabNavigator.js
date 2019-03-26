@@ -1,70 +1,13 @@
 import React from 'react';
 import { createBottomTabNavigator, createStackNavigator } from 'react-navigation';
-import { Image } from 'react-native';
-
+import Feather from "react-native-vector-icons/Feather";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import HomeScreen from '../screens/home/HomeScreen';
 import WeatherScreen from '../screens/weather/WeatherScreen';
 import HistoryScreen from '../screens/history/HistoryScreen';
 import NewsScreen from '../screens/news/NewsScreen';
-import OutfitPostScreen from '../screens/post/OutfitPostScreen';
-import WeatherPostScreen from '../screens/post/WeatherPostScreen';
-
-
-const HomeStack = createStackNavigator(
-  {
-    Home: HomeScreen,
-    OutfitPost: OutfitPostScreen,
-    WeatherPost: WeatherPostScreen,
-  },
-  {
-    headerMode: 'none',
-    navigationOptions: {
-      headerVisible: false,
-    },
-  },
-);
-
-const WeatherStack = createStackNavigator(
-  {
-    Weather: WeatherScreen,
-    OutfitPost: OutfitPostScreen,
-    WeatherPost: WeatherPostScreen,
-  },
-  {
-    headerMode: 'none',
-    navigationOptions: {
-      headerVisible: false,
-    },
-  },
-);
-
-const NewsStack = createStackNavigator(
-  {
-    News: NewsScreen,
-    OutfitPost: OutfitPostScreen,
-    WeatherPost: WeatherPostScreen,
-  },
-  {
-    headerMode: 'none',
-    navigationOptions: {
-      headerVisible: false,
-    },
-  },
-);
-
-const HistoryStack = createStackNavigator(
-  {
-    History: HistoryScreen,
-    OutfitPost: OutfitPostScreen,
-    WeatherPost: WeatherPostScreen,
-  },
-  {
-    headerMode: 'none',
-    navigationOptions: {
-      headerVisible: false,
-    },
-  },
-);
+import NavigationScreen from '../screens/navigation/NavigationScreen';
 
 export default createBottomTabNavigator(
   {
@@ -73,9 +16,7 @@ export default createBottomTabNavigator(
       navigationOptions: {
         tabBarLabel: 'Home',
         tabBarIcon: ({ tintColor }) => (
-          <Image source={require('../../assets/icon/function-icon/map.png')}
-            style= {{width:22.5, height:22.5, marginTop: 5,tintColor:'black'}}>
-          </Image>
+          <Feather name={'home'} size={25} style= {{marginTop: 5}} />
         )
       },
     },
@@ -84,9 +25,7 @@ export default createBottomTabNavigator(
       navigationOptions: {
         tabBarLabel: 'Weather',
         tabBarIcon: ({ tintColor }) => (
-        <Image source={require('../../assets/icon/function-icon/weather.png')}
-        style= {{width:25, height:25, marginTop: 5,tintColor:'black'}}>
-        </Image>
+          <Feather name={'sun'} size={25} style= {{marginTop: 5}} />
         )
       },
     },
@@ -95,9 +34,7 @@ export default createBottomTabNavigator(
       navigationOptions: {
         tabBarLabel: 'News',
         tabBarIcon: ({ tintColor }) => (
-        <Image source={require('../../assets/icon/function-icon/news.png')}
-        style= {{width:25, height:25, marginTop: 5,tintColor:'black'}}>
-        </Image>
+          <FontAwesome name={'newspaper-o'} size={27.5} style= {{marginTop: 5}} />
         )
       },
     },
@@ -106,9 +43,16 @@ export default createBottomTabNavigator(
       navigationOptions: {
         tabBarLabel: 'History',
         tabBarIcon: ({ tintColor }) => (
-        <Image source={require('../../assets/icon/function-icon/history.png')}
-        style= {{width:25, height:25, marginTop: 5, tintColor:'black'}}>
-        </Image>
+          <MaterialCommunityIcons name={'history'} size={30} style= {{marginTop: 5}} />
+        )
+      },
+    },
+    Navigation: {
+      screen: NavigationScreen,
+      navigationOptions: {
+        tabBarLabel: 'Navigation',
+        tabBarIcon: ({ tintColor }) => (
+          <Feather name={'navigation'} size={25} style= {{marginTop: 5}} />
         )
       },
     },

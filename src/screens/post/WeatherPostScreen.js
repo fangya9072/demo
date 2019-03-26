@@ -3,6 +3,8 @@ import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
 import { ImagePicker, Permissions, Location } from 'expo';
 import { Alert, Linking } from 'react-native';
+import Feather from "react-native-vector-icons/Feather";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import LocationView from "react-native-location-view";
 import TopBanner from '../../components/TopBanner';
 import { ICONS } from '../../constant/icon';
@@ -194,11 +196,11 @@ export default class WeatherPostScreen extends React.Component {
 				{!this.state.mapViewVisible && <PostContainer>
 					<TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} />
 					<ImageWrapper onPress={() => { this.pickImage() }}>
-						{this.state.image && < UploadedImage source={{ uri: this.state.image }} />}
-						{!this.state.image && <DefaultImage source={require('../../../assets/icon/function-icon/upload-photo.png')} />}
+						{this.state.image && <UploadedImage source={{ uri: this.state.image }} />}
+						{!this.state.image && <Feather name={'upload'} size={35} />}
 					</ImageWrapper>
 					<LocationSelector onPress={() => { this.pickLocation() }}>
-						<PinButton><PinButtonIcon source={require('../../../assets/icon/function-icon/add-location.png')} /></PinButton>
+						<PinButton><MaterialIcons name={'add-location'} size={22.5} /></PinButton>
 						<PinText>{this.state.locationText} </PinText>
 					</LocationSelector>
 					<SliderWrapper>
@@ -299,11 +301,6 @@ const UploadedImage = styled.Image`
 	resize-mode: contain;
 `
 
-const DefaultImage = styled.Image`
-	height: 45px;
-	width: 45px;
-	resize-mode: stretch;
-`
 const LocationSelector = styled.TouchableOpacity`
     height: 25px;
     width: 40%;
@@ -319,11 +316,6 @@ const PinButton = styled.View`
 	align-items: center;
 `
 
-const PinButtonIcon = styled.Image`
-	height: 25px;
-	width: 25px;
-	resize-mode: stretch;
-`
 const PinText = styled.Text`
     font-family: Optima;
 	font-size: 15px;
