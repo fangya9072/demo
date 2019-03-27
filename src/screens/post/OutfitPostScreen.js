@@ -27,7 +27,7 @@ export default class OutfitPostScreen extends React.Component {
 	/* 
 	function to pick picture from phone's photo library
 	ask permission to grant acess to photo library
-	set picked picture uri as this.state.image
+	set uri of picked picture as this.state.image
 	*/
 	pickImage = async () =>  {
         const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -128,12 +128,6 @@ const UploadedImage= styled.Image`
 	width: 300px;
 	border-radius: 5px;
 	resize-mode: contain;
-`
-
-const DefaultImage= styled.Image`
-	height: 75px;
-	width: 75px;
-	resize-mode: stretch;
 `
 
 const ButtonArea = styled.View`

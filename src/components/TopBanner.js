@@ -71,9 +71,7 @@ class TopBanner extends React.Component {
 				stack banner
 				*/}
 				{!isMainView && <StackBanner>
-					<BackButton onPress={() => {
-						this.props.navigation.goBack();
-					}}>
+					<BackButton onPress={() => { this.props.navigation.goBack(); }}>
 					    <Feather name={'arrow-left'} size={30} />
 					</BackButton>
 					<TextArea><Text> {this.props.pageTitle} </Text></TextArea>

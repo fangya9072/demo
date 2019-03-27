@@ -2,11 +2,10 @@ import React from 'react';
 import styled from 'styled-components/native';
 import { Location, Permissions } from "expo";
 import  MapView  from 'react-native-maps'
-import { Modal }  from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { Alert, Linking } from 'react-native';
 import Entypo from "react-native-vector-icons/Entypo";
-import OutfitPostModalView from '../../components/OutfitPostModalView';
+import OutfitPostView from '../../components/OutfitPostView';
 import TopBanner from '../../components/TopBanner';
 import { COLORS } from '../../constant/color';
 	
@@ -23,7 +22,7 @@ export default class HomeScreen extends React.Component {
 				super(props);
 			  this.state = {
 					  pageTitle: 'HOME',
-					  outfitPostModalViewVisible: false,
+					  outfitPostViewVisible: false,
 						mapRegion: null,
 						coordinate: {
 							longitude: 0,
@@ -77,10 +76,10 @@ export default class HomeScreen extends React.Component {
 
 		// functions that open and close outfit post madal view
 		openPost(id) {
-			  this.setState({ outfitPostModalViewVisible: true });
+			  this.setState({ outfitPostViewVisible: true });
 		}
 		closePost() {
-			  this.setState({ outfitPostModalViewVisible: false });
+			  this.setState({ outfitPostViewVisible: false });
 		}
 
 		// rendering 
@@ -109,9 +108,9 @@ export default class HomeScreen extends React.Component {
 				        						);
 								  			})}
 							  		</MapView>
-								    <Modal transparent={true} visible={this.state.outfitPostModalViewVisible}>
-								        <OutfitPostModalView close={() => { this.closePost(); }} />
-							    	</Modal>
+								    {this.state.outfitPostViewVisible && <OutfitPostContainer>
+								        <OutfitPostView close={() => { this.closePost(); }} />
+							    	</OutfitPostContainer>}
 					    	</Map>
 								{/* put components with absolute position at the bottom */}
 								<TopBanner pageTitle={this.state.pageTitle} navigation={this.props.navigation} navigation={this.state.navigation}/>
@@ -138,4 +137,12 @@ const Map = styled.View`
 const MarkerImage = styled.Image`
   	width: 30px;
   	height: 30px;
+`;
+
+const OutfitPostContainer = styled.View`
+		position: absolute;
+		left: 37.5px;
+		top: 40px;
+    width: 300px;
+	  height: 450px;
 `;

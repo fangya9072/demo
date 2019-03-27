@@ -30,7 +30,7 @@ class TopLeftMenu extends React.Component {
                     </Button>
                 </ButtonArea>
                 <ButtonArea>
-                    <Button>
+                    <Button onPress={() => this.props.navigation.navigate('Friend', {isMainView: false})}>
                         <AntDesign name={'contacts'} size={30} />
                     </Button>
                 </ButtonArea>

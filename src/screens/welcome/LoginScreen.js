@@ -50,7 +50,7 @@ export default class LoginScreen extends React.Component {
 				<Logo />
 				<InputArea>
 				    <Prompt> Username </Prompt>
-					<Input onChangeText={(username) => this.setState({username: username})} />
+					<Input autoCorrect={false} onChangeText={(username) => this.setState({username: username})} />
 					<Prompt> Password </Prompt>
 					<Input secureTextEntry={true} onChangeText={(password) => this.setState({password: password})} />
 				</InputArea>

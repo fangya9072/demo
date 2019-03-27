@@ -61,15 +61,15 @@ export default class RegisterScreen extends React.Component {
 				<Form>
 					<Item>
 						<Prompt> Username </Prompt>
-						<Input onChangeText={(username) => this.setState({username: username})} />
+						<Input autoCorrect={false} onChangeText={(username) => this.setState({username: username})} />
 					</Item>
 					<Item>
 					    <Prompt> Phone Number </Prompt>
-						<Input onChangeText={(phone) => this.setState({phone: phone})} />
+						<Input autoCorrect={false} onChangeText={(phone) => this.setState({phone: phone})} />
 					</Item>
 					<Item>
 					    <Prompt> Email Address </Prompt>
-						<Input onChangeText={(email) => this.setState({email: email})} />
+						<Input autoCorrect={false} onChangeText={(email) => this.setState({email: email})} />
 					</Item>
 					<Item>
 				    	<Prompt> Password </Prompt>
