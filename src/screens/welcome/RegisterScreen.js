@@ -40,7 +40,6 @@ export default class RegisterScreen extends React.Component {
 					'email': email
 				}),
 			}).then((response) => {
-				console.log(JSON.parse(response._bodyText))
 				let result = JSON.parse(response._bodyText)
 				if (result.inserted == 1){
 					this.props.navigation.navigate('Login')
