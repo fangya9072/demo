@@ -3,7 +3,9 @@ import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
 import { ImagePicker, Permissions } from 'expo';
 import { Alert, Linking } from 'react-native';
+import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import TopBanner from '../../components/TopBanner';
+
 
 export default class OutfitPostScreen extends React.Component {
 
@@ -19,14 +21,13 @@ export default class OutfitPostScreen extends React.Component {
 			pageTitle: 'My Outfit Today',
 			image: null,
 			errorMessage: '',
-			path: ''
 		};
 	}
 
 	/* 
 	function to pick picture from phone's photo library
 	ask permission to grant acess to photo library
-	set picked picture uri as this.state.image
+	set uri of picked picture as this.state.image
 	*/
 	pickImage = async () =>  {
         const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -65,15 +66,15 @@ export default class OutfitPostScreen extends React.Component {
 			this.setState({
 				errorMessage: 'Please Choose A Picture',
 			});
-		}else{
-			//now use username 'hcx' and date '2019-03-18' as an example of outfit post
+		}else{		
+		    //now use username 'hcx' and date '2019-03-23' as an example of outfit post
 			//replace username and date with the current user and date
 			let username = 'hcx';
 		    fetch('http://3.93.183.130:3000/outlookposts/' + username, {
 				method: 'PUT',
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify({
-					'date': '2019-03-18',
+					'date': '2019-03-23',
 					'photo': data
 				}),
 			}).then((response) => {
@@ -94,8 +95,8 @@ export default class OutfitPostScreen extends React.Component {
 				<Container>
 					<TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} />
 					<ImageWrapper>
-						{this.state.image && < UploadedImage source={{ uri: this.state.image }} />}
-						{!this.state.image && <DefaultImage source={require('../../../assets/icon/function-icon/upload-photo.png')} />}
+						{this.state.image && <UploadedImage source={{ uri: this.state.image }} />}
+						{!this.state.image && <SimpleLineIcons name={'picture'} size={50} />}
 					</ImageWrapper>
 					<ButtonArea>
 						<Button onPress={() => {this.pickImage()}}>
@@ -135,12 +136,6 @@ const UploadedImage= styled.Image`
 	width: 300px;
 	border-radius: 5px;
 	resize-mode: contain;
-`
-
-const DefaultImage= styled.Image`
-	height: 75px;
-	width: 75px;
-	resize-mode: stretch;
 `
 
 const ButtonArea = styled.View`
