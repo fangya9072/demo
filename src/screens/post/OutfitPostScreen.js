@@ -3,9 +3,7 @@ import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
 import { ImagePicker, Permissions } from 'expo';
 import { Alert, Linking } from 'react-native';
-import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import TopBanner from '../../components/TopBanner';
-
 
 export default class OutfitPostScreen extends React.Component {
 
@@ -21,13 +19,14 @@ export default class OutfitPostScreen extends React.Component {
 			pageTitle: 'My Outfit Today',
 			image: null,
 			errorMessage: '',
+			path: ''
 		};
 	}
 
 	/* 
 	function to pick picture from phone's photo library
 	ask permission to grant acess to photo library
-	set uri of picked picture as this.state.image
+	set picked picture uri as this.state.image
 	*/
 	pickImage = async () =>  {
         const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -48,35 +47,43 @@ export default class OutfitPostScreen extends React.Component {
 		let result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes:'Images',
 			allowsEditing: true,
+			base64: true
 		});
 		if(!result.cancelled){
 			this.setState({ 
 				image: result.uri, 
 				errorMessage: '',
+				data: result.base64
 			});
 		}
 	}
 	
 	 
 	// function to save outfit post to database
-	sendPost = async (uri) => {
+	sendPost = async (data) => {
 		if(!this.state.image){
 			this.setState({
 				errorMessage: 'Please Choose A Picture',
 			});
-		}else{		
-		    /* code conneting to backend starts here
-			t
-			e
-			s
-			t
-			
-			d
-			a
-			t
-			a
-		    end of code */
-		    this.props.navigation.goBack();
+		}else{
+			//now use username 'hcx' and date '2019-03-18' as an example of outfit post
+			//replace username and date with the current user and date
+			let username = 'hcx';
+		    fetch('http://3.93.183.130:3000/outlookposts/' + username, {
+				method: 'PUT',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({
+					'date': '2019-03-18',
+					'photo': data
+				}),
+			}).then((response) => {
+				let result = JSON.parse(response._bodyText)
+				if (result.inserted == 1){
+					this.props.navigation.goBack();
+				} else {
+					this.setState({errorMessage: 'Upload Image Failed. Please Retry.'});
+				}
+			})
 		}
 	}
 
@@ -87,14 +94,14 @@ export default class OutfitPostScreen extends React.Component {
 				<Container>
 					<TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} />
 					<ImageWrapper>
-						{this.state.image && <UploadedImage source={{ uri: this.state.image }} />}
-						{!this.state.image && <SimpleLineIcons name={'picture'} size={50} />}
+						{this.state.image && < UploadedImage source={{ uri: this.state.image }} />}
+						{!this.state.image && <DefaultImage source={require('../../../assets/icon/function-icon/upload-photo.png')} />}
 					</ImageWrapper>
 					<ButtonArea>
 						<Button onPress={() => {this.pickImage()}}>
 							<ButtonText> Choose A Picture </ButtonText>
 						</Button>
-						<Button style={{top:30}} onPress={() => { this.sendPost(this.state.image); }}>
+						<Button style={{top:30}} onPress={() => { this.sendPost(this.state.data); }}>
 						    <ButtonText> Update Your Outfit </ButtonText>
 						</Button>
 					</ButtonArea>
@@ -128,6 +135,12 @@ const UploadedImage= styled.Image`
 	width: 300px;
 	border-radius: 5px;
 	resize-mode: contain;
+`
+
+const DefaultImage= styled.Image`
+	height: 75px;
+	width: 75px;
+	resize-mode: stretch;
 `
 
 const ButtonArea = styled.View`
