@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
-import { ImagePicker, Permissions } from 'expo';
+import { ImagePicker, Permissions, ImageManipulator } from 'expo';
 import { Alert, Linking } from 'react-native';
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import TopBanner from '../../components/TopBanner';
@@ -50,11 +50,14 @@ export default class OutfitPostScreen extends React.Component {
 			allowsEditing: true,
 			base64: true
 		});
-		if(!result.cancelled){
-			this.setState({ 
-				image: result.uri, 
+		let resultFinal = await ImageManipulator.manipulateAsync(
+			result.uri, [], { base64: true, compress: 0.5 }
+		)
+		if (!result.cancelled) {
+			this.setState({
+				image: resultFinal.uri,
 				errorMessage: '',
-				data: result.base64
+				data: resultFinal.base64
 			});
 		}
 	}
@@ -70,7 +73,7 @@ export default class OutfitPostScreen extends React.Component {
 		    //now use username 'hcx' and date '2019-03-23' as an example of outfit post
 			//replace username and date with the current user and date
 			let username = 'hcx';
-			let date = '2019-03-23'
+			let date = '2019-03-28'
 		    fetch('http://3.93.183.130:3000/outlookposts/' + username, {
 				method: 'PUT',
 				headers: {'Content-Type': 'application/json'},
