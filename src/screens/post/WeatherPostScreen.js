@@ -107,9 +107,13 @@ export default class WeatherPostScreen extends React.Component {
 		let result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: 'Images',
 			allowsEditing: true,
+			base64: true
 		});
 		if (!result.cancelled) {
-			this.setState({ image: result.uri });
+			this.setState({
+				image: result.uri,
+				byte: result.base64
+			});
 		}
 	}
 
@@ -124,24 +128,38 @@ export default class WeatherPostScreen extends React.Component {
 		});
 	}
 
-	// function to save outfit post to database
-	sendPost = async (uri) => {
+	// function to save weather post to database
+	sendPost = async (byte, location, temperature, humidity, 
+		cloud, wind) => {
 		if (!this.state.image) {
 			this.setState({
 				errorMessage: 'Please Choose A Picture',
 			});
 		} else {
-			/* code conneting to backend starts here
-			t
-			e
-			s
-			t
-			
-			d
-			a
-			t
-			a
-		    end of code */
+			//now use username 'hcx' and date '2019-03-23' as an example of weather post
+			//replace username and date with the current user and date
+			let username = 'hcx';
+			let date = '2019-03-31'
+		    fetch('http://3.93.183.130:3000/weatherposts/' + username, {
+				method: 'PUT',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({
+					'date': date,
+					'location': location, 
+					'photo': byte, 
+					'temperature': temperature, 
+					'humidity': humidity, 
+					'cloud': cloud, 
+					'wind': wind
+				}),
+			}).then((response) => {
+				let result = JSON.parse(response._bodyText)
+				if (result.inserted == 1){
+					this.props.navigation.goBack();
+				} else {
+					this.setState({errorMessage: 'Upload Image Failed. Please Retry.'});
+				}
+			})
 			this.props.navigation.goBack();
 		}
 	}
@@ -247,7 +265,9 @@ export default class WeatherPostScreen extends React.Component {
 					</SliderWrapper>
 					<ErrorMessage><ErrorMessageText> {this.state.errorMessage} </ErrorMessageText></ErrorMessage>
 					<ButtonArea>
-						<PostButton onPress={() => { this.sendPost() }}>
+						<PostButton onPress={() => { this.sendPost(this.state.byte, 
+							this.state.coordinate, this.state.temperature, this.state.humidity, 
+							this.state.cloud, this.state.wind) }}>
 							<PostButtonText> POST </PostButtonText>
 						</PostButton>
 						<ClearButton onPress={() => { this.resetState() }}>

@@ -70,11 +70,12 @@ export default class OutfitPostScreen extends React.Component {
 		    //now use username 'hcx' and date '2019-03-23' as an example of outfit post
 			//replace username and date with the current user and date
 			let username = 'hcx';
+			let date = '2019-03-23'
 		    fetch('http://3.93.183.130:3000/outlookposts/' + username, {
 				method: 'PUT',
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify({
-					'date': '2019-03-23',
+					'date': date,
 					'photo': data
 				}),
 			}).then((response) => {
