@@ -136,7 +136,7 @@ export default class WeatherPostScreen extends React.Component {
 				errorMessage: 'Please Choose A Picture',
 			});
 		} else {
-			//now use username 'hcx' and date '2019-03-23' as an example of weather post
+			//now use username 'hcx' and date '2019-03-31' as an example of weather post
 			//replace username and date with the current user and date
 			let username = 'hcx';
 			let date = '2019-03-31'
@@ -160,7 +160,6 @@ export default class WeatherPostScreen extends React.Component {
 					this.setState({errorMessage: 'Upload Image Failed. Please Retry.'});
 				}
 			})
-			this.props.navigation.goBack();
 		}
 	}
 
