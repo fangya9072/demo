@@ -105,6 +105,11 @@ export default class WeatherScreen extends React.Component {
 		});
 	};
 
+	// function to reload screen
+	onRefresh = () => {
+		this.getCurrentLocation();
+	}
+
 	// functions that open and closes weather post madal view
 	openPost(id) {
 		this.setState({ weatherPostModalViewVisible: true });
@@ -148,7 +153,7 @@ export default class WeatherScreen extends React.Component {
 						<WeatherForcast cityName={this.state.cityName} cityForcast={this.state.cityForcast} />
 					</WeatherForcastContainer>
 					{/* put components with absolute position at the bottom */}
-					<TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} />
+					<TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} refreshHandler={this.onRefresh.bind(this)} />
 				</Container>
 			</SafeAreaView>
 		);

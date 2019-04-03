@@ -23,7 +23,6 @@ export default class NewsScreen extends React.Component {
 			username: '',
 			articles: [],
 			area: '',
-			refreshing: true,
 			coordinate: {
 				latitude: 0,
 				longitude: 0,
@@ -51,14 +50,13 @@ export default class NewsScreen extends React.Component {
 		}
 	};
     
-    handleRefresh() {
-      this.setState(
-         {
-           refreshing: true
-       },
-           () => this.getNews()
-       );
-    }
+    // function to reload screen
+	onRefresh = () => {
+		this.setState({
+			articles:[],
+		});
+		this.getNews();
+	}
     
     getNews = async () => {
 		let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -101,12 +99,10 @@ export default class NewsScreen extends React.Component {
                           data = {this.state.articles}
                           renderItem = {({ item }) => <Article article={item} />}
                           keyExtractor = {item => item.url}
-                          refreshing={this.state.refreshing}
-                          onRefresh={this.handleRefresh.bind(this)} 
                         /> 
                      </News>
                      {}
-				    <TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation}/>
+				    <TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} refreshHandler={this.onRefresh.bind(this)} />
 			    </Container>
 			</SafeAreaView>
 		);

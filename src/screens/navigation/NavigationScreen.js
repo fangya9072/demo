@@ -19,6 +19,9 @@ export default class NavigationScreen extends React.Component {
 		};
 	}
 
+	// function to reload screen
+	onRefresh = () => {}
+
 	// rendering
 	render(){
 		return(
@@ -27,7 +30,7 @@ export default class NavigationScreen extends React.Component {
 				    <Navigation>	
 				    </Navigation>
 				    {/* put components with absolute position at the bottom */}
-				    <TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation}/>
+				    <TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} refreshHandler={this.onRefresh.bind(this)} />
 			    </Container>
 			</SafeAreaView>
 		);

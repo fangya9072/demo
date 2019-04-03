@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import moment from 'moment';
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import TopBanner from '../../components/TopBanner';
 
@@ -80,7 +80,7 @@ export default class HistoryScreen extends React.Component {
 					dayHasPost.posts.push(post);
 				} else { 
 					// if not stored, create a new day object, whose date attribute equals to the date of the new post object
-					// and the store the new post object into into the posts array attribute
+					// and then store the new post object into into the posts array attribute
 					let day = {
 						date: formattedDate,
 						posts: [
@@ -99,6 +99,14 @@ export default class HistoryScreen extends React.Component {
 		}
 	}
 
+	// function to reload screen
+	onRefresh = () => {
+		this.setState({
+			daysHavePost:[],
+		});
+		this.getAllPosts();
+	}
+
 	// rendering
 	render() {
 		return (
@@ -106,9 +114,8 @@ export default class HistoryScreen extends React.Component {
 				<Container>
 					<History 
 					ref={ref => this.scrollView = ref}
-					onContentSizeChange={(contentWidth, contentHeight)=>{
-						this.scrollView.scrollToEnd({animated: false});
-					}}>
+					onContentSizeChange={() => { this.scrollView.scrollToEnd({animated: false}) }}
+					>
 						{this.state.daysHavePost.map((dayItem, dayKey) => {
 							return (
 								<DailyPosts key={dayKey}>
@@ -129,7 +136,7 @@ export default class HistoryScreen extends React.Component {
 						})}
 					</History>
 					{/* put components with absolute position at the bottom */}
-					<TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} />
+					<TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} refreshHandler={this.onRefresh.bind(this)} />
 				</Container>
 			</SafeAreaView>
 		);

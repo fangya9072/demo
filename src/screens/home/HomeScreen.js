@@ -90,6 +90,11 @@ export default class HomeScreen extends React.Component {
 		    });
 		};
 
+		// function to reload screen
+		onRefresh = () => {
+			this.getCurrentLocation();
+		}
+
 		// functions that open and close outfit post madal view
 		openPost(id) {
 			  this.setState({ outfitPostViewVisible: true });
@@ -129,7 +134,7 @@ export default class HomeScreen extends React.Component {
 							    	</OutfitPostContainer>}
 					    	</Map>
 								{/* put components with absolute position at the bottom */}
-								<TopBanner pageTitle={this.state.pageTitle} navigation={this.props.navigation} navigation={this.state.navigation}/>
+								<TopBanner pageTitle={this.state.pageTitle} navigation={this.props.navigation} navigation={this.state.navigation} refreshHandler={this.onRefresh.bind(this)} />
 				  	</Container>
 					</SafeAreaView>
 		    );

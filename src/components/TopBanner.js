@@ -59,7 +59,7 @@ class TopBanner extends React.Component {
 					    */}
 						<UserButtonIcon source={require('../../assets/icon/role-icon/pikachu.png')} />
 					</UserButton>
-					<RefreshButton>
+					<RefreshButton onPress={this.props.refreshHandler}>
 						<Entypo name={'cw'} size={30} />
 					</RefreshButton>
 					<LocationButton onPress={() => { this.setState({ topLocationMenuVisible: !this.state.topLocationMenuVisible, }); }}>

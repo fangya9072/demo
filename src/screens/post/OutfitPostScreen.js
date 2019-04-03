@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import moment from 'moment';
 import { SafeAreaView } from 'react-navigation';
 import { ImagePicker, Permissions, ImageManipulator } from 'expo';
 import { Alert, Linking, AsyncStorage } from 'react-native';
@@ -92,7 +91,7 @@ export default class OutfitPostScreen extends React.Component {
 			this.setState({
 				errorMessage: 'Please Choose A Picture',
 			});
-		}else{		
+		}else{
 			let username = this.state.username;
 			let date = new Date();
 		    let dateString = date.getFullYear() + "-" + ("0"+(date.getMonth()+1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2);
