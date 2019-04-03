@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/native';
+import moment from 'moment';
 import { SafeAreaView } from 'react-navigation';
 import { ImagePicker, Permissions, ImageManipulator } from 'expo';
 import { Alert, Linking } from 'react-native';
@@ -19,15 +20,18 @@ export default class OutfitPostScreen extends React.Component {
 		super(props);
 		this.state = {
 			pageTitle: 'My Outfit Today',
+			username: 'hcx',
 			image: null,
+			imageData: null,
 			errorMessage: '',
+			currentDate: new Date(),
 		};
 	}
 
 	/* 
 	function to pick picture from phone's photo library
 	ask permission to grant acess to photo library
-	set uri of picked picture as this.state.image
+	set uri of picked picture as this.state.image, encoded base64 image as this.state.imageDate
 	*/
 	pickImage = async () =>  {
         const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -50,21 +54,21 @@ export default class OutfitPostScreen extends React.Component {
 			allowsEditing: true,
 			base64: true
 		});
-		let resultFinal = await ImageManipulator.manipulateAsync(
-			result.uri, [], { base64: true, compress: 0.5 }
-		)
 		if (!result.cancelled) {
+			let resultFinal = await ImageManipulator.manipulateAsync(
+				result.uri, [], { base64: true, compress: 0.5 }
+			)
 			this.setState({
 				image: resultFinal.uri,
 				errorMessage: '',
-				data: resultFinal.base64
+				imageData: resultFinal.base64
 			});
 		}
 	}
 	
 	 
 	// function to save outfit post to database
-	sendPost = async (data) => {
+	sendPost = async (imageData) => {
 		if(!this.state.image){
 			this.setState({
 				errorMessage: 'Please Choose A Picture',
@@ -72,14 +76,14 @@ export default class OutfitPostScreen extends React.Component {
 		}else{		
 		    //now use username 'hcx' and date '2019-03-23' as an example of outfit post
 			//replace username and date with the current user and date
-			let username = 'hcx';
-			let date = '2019-03-28'
+			let username = this.state.username;
+			let date = '2019-04-01'
 		    fetch('http://3.93.183.130:3000/outlookposts/' + username, {
 				method: 'PUT',
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify({
 					'date': date,
-					'photo': data
+					'photo': imageData
 				}),
 			}).then((response) => {
 				let result = JSON.parse(response._bodyText)
@@ -106,7 +110,7 @@ export default class OutfitPostScreen extends React.Component {
 						<Button onPress={() => {this.pickImage()}}>
 							<ButtonText> Choose A Picture </ButtonText>
 						</Button>
-						<Button style={{top:30}} onPress={() => { this.sendPost(this.state.data); }}>
+						<Button style={{top:30}} onPress={() => { this.sendPost(this.state.imageData); }}>
 						    <ButtonText> Update Your Outfit </ButtonText>
 						</Button>
 					</ButtonArea>

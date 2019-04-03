@@ -21,7 +21,9 @@ export default class WeatherPostScreen extends React.Component {
 		super(props);
 		this.state = {
 			pageTitle: 'How Is The Weather?',
+			username: 'hcx',
 			image: null,
+			imageData: null,
 			locationText: '',
 			coordinate: {
 				latitude: 0,
@@ -109,13 +111,13 @@ export default class WeatherPostScreen extends React.Component {
 			allowsEditing: true,
 			base64: true
 		});
-		let resultFinal = await ImageManipulator.manipulateAsync(
-			result.uri, [], { base64: true, compress: 0.5 }
-		)
 		if (!result.cancelled) {
+			let resultFinal = await ImageManipulator.manipulateAsync(
+				result.uri, [], { base64: true, compress: 0.5 }
+			)
 			this.setState({
 				image: resultFinal.uri,
-				byte: resultFinal.base64
+				imageData: resultFinal.base64
 			});
 		}
 	}
@@ -132,8 +134,7 @@ export default class WeatherPostScreen extends React.Component {
 	}
 
 	// function to save weather post to database
-	sendPost = async (byte, location, temperature, humidity, 
-		cloud, wind) => {
+	sendPost = async (imageData, location, temperature, humidity, cloud, wind) => {
 		if (!this.state.image) {
 			this.setState({
 				errorMessage: 'Please Choose A Picture',
@@ -141,15 +142,15 @@ export default class WeatherPostScreen extends React.Component {
 		} else {
 			//now use username 'hcx' and date '2019-03-31' as an example of weather post
 			//replace username and date with the current user and date
-			let username = 'hcx';
-			let date = '2019-03-28'
+			let username = this.state.username;
+			let date = '2019-04-02'
 		    fetch('http://3.93.183.130:3000/weatherposts/' + username, {
 				method: 'PUT',
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify({
 					'date': date,
 					'location': location, 
-					'photo': byte, 
+					'photo': imageData, 
 					'temperature': temperature, 
 					'humidity': humidity, 
 					'cloud': cloud, 
@@ -267,7 +268,7 @@ export default class WeatherPostScreen extends React.Component {
 					</SliderWrapper>
 					<ErrorMessage><ErrorMessageText> {this.state.errorMessage} </ErrorMessageText></ErrorMessage>
 					<ButtonArea>
-						<PostButton onPress={() => { this.sendPost(this.state.byte, 
+						<PostButton onPress={() => { this.sendPost(this.state.imageData, 
 							this.state.coordinate, this.state.temperature, this.state.humidity, 
 							this.state.cloud, this.state.wind) }}>
 							<PostButtonText> POST </PostButtonText>
