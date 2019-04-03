@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
 import { ImagePicker, Permissions, Location, ImageManipulator } from 'expo';
-import { Alert, Linking } from 'react-native';
+import { Alert, Linking, AsyncStorage } from 'react-native';
 import Feather from "react-native-vector-icons/Feather";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import LocationView from "react-native-location-view";
@@ -21,7 +21,7 @@ export default class WeatherPostScreen extends React.Component {
 		super(props);
 		this.state = {
 			pageTitle: 'How Is The Weather?',
-			username: 'hcx',
+			username: '',
 			image: null,
 			imageData: null,
 			locationText: '',
@@ -36,6 +36,7 @@ export default class WeatherPostScreen extends React.Component {
 			wind: 3,
 		};
 	}
+
 
 	// function to update state, used to get state passed by child component
 	updateState (data) {
@@ -52,8 +53,23 @@ export default class WeatherPostScreen extends React.Component {
 
 	// functions that runs whenever WeatherPostScreen is rerendered in DOM
 	componentWillMount() {
+		this.getUsername();
 		this.getCurrentLocation();
 	}
+
+	// function to retrive username from persistant storage
+	getUsername = async () => {
+		try {
+			const username = await AsyncStorage.getItem('username');
+			if (username !== null) {
+				this.setState({
+					username: username,
+				})
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
 	// funtion to get current location
 	getCurrentLocation = async () => {
@@ -140,15 +156,14 @@ export default class WeatherPostScreen extends React.Component {
 				errorMessage: 'Please Choose A Picture',
 			});
 		} else {
-			//now use username 'hcx' and date '2019-03-31' as an example of weather post
-			//replace username and date with the current user and date
 			let username = this.state.username;
-			let date = '2019-04-02'
+			let date = new Date();
+		    let dateString = date.getFullYear() + "-" + ("0"+(date.getMonth()+1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2);
 		    fetch('http://3.93.183.130:3000/weatherposts/' + username, {
 				method: 'PUT',
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify({
-					'date': date,
+					'date': dateString,
 					'location': location, 
 					'photo': imageData, 
 					'temperature': temperature, 

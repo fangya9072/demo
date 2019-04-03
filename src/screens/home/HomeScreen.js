@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import { Location, Permissions } from "expo";
 import  MapView  from 'react-native-maps'
 import { SafeAreaView } from 'react-navigation';
-import { Alert, Linking } from 'react-native';
+import { Alert, Linking, AsyncStorage } from 'react-native';
 import Entypo from "react-native-vector-icons/Entypo";
 import OutfitPostView from '../../components/OutfitPostView';
 import TopBanner from '../../components/TopBanner';
@@ -22,6 +22,7 @@ export default class HomeScreen extends React.Component {
 				super(props);
 			  this.state = {
 					  pageTitle: 'HOME',
+						username: '',
 					  outfitPostViewVisible: false,
 						mapRegion: null,
 						coordinate: {
@@ -47,9 +48,24 @@ export default class HomeScreen extends React.Component {
 
   	// functions that runs whenever HomePage is rerendered in DOM
 		componentDidMount() {
+			  this.getUsername();
 				this.getCurrentLocation();
 		}
 	
+		// function to retrive username from persistant storage
+		getUsername = async () => {
+			try {
+				const username = await AsyncStorage.getItem('username');
+				if (username !== null) {
+					this.setState({
+						username: username,
+					})
+				}
+			} catch (error) {
+				console.error(error);
+			}
+		};
+
 		// function to get user's realtime geolocation
 		getCurrentLocation = async () => {
 			  let { status } = await Permissions.askAsync(Permissions.LOCATION);

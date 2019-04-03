@@ -2,9 +2,8 @@ import React from 'react';
 import styled from 'styled-components/native';
 import TopBanner from '../../components/TopBanner';
 import {SafeAreaView} from 'react-navigation';
-import { Modal }  from 'react-native';
+import { AsyncStorage }  from 'react-native';
 import { Location, Permissions } from "expo";
-import Entypo from "react-native-vector-icons/Entypo";
 import { Alert, ScrollView, View, Text, TouchableOpacity, Image, FlatList, List } from "react-native";
 import Article from '../../components/Article';
 
@@ -21,6 +20,7 @@ export default class NewsScreen extends React.Component {
 		super(props);
 		this.state = {
 			pageTitle: 'NEWS',
+			username: '',
 			articles: [],
 			area: '',
 			refreshing: true,
@@ -31,12 +31,26 @@ export default class NewsScreen extends React.Component {
 		};
 	}
 
-    //functions
+    // functions that runs whenever NewsPage is rerendered in DOM
     componentWillMount() {
+		this.getUsername();
 		this.getNews();
 	}
-    
 
+	// function to retrive username from persistant storage
+	getUsername = async () => {
+		try {
+			const username = await AsyncStorage.getItem('username');
+			if (username !== null) {
+				this.setState({
+					username: username,
+				})
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
+    
     handleRefresh() {
       this.setState(
          {
@@ -77,8 +91,6 @@ export default class NewsScreen extends React.Component {
 
   
 	// rendering
-
-
 	render(){
 		return(
 			<SafeAreaView style={{ backgroundColor: 'whitesmoke', flex: 1}}>

@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import moment from 'moment';
+import { AsyncStorage } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import TopBanner from '../../components/TopBanner';
-import { Modal } from 'react-native';
 
 export default class HistoryScreen extends React.Component {
 
@@ -17,7 +17,7 @@ export default class HistoryScreen extends React.Component {
 		super(props);
 		this.state = {
 			pageTitle: 'HISTORY',
-			username: 'hcx',
+			username: '',
 			daysHavePost: [],
 		};
 	}
@@ -27,8 +27,23 @@ export default class HistoryScreen extends React.Component {
 		this.getAllPosts();
 	}
 
+	// function to retrive username from persistant storage
+	getUsername = async () => {
+		try {
+			const username = await AsyncStorage.getItem('username');
+			if (username !== null) {
+				this.setState({
+					username: username,
+				})
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	// function to get all posts 
 	getAllPosts = async () => {
+		await this.getUsername();
 		try {
 			let response = await fetch('http://3.93.183.130:3000/allposts/' + this.state.username, { method: 'GET' })
 			let responseJson = await response.json();

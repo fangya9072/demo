@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import moment from 'moment';
 import { SafeAreaView } from 'react-navigation';
 import { ImagePicker, Permissions, ImageManipulator } from 'expo';
-import { Alert, Linking } from 'react-native';
+import { Alert, Linking, AsyncStorage } from 'react-native';
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import TopBanner from '../../components/TopBanner';
 
@@ -20,13 +20,32 @@ export default class OutfitPostScreen extends React.Component {
 		super(props);
 		this.state = {
 			pageTitle: 'My Outfit Today',
-			username: 'hcx',
+			username: '',
 			image: null,
 			imageData: null,
 			errorMessage: '',
 			currentDate: new Date(),
 		};
 	}
+
+	// functions that runs whenever PostPage is rerendered in DOM
+	componentDidMount() {
+		this.getUsername();
+	}
+
+	// function to retrive username from persistant storage
+	getUsername = async () => {
+		try {
+			const username = await AsyncStorage.getItem('username');
+			if (username !== null) {
+				this.setState({
+					username: username,
+				})
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
 	/* 
 	function to pick picture from phone's photo library
@@ -74,15 +93,14 @@ export default class OutfitPostScreen extends React.Component {
 				errorMessage: 'Please Choose A Picture',
 			});
 		}else{		
-		    //now use username 'hcx' and date '2019-03-23' as an example of outfit post
-			//replace username and date with the current user and date
 			let username = this.state.username;
-			let date = '2019-04-01'
+			let date = new Date();
+		    let dateString = date.getFullYear() + "-" + ("0"+(date.getMonth()+1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2);
 		    fetch('http://3.93.183.130:3000/outlookposts/' + username, {
 				method: 'PUT',
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify({
-					'date': date,
+					'date': dateString,
 					'photo': imageData
 				}),
 			}).then((response) => {

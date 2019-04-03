@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import { KeyboardAvoidingView } from 'react-native';
-import { COLORS } from '../../constant/color';
+import { KeyboardAvoidingView, AsyncStorage } from 'react-native';
+import { COLORS } from '../../constant/color'
+
 
 export default class LoginScreen extends React.Component {
 	
@@ -21,6 +22,11 @@ export default class LoginScreen extends React.Component {
 		};
 	}
 
+	// functions that runs whenever LoginPage is re-rendered in DOM
+	componentWillMount() {
+		this.removeDate('username');
+	}
+
   	//check login username and password function
 	checkLogin(username, password){
 		fetch('http://3.93.183.130:3000/login?username=' + username + '&password=' +password, {
@@ -28,10 +34,11 @@ export default class LoginScreen extends React.Component {
 		}).then((response) => {
 			let result = JSON.parse(response._bodyText)
 			if (result == true) {
+				this.storeData('username', this.state.username)
 				this.props.navigation.navigate('Home')
 			} else {
 				if (password === '' || username === ''){
-					this.setState({errorMsg: 'Please Enter Your Username Or Password'})
+					this.setState({errorMsg: 'Please Enter Your Username Or Password'});
 				} else if (result == null){
 					this.setState({errorMsg: 'No Such User'})
 				} else {
@@ -40,6 +47,24 @@ export default class LoginScreen extends React.Component {
 				this.setState({errorMsgVisible: true})
 			}
 		})
+	}
+
+	
+
+	// function to store and remove data(i.e. username, logged in status) in persistant storage
+	storeData = async (key, val) => {
+		try {
+		    await AsyncStorage.setItem(key, val);
+		} catch (error) {
+		    console.error(error);
+		}
+	};
+	removeDate = async (key) => {
+		try {
+		    await AsyncStorage.removeItem(key);
+		} catch (error) {
+		    console.error(error);
+		}
 	}
 
 	// rendering 

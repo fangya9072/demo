@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
-import { Alert, Linking } from 'react-native';
+import { Alert, Linking, AsyncStorage } from 'react-native';
 import TopBanner from '../../components/TopBanner';
 import WeatherForcast from '../../components/WeatherForcast';
 import Entypo from "react-native-vector-icons/Entypo";
@@ -21,6 +21,7 @@ export default class WeatherScreen extends React.Component {
 		super(props);
 		this.state = {
 			pageTitle: 'WEATHER',
+			username: '',
 			weatherPostModalViewVisible: false,
 			mapRegion: null,
 			coordinate: {
@@ -56,18 +57,25 @@ export default class WeatherScreen extends React.Component {
 		};
 	}
 
-	// functions that open and closes weather post madal view
-	openPost(id) {
-		this.setState({ weatherPostModalViewVisible: true });
-	}
-	closePost() {
-		this.setState({ weatherPostModalViewVisible: false });
-	}
-
 	// functions that will run whenever WeatherPage is rerendered in DOM
 	componentWillMount() {
+		this.getUsername();
 		this.getCurrentLocation();
 	}
+
+	// function to retrive username from persistant storage
+	getUsername = async () => {
+		try {
+			const username = await AsyncStorage.getItem('username');
+			if (username !== null) {
+				this.setState({
+					username: username,
+				})
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
 	// function to get user's realtime geolocation
 	getCurrentLocation = async () => {
@@ -96,6 +104,14 @@ export default class WeatherScreen extends React.Component {
 			cityName: locationInfo[0].city,
 		});
 	};
+
+	// functions that open and closes weather post madal view
+	openPost(id) {
+		this.setState({ weatherPostModalViewVisible: true });
+	}
+	closePost() {
+		this.setState({ weatherPostModalViewVisible: false });
+	}
 
 	// rendering
 	render() {
