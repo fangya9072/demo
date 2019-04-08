@@ -9,7 +9,7 @@ export default class FriendScreen extends React.Component {
 
 	// set up navigation
 	static navigationOptions = {
-		title: 'Friend',
+		title: 'FRIEND',
 	};
 
 	// set up state

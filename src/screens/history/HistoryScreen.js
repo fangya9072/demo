@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import moment from 'moment';
-import { AsyncStorage, RefreshControl } from 'react-native';
+import { AsyncStorage } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import TopBanner from '../../components/TopBanner';
 
@@ -24,7 +24,7 @@ export default class HistoryScreen extends React.Component {
 
 	// functions that runs whenever HistoryPage is re-rendered in DOM
 	componentWillMount() {
-		this.getAllPosts();
+		this.onRefresh();
 	}
 
 	// function to retrive username from persistant storage
@@ -48,29 +48,35 @@ export default class HistoryScreen extends React.Component {
 			let response = await fetch('http://3.93.183.130:3000/allposts/' + this.state.username, { method: 'GET' })
 			let responseJson = await response.json();
 			for (responseItem of responseJson) {
+				// change date format
+				let fromDate = responseItem.date.split("-")
+				let rawDate = new Date(fromDate[0], fromDate[1] - 1, fromDate[2])
+				let formattedDate = moment(rawDate).format('ll')
 				// distinguish if it is an outfit post or weather post, create post object
 				if (responseItem.weather_post_id) {
 					post = {
 						postId: responseItem.weather_post_id,
 						postType: 'weather',
 						image: responseItem.photo,
-						location: responseItem.location,
+						date: formattedDate,
+						coordinate: responseItem.coordinate,
+						locationText: responseItem.locationText,
 						temperature: responseItem.temperature,
 						humidity: responseItem.humidity,
 						cloud: responseItem.cloud,
 						wind: responseItem.wind,
 					}
-				} else {
+				} else if (responseItem.outlook_post_id) {
 					post = {
 						postId: responseItem.outlook_post_id,
 						postType: 'outfit',
 						image: responseItem.photo,
+						date: formattedDate,
 					}
+				} else {
+					console.error("post type error");
+					continue;
 				}
-				// change date format
-				let fromDate = responseItem.date.split("-")
-				let rawDate = new Date(fromDate[0], fromDate[1] - 1, fromDate[2])
-				let formattedDate = moment(rawDate).format('ll')
 				// check if we have already stored a specific day object, whose date attribute matches the date of the new post object just created
 				let dayHasPost = this.state.daysHavePost.find((day) => {
 					return day.date == formattedDate;
@@ -125,7 +131,10 @@ export default class HistoryScreen extends React.Component {
 									<Posts horizontal={true} showsHorizontalScrollIndicator={false}>
 										{dayItem.posts.map((postItem, postKey) => {
 											return (
-												<Post key={postKey}>
+												<Post 
+												key={postKey} 
+												onPress={() => this.props.navigation.navigate('PostView', {isMainView: false, post: postItem})}
+												>
 													<PostImage source={{ uri: 'data:image/png;base64,' + postItem.image }} />
 												</Post>
 											);
@@ -173,7 +182,7 @@ const DateWrapper = styled.View`
 `;
 
 const DateText = styled.Text`
-  font-size: 12.5px;
+    font-size: 12.5px;
 	font-family: Georgia;
 	color: black;
 `;
@@ -193,6 +202,6 @@ const Post = styled.TouchableOpacity`
 const PostImage = styled.Image`
 	height: 105px;
 	width: 105px;
-	resize-mode: stretch;
+	resize-mode: contain;
 	border-radius: 5px;
 `;

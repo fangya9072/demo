@@ -150,7 +150,7 @@ export default class WeatherPostScreen extends React.Component {
 	}
 
 	// function to save weather post to database
-	sendPost = async (imageData, location, temperature, humidity, cloud, wind) => {
+	sendPost = async (imageData, coordinate, locationText, temperature, humidity, cloud, wind) => {
 		if (!this.state.image) {
 			this.setState({
 				errorMessage: 'Please Choose A Picture',
@@ -164,7 +164,8 @@ export default class WeatherPostScreen extends React.Component {
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify({
 					'date': dateString,
-					'location': location, 
+					'coordinate': coordinate, 
+					'locationText': locationText,
 					'photo': imageData, 
 					'temperature': temperature, 
 					'humidity': humidity, 
@@ -284,7 +285,7 @@ export default class WeatherPostScreen extends React.Component {
 					<ErrorMessage><ErrorMessageText> {this.state.errorMessage} </ErrorMessageText></ErrorMessage>
 					<ButtonArea>
 						<PostButton onPress={() => { this.sendPost(this.state.imageData, 
-							this.state.coordinate, this.state.temperature, this.state.humidity, 
+							this.state.coordinate, this.state.locationText, this.state.temperature, this.state.humidity, 
 							this.state.cloud, this.state.wind) }}>
 							<PostButtonText> POST </PostButtonText>
 						</PostButton>

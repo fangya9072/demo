@@ -155,11 +155,6 @@ const BackButton = styled.TouchableOpacity`
 	justify-content: center;
 `;
 
-const BackButtonIcon = styled.Image`
-    height: 30px;
-	width: 30px;
-`;
-
 const TextArea = styled.View`
     height: 45px;
 	width: 280px;

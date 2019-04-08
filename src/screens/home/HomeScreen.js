@@ -95,8 +95,8 @@ export default class HomeScreen extends React.Component {
 			this.getCurrentLocation();
 		}
 
-		// functions that open and close outfit post madal view
-		openPost(id) {
+		// functions that open and close outfit post view
+		openPost() {
 			  this.setState({ outfitPostViewVisible: true });
 		}
 		closePost() {
@@ -122,7 +122,7 @@ export default class HomeScreen extends React.Component {
 										    				coordinate={{ longitude: Number(item.longitude), latitude: Number(item.latitude) }}
 													    	title={item.title}
 	    													key={key}
-			    											onPress={(e) => this.openPost(item.id)}
+			    											onPress={(e) => this.openPost()}
 					    									>
                      							  <MarkerImage source={{ uri: item.src }}/>
 									    					</MapView.Marker>

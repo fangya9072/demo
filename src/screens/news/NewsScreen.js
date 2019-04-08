@@ -2,9 +2,8 @@ import React from 'react';
 import styled from 'styled-components/native';
 import TopBanner from '../../components/TopBanner';
 import {SafeAreaView} from 'react-navigation';
-import { AsyncStorage }  from 'react-native';
 import { Location, Permissions } from "expo";
-import { Alert, ScrollView, View, Text, TouchableOpacity, Image, FlatList, List } from "react-native";
+import { Alert, FlatList, AsyncStorage } from "react-native";
 import Article from '../../components/Article';
 
 
@@ -83,7 +82,7 @@ export default class NewsScreen extends React.Component {
 			area: locationInfo[0].city,
 		});
 		let result = await fetch('https://newsapi.org/v2/everything?q=' + this.state.area + '&apiKey=0b54ce7d55944a0bb32c193eb264c3e4').then(response => response.json());
-        this.setState({articles: result.articles, refreshing: false });
+		this.setState({articles: result.articles, refreshing: false });
 	};
 
 
@@ -93,7 +92,6 @@ export default class NewsScreen extends React.Component {
 		return(
 			<SafeAreaView style={{ backgroundColor: 'whitesmoke', flex: 1}}>
 			    <Container>
-
 			        <News>
 				        <FlatList
                           data = {this.state.articles}
@@ -101,7 +99,6 @@ export default class NewsScreen extends React.Component {
                           keyExtractor = {item => item.url}
                         /> 
                      </News>
-                     {}
 				    <TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} refreshHandler={this.onRefresh.bind(this)} />
 			    </Container>
 			</SafeAreaView>
