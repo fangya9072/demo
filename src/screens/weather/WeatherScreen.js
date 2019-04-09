@@ -35,6 +35,8 @@ export default class WeatherScreen extends React.Component {
 				maxTemperature: 60,
 				currentTemperature: 55,
 			},
+		
+			hourInfo: [],
 			errorMessage: null,
 			/*  
 		    markers below for people nearby are only for test purpose, 
@@ -77,7 +79,7 @@ export default class WeatherScreen extends React.Component {
 		}
 	};
 
-	// function to get user's realtime geolocation
+	// function to get user's realtime geolocation and weather information
 	getCurrentLocation = async () => {
 		let { status } = await Permissions.askAsync(Permissions.LOCATION);
 		if (status !== 'granted') {
@@ -95,6 +97,8 @@ export default class WeatherScreen extends React.Component {
 			);
 		}
 		let location = await Location.getCurrentPositionAsync({}); // get coordinates of current location
+		let lat = location.coords.latitude;
+		let log = location.coords.longitude;
 		this.setState({
 			mapRegion: { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 },
 			coordinate: { latitude: location.coords.latitude, longitude: location.coords.longitude }
@@ -103,6 +107,18 @@ export default class WeatherScreen extends React.Component {
 		this.setState({
 			cityName: locationInfo[0].city,
 		});
+		//let result = await fetch('https://api.openweathermap.org/data/2.5/forecast/hourly?q='+this.state.cityName+',us&units=metric&appid=ac141ae24c04ea59edfa71a5ab109b73').then(response => response.json());
+        //this.setState({hourInfo: result.list});
+        let day = await fetch('https://api.darksky.net/forecast/8c2568f00f593c6a4c4125d386af88f5/'+lat+','+log).then(response => response.json());
+        this.setState({hourInfo: day});
+        this.setState({
+        	cityForcast:{
+        		weatherType: day.currently.summary,
+				minTemperature: ((day.daily.data[0].temperatureHigh-32)/1.8).toFixed(0),
+				maxTemperature: ((day.daily.data[0].temperatureLow-32)/1.8).toFixed(0),
+				currentTemperature: ((day.currently.temperature-32)/1.8).toFixed(0),
+        	}
+        })
 	};
 
 	// function to reload screen
@@ -150,7 +166,7 @@ export default class WeatherScreen extends React.Component {
 						</Map>
 					</MapContainer>
 					<WeatherForcastContainer>
-						<WeatherForcast cityName={this.state.cityName} cityForcast={this.state.cityForcast} />
+						<WeatherForcast cityName={this.state.cityName} cityForcast={this.state.cityForcast} hourInfo={this.state.hourInfo}/>
 					</WeatherForcastContainer>
 					{/* put components with absolute position at the bottom */}
 					<TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} refreshHandler={this.onRefresh.bind(this)} />
