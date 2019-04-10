@@ -74,7 +74,7 @@ export default class OutfitPostScreen extends React.Component {
 		});
 		if (!result.cancelled) {
 			let resultFinal = await ImageManipulator.manipulateAsync(
-				result.uri, [], { base64: true, compress: 0.5 }
+				result.uri, [], { base64: true, compress: 0.3 }
 			)
 			this.setState({
 				image: resultFinal.uri,
