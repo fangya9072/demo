@@ -7,6 +7,7 @@ import Swiper from "react-native-web-swiper";
 import CardFlip from 'react-native-card-flip';
 import TopBanner from '../../components/TopBanner';
 import { ICONS } from '../../constant/icon';
+import Feather from "react-native-vector-icons/Feather";
 
 export default class PostViewScreen extends React.Component {
 
@@ -22,6 +23,37 @@ export default class PostViewScreen extends React.Component {
 			pageTitle: 'MY POST',
 			subOptionVisible: false,
 			errorMessage: '',
+			commentList: [
+				{
+					id: 1,
+					username: 'Stotts',
+					icon: null,
+					date: '20:37, Mar 1, 2019',
+					text: 'Doing what you like will always keep you happy ... Doing what you like will always keep you happy ... Doing what you like will always keep you happy ... Doing what you like will always keep you happy ...'
+				},
+				{
+					id: 2,
+					username: 'Mia',
+					icon: null,
+					date: '17:14, Mar 1, 2019',
+					text: 'You look so adorable in this outfit! '
+				},
+				{
+					id: 3,
+					username: 'Jason',
+					icon: null,
+					date: '14:40, Mar 1, 2019',
+					text: 'Wanna hang out with me this weekend?'
+				},
+				{
+					id: 4,
+					username: 'Kim',
+					icon: null,
+					date: '10:10, Mar 1, 2019',
+					text: 'Have a nice day! Have a nice day! Have a nice day! Have a nice day! Have a nice day! Have a nice day! Have a nice day! Have a nice day!',
+				},
+			],
+			commentInput: '',
 		};
 	}
 
@@ -52,6 +84,9 @@ export default class PostViewScreen extends React.Component {
 			],
 		);
 	};
+
+	// function to send comment
+	sendComment = async () => { }
 
 	// rendering
 	render() {
@@ -84,114 +119,140 @@ export default class PostViewScreen extends React.Component {
 			<SafeAreaView style={{ backgroundColor: 'whitesmoke', flex: 1 }}>
 				<Container>
 					<KeyboardAvoidingView behavior="position" keyboardVerticalOffset={20}>
-					<PostContainer>
-						<PostScollView>
-							{weatherPost && <WeatherPost>
-								<LocationWrapper>
-									<LocationIcon><MaterialIcons name={'location-on'} size={22.5} /></LocationIcon>
-									<LocationText> {weatherPost.locationText} </LocationText>
-								</LocationWrapper>
-								<SwiperContainer>
-									<Swiper>
-										<SwiperView>
-											<PostImage source={{ uri: 'data:image/png;base64,' + weatherPost.image }} />
-										</SwiperView>
-										<SwiperView>
-											<InfoContainer>
-												<Colomn>
-													<Row>
-														<SubInfoContainer>
-															<CardFlip style={{ flex: 1 }} ref={(card1) => this.card1 = card1} >
-																<Card onPress={() => this.card1.flip()} >
-																	<WeatherText> TEMPERATURE </WeatherText>
-																</Card>
-																<Card onPress={() => this.card1.flip()} >
-																	<WeatherIcon source={ICONS.weatherSlider['temperature' + weatherPost.temperature]} />
-																</Card>
-															</CardFlip>
-														</SubInfoContainer>
-													</Row>
-													<Row>
-														<SubInfoContainer>
-															<CardFlip style={{ flex: 1 }} ref={(card2) => this.card2 = card2} >
-																<Card onPress={() => this.card2.flip()} >
-																	<WeatherText> HUMIDITY </WeatherText>
-																</Card>
-																<Card onPress={() => this.card2.flip()} >
-																	<WeatherIcon source={ICONS.weatherSlider['humidity' + weatherPost.humidity]} />
-																</Card>
-															</CardFlip>
-														</SubInfoContainer>
-													</Row>
-												</Colomn>
-												<Colomn>
-													<Row>
-														<SubInfoContainer>
-															<CardFlip style={{ flex: 1 }} ref={(card3) => this.card3 = card3} >
-																<Card onPress={() => this.card3.flip()} >
-																	<WeatherText> CLOUD </WeatherText>
-																</Card>
-																<Card onPress={() => this.card3.flip()} >
-																	<WeatherIcon source={ICONS.weatherSlider['cloud' + weatherPost.cloud]} />
-																</Card>
-															</CardFlip>
-														</SubInfoContainer>
-													</Row>
-													<Row>
-														<SubInfoContainer>
-															<CardFlip style={{ flex: 1 }} ref={(card4) => this.card4 = card4} >
-																<Card onPress={() => this.card4.flip()} >
-																	<WeatherText> WIND </WeatherText>
-																</Card>
-																<Card onPress={() => this.card4.flip()} >
-																	<WeatherIcon source={ICONS.weatherSlider['wind' + weatherPost.wind]} />
-																</Card>
-															</CardFlip>
-														</SubInfoContainer>
-													</Row>
-												</Colomn>
-											</InfoContainer>
-										</SwiperView>
-									</Swiper>
-								</SwiperContainer>
-								<PostInfo>
-									<Date><DateText> {weatherPost.date} </DateText></Date>
-									{this.state.subOptionVisible && <SubOption>
-										<SubOptionButton onPress={() => { this.deletePost(weatherPost.id) }}>
-											<SubOptionButtonText>   DELETE   </SubOptionButtonText>
-										</SubOptionButton>
-									</SubOption>}
-									<OptionButton onPress={() => this.setState({ subOptionVisible: !this.state.subOptionVisible })}>
-										<OptionButtonText> • • • </OptionButtonText>
-									</OptionButton>
-								</PostInfo>
-							</WeatherPost>}
-
-							{outfitPost && <OutfitPost>
-								<PostImage source={{ uri: 'data:image/png;base64,' + outfitPost.image }} />
-								<PostInfo>
-									<Date>
-										<DateText> {outfitPost.date} </DateText>
-									</Date>
-									<OptionArea>
+						<PostContainer>
+							<PostScollView contentContainerStyle={{paddingBottom: 35}}>
+								{weatherPost && <WeatherPost>
+									<LocationWrapper>
+										<LocationIcon><MaterialIcons name={'location-on'} size={22.5} /></LocationIcon>
+										<LocationText> {weatherPost.locationText} </LocationText>
+									</LocationWrapper>
+									<SwiperContainer>
+										<Swiper>
+											<SwiperView>
+												<PostImage source={{ uri: 'data:image/png;base64,' + weatherPost.image }} />
+											</SwiperView>
+											<SwiperView>
+												<InfoContainer>
+													<Colomn>
+														<Row>
+															<SubInfoContainer>
+																<CardFlip style={{ flex: 1 }} ref={(card1) => this.card1 = card1} >
+																	<Card onPress={() => this.card1.flip()} >
+																		<WeatherText> TEMPERATURE </WeatherText>
+																	</Card>
+																	<Card onPress={() => this.card1.flip()} >
+																		<WeatherIcon source={ICONS.weatherSlider['temperature' + weatherPost.temperature]} />
+																	</Card>
+																</CardFlip>
+															</SubInfoContainer>
+														</Row>
+														<Row>
+															<SubInfoContainer>
+																<CardFlip style={{ flex: 1 }} ref={(card2) => this.card2 = card2} >
+																	<Card onPress={() => this.card2.flip()} >
+																		<WeatherText> HUMIDITY </WeatherText>
+																	</Card>
+																	<Card onPress={() => this.card2.flip()} >
+																		<WeatherIcon source={ICONS.weatherSlider['humidity' + weatherPost.humidity]} />
+																	</Card>
+																</CardFlip>
+															</SubInfoContainer>
+														</Row>
+													</Colomn>
+													<Colomn>
+														<Row>
+															<SubInfoContainer>
+																<CardFlip style={{ flex: 1 }} ref={(card3) => this.card3 = card3} >
+																	<Card onPress={() => this.card3.flip()} >
+																		<WeatherText> CLOUD </WeatherText>
+																	</Card>
+																	<Card onPress={() => this.card3.flip()} >
+																		<WeatherIcon source={ICONS.weatherSlider['cloud' + weatherPost.cloud]} />
+																	</Card>
+																</CardFlip>
+															</SubInfoContainer>
+														</Row>
+														<Row>
+															<SubInfoContainer>
+																<CardFlip style={{ flex: 1 }} ref={(card4) => this.card4 = card4} >
+																	<Card onPress={() => this.card4.flip()} >
+																		<WeatherText> WIND </WeatherText>
+																	</Card>
+																	<Card onPress={() => this.card4.flip()} >
+																		<WeatherIcon source={ICONS.weatherSlider['wind' + weatherPost.wind]} />
+																	</Card>
+																</CardFlip>
+															</SubInfoContainer>
+														</Row>
+													</Colomn>
+												</InfoContainer>
+											</SwiperView>
+										</Swiper>
+									</SwiperContainer>
+									<PostInfo>
+										<Date><DateText> {weatherPost.date} </DateText></Date>
 										{this.state.subOptionVisible && <SubOption>
-											<SubOptionButton onPress={() => { this.deletePost(outfitPost.id) }}>
+											<SubOptionButton onPress={() => { this.deletePost(weatherPost.id) }}>
 												<SubOptionButtonText>   DELETE   </SubOptionButtonText>
 											</SubOptionButton>
 										</SubOption>}
 										<OptionButton onPress={() => this.setState({ subOptionVisible: !this.state.subOptionVisible })}>
 											<OptionButtonText> • • • </OptionButtonText>
 										</OptionButton>
-									</OptionArea>
-								</PostInfo>
-							</OutfitPost>}
-							<CommentContainer>
-							</CommentContainer>
-						</PostScollView>
-					</PostContainer>
-					<InputArea>
-					    <Input autoCorrect={false} onChangeText={(comment) => this.setState({comment: comment})} />
-					</InputArea>
+									</PostInfo>
+								</WeatherPost>}
+
+								{outfitPost && <OutfitPost>
+									<PostImage source={{ uri: 'data:image/png;base64,' + outfitPost.image }} />
+									<PostInfo>
+										<Date>
+											<DateText> {outfitPost.date} </DateText>
+										</Date>
+										<OptionArea>
+											{this.state.subOptionVisible && <SubOption>
+												<SubOptionButton onPress={() => { this.deletePost(outfitPost.id) }}>
+													<SubOptionButtonText>   DELETE   </SubOptionButtonText>
+												</SubOptionButton>
+											</SubOption>}
+											<OptionButton onPress={() => this.setState({ subOptionVisible: !this.state.subOptionVisible })}>
+												<OptionButtonText> • • • </OptionButtonText>
+											</OptionButton>
+										</OptionArea>
+									</PostInfo>
+								</OutfitPost>}
+								<CommentContainer>
+									{/* 
+									make API call to rethinkDB to retrive real comments
+									set retrived comments into this.state.commentList
+									replace require('../../assets/icon/role-icon/pikachu.jpg') with { uri: item.icon } after setting up state 
+									*/}
+									{this.state.commentList.map((item, key) => {
+										return (
+											<CommentItemWrapper key={key}>
+												<CommentItem>
+													<UserInfoArea>
+														<UserIcon source={require('../../../assets/icon/role-icon/pikachu.png')} />
+														<Username> {item.username} </Username>
+													</UserInfoArea>
+													<CommentContent>
+														<CommentText>{item.text}{"\n"}</CommentText>
+														<CommentTime>{item.date}</CommentTime>
+													</CommentContent>
+												</CommentItem>
+											</CommentItemWrapper>
+										);
+									})}
+								</CommentContainer>
+							</PostScollView>
+						</PostContainer>
+						<InputArea>
+							<InputWrapper>
+								<Input placeholder={"Comment"} autoCorrect={false} onChangeText={(commentInput) => this.setState({ commentInput: commentInput })} />
+							</InputWrapper>
+							<SendButton onPress={() => { this.sendComment() }}>
+								<Feather name={'send'} size={25} />
+							</SendButton>
+						</InputArea>
 					</KeyboardAvoidingView>
 					<TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} />
 				</Container>
@@ -212,7 +273,7 @@ const PostContainer = styled.View`
     top: 45px;
 	width: 100%;
 	height: 100%;
-	padding-bottom: 40px;
+	padding-bottom: 87.5px;
 `;
 
 const PostScollView = styled.ScrollView`
@@ -372,27 +433,94 @@ const PostImage = styled.Image`
 `;
 
 const CommentContainer = styled.View`
-    top: 35px;
+    top: 25px;
     left: 5%;
     width: 90%;
 `;
 
+const CommentItemWrapper = styled.View`
+	width: 100%;
+`;
+
+const CommentItem = styled.View`
+	padding-top: 5px;
+	padding-bottom: 5px;
+	flex-direction: row;
+	background-color: #FBFBFB;
+	border-bottom-color: gainsboro;
+	border-bottom-width: 0.5;
+	border-radius: 5px;
+`;
+
+const UserInfoArea = styled.View`
+	flex: 1;
+	height: 100%;
+	padding-left: 10px;
+	padding-top: 5px;
+	align-items: center;
+`;
+
+const UserIcon = styled.Image`
+	width: 100%;
+	height: 50px;
+	resize-mode: stretch;
+	border-radius: 25px;
+`;
+
+const Username = styled.Text`
+	font-size: 10px;
+	font-weight: bold;
+	padding-top: 5px;
+`;
+
+const CommentContent = styled.Text`
+	flex: 5;
+	padding-left: 17.5px
+	padding-right: 15px;
+	padding-top: 5px;
+`;
+
+const CommentText = styled.Text`
+    color: black;
+	font-size: 12px;
+`;
+
+const CommentTime = styled.Text`
+	font-size: 10px;
+	color: gray;
+`;
+
 const InputArea = styled.View`
 	position: absolute;
-	height: 40px;
+	height: 42.5px;
 	width: 375px;
 	bottom: 0px;
+	zIndex: 1;
+	flex-direction: row;
+	border: 0.5px solid gainsboro;
+`;
+
+const InputWrapper = styled.View`
+	flex: 6;
 	background-color: whitesmoke;
 	justify-content: center;
-	zIndex: 1;
+	align-items: center;
 `;
 
 const Input = styled.TextInput`
-	height: 80%;
+    width: 95%;
+	height: 70%;
 	border-radius: 5px;
     background-color: white;
 	color: gray;
 	padding-left: 8px;
 	font-family: Didot;
 	font-size: 15px;
+`;
+
+const SendButton = styled.TouchableOpacity`
+    flex: 1;
+	background-color: lightblue;
+	justify-content: center;
+	align-items: center;
 `;

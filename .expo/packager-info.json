@@ -3,7 +3,7 @@
   "expoServerPort": null,
   "packagerPort": null,
   "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null
+  "expoServerNgrokUrl": "https://rb-q26.anonymous.demo.exp.direct",
+  "packagerNgrokUrl": "https://packager.rb-q26.anonymous.demo.exp.direct",
+  "ngrokPid": 47224
 }
