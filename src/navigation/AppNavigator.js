@@ -6,14 +6,16 @@ import OutfitPostScreen from '../screens/post/OutfitPostScreen';
 import WeatherPostScreen from '../screens/post/WeatherPostScreen';
 import BottomTabNavigator from './BottomTabNavigator';
 import FriendScreen from '../screens/friend/FriendScreen';
-import PostViewScreen from '../screens/history/PostViewScreen';
+import MyPostViewScreen from '../screens/history/MyPostViewScreen';
+import OutfitPostViewScreen from '../screens/home/OutfitPostViewScreen'
 
 const StackNavigator = createStackNavigator(
   { 
     OutfitPost: OutfitPostScreen,
     WeatherPost: WeatherPostScreen,
     Friend: FriendScreen,
-    PostView: PostViewScreen,
+    MyPostView: MyPostViewScreen,
+    OutfitPostView: OutfitPostViewScreen,
     BottomTab: BottomTabNavigator,
   },
   {

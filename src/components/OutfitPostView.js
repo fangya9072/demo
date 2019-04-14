@@ -96,8 +96,8 @@ export default class OutfitPostView extends React.Component {
 											<CommentText>{item.text} </CommentText> 
 											<CommentTime> {item.date}</CommentTime>
 								        </CommentContent>
-							        </CommentItem>  	
-				        		);
+							    </CommentItem>  	
+				      	);
 							})}
 						</CommentView>
 						<CommentWrite>

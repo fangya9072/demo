@@ -1,144 +1,238 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { Location, Permissions } from "expo";
-import  MapView  from 'react-native-maps'
+import MapView from 'react-native-maps'
 import { SafeAreaView } from 'react-navigation';
-import { Alert, Linking, AsyncStorage } from 'react-native';
+import { Alert, Linking, AsyncStorage, Dimensions, TouchableOpacity } from 'react-native';
 import Entypo from "react-native-vector-icons/Entypo";
-import OutfitPostView from '../../components/OutfitPostView';
+import Feather from "react-native-vector-icons/Feather";
 import TopBanner from '../../components/TopBanner';
-import { COLORS } from '../../constant/color';
-	
+
 
 export default class HomeScreen extends React.Component {
-	
-		// set up navigation
-		static navigationOptions = {
-				title: 'HOME',
+
+	// set up navigation
+	static navigationOptions = {
+		title: 'HOME',
+	};
+
+	// set up state
+	constructor(props) {
+		super(props);
+		this.state = {
+			pageTitle: 'HOME',
+			username: '',
+			mapRegion: null,
+			coordinate: {
+				longitude: 0,
+				latitude: 0,
+			},
+			/*  
+			userID: username
+			icon: most recent outfit post for a user
+			friendType: restriected to 'add', 'sent', 'friend'
+			'add' when there is no friend request between 2 users in db
+			'sent' when there exists friend request between 2 users in db, but the its status is false
+			'friend' when there exists friend request between 2 users in db, and the its status is true
+			*/
+			outfitPostMarkers: [
+				{
+					userID: 'hcx',
+					latitude: 35.909995043008486,
+					longitude: -79.05328273773193,
+					icon: require('../../../assets/icon/role-icon/pikachu.png'),
+					friendType: 'add',
+					date: 'Mar 9, 2019',
+				},
+				{
+					userID: 'SherryPi',
+					latitude: 35.910551182261656,
+					longitude: -79.07154321670532,
+					icon: require('../../../assets/icon/role-icon/trump.jpg'),
+					friendType: 'add',
+					date: 'Mar 12, 2019',
+				},
+			],
+			outfitPostViewVisible: false,
+			outfitPostInfo: {
+				username: '',
+				icon: '',
+				friendType: '',
+				date:'',
+			},
 		};
+	}
 
-	  // set up state
-		constructor(props) {
-				super(props);
-			  this.state = {
-					  pageTitle: 'HOME',
-						username: '',
-					  outfitPostViewVisible: false,
-						mapRegion: null,
-						coordinate: {
-							longitude: 0,
-							latitude: 0,
-						},
-						/*  
-					  markers below for people nearby are only for test purpose, 
-						make API call to rethinkDB to get real user data
-						*/
-						outfitPostMarkers: [ 
-							  { userID: 1, 
-				  			  latitude: 35.909995043008486,
-								  longitude: -79.05328273773193,
-								  src: "https://s3-ap-southeast-1.amazonaws.com/so-srilanka/any/boy.png", },
-								{ userID: 2, 
-									latitude: 35.910551182261656,
-				  			  longitude: -79.07154321670532,
-									src: "https://s3-ap-southeast-1.amazonaws.com/so-srilanka/any/female.png", },
-    				],
-				};
-		}
+	// functions that runs whenever HomePage is rerendered in DOM
+	componentDidMount() {
+		this.getUsername();
+		this.getCurrentLocation();
+	}
 
-  	// functions that runs whenever HomePage is rerendered in DOM
-		componentDidMount() {
-			  this.getUsername();
-				this.getCurrentLocation();
-		}
-	
-		// function to retrive username from persistant storage
-		getUsername = async () => {
-			try {
-				const username = await AsyncStorage.getItem('username');
-				if (username !== null) {
-					this.setState({
-						username: username,
-					})
-				}
-			} catch (error) {
-				console.error(error);
-			}
-		};
-
-		// function to get user's realtime geolocation
-		getCurrentLocation = async () => {
-			  let { status } = await Permissions.askAsync(Permissions.LOCATION);
-				if (status !== 'granted') {
-					Alert.alert(
-						'Please Allow Access',
-						[
-							'This applicaton needs access to your current location.',
-							'\n',
-							'Please go to Settings of your device and grant permissions to Location Service.',
-						].join(''),
-						[
-							{ text: 'Not Now', style: 'cancel' },
-							{ text: 'Settings', onPress: () => Linking.openURL('app-settings:') },
-						],
-					);
-				}
-				let location = await Location.getCurrentPositionAsync({});
+	// function to retrive username from persistant storage
+	getUsername = async () => {
+		try {
+			const username = await AsyncStorage.getItem('username');
+			if (username !== null) {
 				this.setState({
-						mapRegion: { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 },
-						coordinate: { latitude: location.coords.latitude, longitude: location.coords.longitude }
-		    });
-		};
+					username: username,
+				})
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
-		// function to reload screen
-		onRefresh = () => {
-			this.getCurrentLocation();
+	// function to get user's realtime geolocation
+	getCurrentLocation = async () => {
+		let { status } = await Permissions.askAsync(Permissions.LOCATION);
+		if (status !== 'granted') {
+			Alert.alert(
+				'Please Allow Access',
+				[
+					'This applicaton needs access to your current location.',
+					'\n',
+					'Please go to Settings of your device and grant permissions to Location Service.',
+				].join(''),
+				[
+					{ text: 'Not Now', style: 'cancel' },
+					{ text: 'Settings', onPress: () => Linking.openURL('app-settings:') },
+				],
+			);
 		}
+		let location = await Location.getCurrentPositionAsync({});
+		this.setState({
+			mapRegion: { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 },
+			coordinate: { latitude: location.coords.latitude, longitude: location.coords.longitude }
+		});
+	};
 
-		// functions that open and close outfit post view
-		openPost() {
-			  this.setState({ outfitPostViewVisible: true });
-		}
-		closePost() {
-			  this.setState({ outfitPostViewVisible: false });
-		}
+	// function to reload screen
+	onRefresh = () => {
+		this.getCurrentLocation();
+	}
 
-		// rendering 
-		render(){
-				return (
-					<SafeAreaView style={{ backgroundColor: 'whitesmoke', flex: 1}}>
-					  <Container>
-								<Map>
-								    <MapView style={{ flex: 1 }} initialRegion={this.state.mapRegion}>
-										    <MapView.Marker	
-										    coordinate={{ longitude: this.state.coordinate.longitude, latitude: this.state.coordinate.latitude }}
-									    	title={"my location"}
-					    					>
-                     				<Entypo name={'location-pin'} size={30} color={'black'} style={{backgroundColor: 'transparent'}}/>
-									    	</MapView.Marker>
-										    {this.state.outfitPostMarkers.map((item, key) => {
-					  					    	return (
-								  					    <MapView.Marker	
-										    				coordinate={{ longitude: Number(item.longitude), latitude: Number(item.latitude) }}
-													    	title={item.title}
-	    													key={key}
-			    											onPress={(e) => this.openPost()}
-					    									>
-                     							  <MarkerImage source={{ uri: item.src }}/>
-									    					</MapView.Marker>
-				        						);
-								  			})}
-							  		</MapView>
-								    {this.state.outfitPostViewVisible && <OutfitPostContainer>
-								        <OutfitPostView close={() => { this.closePost(); }} />
-							    	</OutfitPostContainer>}
-					    	</Map>
-								{/* put components with absolute position at the bottom */}
-								<TopBanner pageTitle={this.state.pageTitle} navigation={this.props.navigation} navigation={this.state.navigation} refreshHandler={this.onRefresh.bind(this)} />
-				  	</Container>
-					</SafeAreaView>
-		    );
+	// functions that open and close outfit post view
+	openPost() {
+		this.setState({ outfitPostViewVisible: true });
+	}
+	closePost() {
+		this.setState({ outfitPostViewVisible: false });
+	}
+
+	// function to send friend request
+	sendFriendRequest = async (username_from, username_to) => {
+		try {
+			let response = await fetch('http://3.93.183.130:3000/friendrequests/' + username_from, { 
+				method: 'PUT',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({
+					user_to_id: username_to, 
+          status: false,
+				}),
+			});
+			let responseJson = await response.json();
+			console.log(responseJson)
+			if (responseJson.inserted == 1){
+				this.setState({
+					outfitPostInfo: {
+						username: this.state.outfitPostInfo.username,
+				    icon: this.state.outfitPostInfo.icon,
+				    friendType: 'sent',
+				    date: this.state.outfitPostInfo.date,
+					}
+				});
+			} else {
+				this.setState({errorMsg: 'Friend Request Already Exist!'})
+			}
+		} catch (error) {
+			console.error(error);
 		}
+	};
+
+	// rendering 
+	render() {
+		return (
+			<SafeAreaView style={{ backgroundColor: 'whitesmoke', flex: 1 }}>
+				<Container>
+					<Map>
+						<MapView style={{ flex: 1 }} initialRegion={this.state.mapRegion}>
+							<MapView.Marker
+								coordinate={{ longitude: this.state.coordinate.longitude, latitude: this.state.coordinate.latitude }}
+								title={"my location"}
+							>
+								<Entypo name={'location-pin'} size={30} color={'black'} style={{ backgroundColor: 'transparent' }} />
+							</MapView.Marker>
+							{this.state.outfitPostMarkers.map((item, key) => {
+								return (
+									<MapView.Marker
+										coordinate={{ longitude: Number(item.longitude), latitude: Number(item.latitude) }}
+										title={item.title}
+										key={key}
+										onPress={() => {
+											this.openPost();
+											this.setState({
+												outfitPostInfo: {
+													username: item.userID,
+													icon: item.icon,
+													friendType: item.friendType,
+													date: item.date,
+												}
+											});
+										}}
+									>
+										<MarkerImage source={item.icon} />
+									</MapView.Marker>
+								);
+							})}
+						</MapView>
+
+						{this.state.outfitPostViewVisible && <OutfitPostContainer style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}>
+							<OutfitPostView>
+								<CloseButtonWrapper>
+									<CloseButton onPress={() => this.closePost()} >
+										<Feather name={'x-circle'} size={26.5} style={{ marginTop: -1.5, marginLeft: -1 }} />
+									</CloseButton>
+								</CloseButtonWrapper>
+								<UserInfoWrapper>
+									<UsernameText> {this.state.outfitPostInfo.username} </UsernameText>
+									<FriendButtonWrapper>
+										{this.state.outfitPostInfo.friendType == 'add' && <TouchableOpacity onPress={() => this.sendFriendRequest(this.state.username, this.state.outfitPostInfo.username)}>
+											<FriendButton>
+												<Entypo name={'plus'} size={20} style={{ marginLeft: 6.5, marginTop: 1 }} />
+												<FriendButtonText style={{paddingLeft: 2.5, paddingRight: 6.5}}> Add </FriendButtonText>
+											</FriendButton>
+										</TouchableOpacity>}
+										{this.state.outfitPostInfo.friendType == 'sent' && <FriendButton>
+											<Entypo name={'check'} size={17.5} style={{ marginLeft: 7.5, marginTop: 2.5 }} />
+											<FriendButtonText style={{paddingLeft: 2.5, paddingRight: 5}}> Sent </FriendButtonText>
+										</FriendButton>}
+										{this.state.outfitPostInfo.friendType == 'friend' && <FriendButton>
+											<Feather name={'users'} size={17.5} style={{ marginLeft: 10 }} />
+											<FriendButtonText style={{paddingLeft: 5, paddingRight: 3.5}}> Friend </FriendButtonText>
+										</FriendButton>}
+									</FriendButtonWrapper>
+								</UserInfoWrapper>
+								<PhotoWrapper>
+									<Photo source={this.state.outfitPostInfo.icon} />
+								</PhotoWrapper>
+								<MetaInfoWrapper>
+							  	<DateTextWrapper style={{alignItems: 'flex-start'}}>
+										<DateText>{this.state.outfitPostInfo.date}</DateText>
+									</DateTextWrapper>
+									<MoreTextWrapper style={{alignItems: 'flex-end'}} onPress={() => this.props.navigation.navigate('OutfitPostView', {isMainView: false, postInfo: this.state.outfitPostInfo})}>
+									  <MoreText> . . . </MoreText>
+									</MoreTextWrapper>
+								</MetaInfoWrapper>
+							</OutfitPostView>
+						</OutfitPostContainer>}
+					</Map>
+					{/* put components with absolute position at the bottom */}
+					<TopBanner pageTitle={this.state.pageTitle} navigation={this.props.navigation} navigation={this.state.navigation} refreshHandler={this.onRefresh.bind(this)} />
+				</Container>
+			</SafeAreaView>
+		);
+	}
 }
 
 
@@ -157,13 +251,113 @@ const Map = styled.View`
 
 const MarkerImage = styled.Image`
   	width: 30px;
-  	height: 30px;
+		height: 30px;
+		border-radius: 15px;
 `;
 
 const OutfitPostContainer = styled.View`
 		position: absolute;
-		left: 37.5px;
-		top: 40px;
-    width: 300px;
-	  height: 450px;
+		align-items: center;
+		background-color: transparent;
+`;
+
+const OutfitPostView = styled.View`
+    top: 10%;
+		width: 80%;
+		height: 60%;
+	  flexDirection: column;
+		background-color: rgba(255, 255, 255, 0.9);
+		border-radius: 5px;
+		align-items: center;
+`;
+
+const CloseButtonWrapper = styled.View`
+	flex: 1.5;
+	width: 100%;
+	align-items: flex-end;
+`;
+
+const CloseButton = styled.TouchableOpacity`
+	width: 25px;
+	height: 25px;
+	backgroundColor: lightblue;
+	border-radius: 25px;
+	margin-right: 5px;
+	margin-top: 5px;
+`;
+
+const UserInfoWrapper = styled.View`
+	width: 250px;
+	flex-direction: row;
+	align-items: flex-end;
+	justify-content: center;
+`;
+
+const UsernameText = styled.Text`
+  font-family: Optima;
+	font-size: 17.5px;
+	font-weight: 400;
+	color: black;
+	padding-bottom: 1px;
+`;
+
+const FriendButtonWrapper = styled.View`
+	height: 25px;
+	justify-content: center;
+	margin-left: 5px;
+`;
+
+const FriendButton = styled.View`
+  height: 22.5px;
+	background-color: gainsboro;
+	border-radius: 5px;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+`;
+
+const FriendButtonText = styled.Text`
+  font-family: Gill Sans;
+	font-size: 17.5px;
+`;
+
+const PhotoWrapper = styled.View`
+	flex: 10;
+	align-items: center;
+	justify-content: center;
+`;
+
+const Photo = styled.Image`
+	width: 250px;
+	height: 250px;
+	resize-mode: cover;
+	border-radius: 5px;
+`;
+
+const MetaInfoWrapper = styled.View`
+	flex: 1.5;
+	width: 250px;
+	flex-direction: row;
+`;
+
+const DateTextWrapper = styled.View`
+	flex: 2;
+`;
+
+const MoreTextWrapper = styled.TouchableOpacity`
+	flex: 1;
+`;
+
+const DateText = styled.Text`
+	font-size: 12.5px;
+	padding-top: 5px;
+  font-family: Georgia;
+	color: gray;
+`;
+
+const MoreText= styled.Text`
+	font-size: 15px;
+	font-weight: bold;
+  font-family: Georgia;
+	color: black;
 `;

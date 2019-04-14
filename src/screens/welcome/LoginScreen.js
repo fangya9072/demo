@@ -24,7 +24,7 @@ export default class LoginScreen extends React.Component {
 
 	// functions that runs whenever LoginPage is re-rendered in DOM
 	componentWillMount() {
-		this.removeDate('username');
+		this.removeData('username');
 	}
 
   	//check login username and password function
@@ -59,7 +59,7 @@ export default class LoginScreen extends React.Component {
 		    console.error(error);
 		}
 	};
-	removeDate = async (key) => {
+	removeData = async (key) => {
 		try {
 		    await AsyncStorage.removeItem(key);
 		} catch (error) {

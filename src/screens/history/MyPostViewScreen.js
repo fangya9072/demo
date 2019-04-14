@@ -9,7 +9,7 @@ import TopBanner from '../../components/TopBanner';
 import { ICONS } from '../../constant/icon';
 import Feather from "react-native-vector-icons/Feather";
 
-export default class PostViewScreen extends React.Component {
+export default class MyPostViewScreen extends React.Component {
 
 	// set up navigation
 	static navigationOptions = {
@@ -293,7 +293,7 @@ const OutfitPost = styled.View`
 `;
 
 const PostInfo = styled.View`
-    top: 5px;
+    top: 10px;
 	width: 100%;
 	height: 25px;
 	flex-direction: row;
@@ -433,7 +433,7 @@ const PostImage = styled.Image`
 `;
 
 const CommentContainer = styled.View`
-    top: 25px;
+    top: 35px;
     left: 5%;
     width: 90%;
 `;

@@ -133,7 +133,7 @@ export default class HistoryScreen extends React.Component {
 											return (
 												<Post 
 												key={postKey} 
-												onPress={() => this.props.navigation.navigate('PostView', {isMainView: false, post: postItem})}
+												onPress={() => this.props.navigation.navigate('MyPostView', {isMainView: false, post: postItem})}
 												>
 													<PostImage source={{ uri: 'data:image/png;base64,' + postItem.image }} />
 												</Post>
