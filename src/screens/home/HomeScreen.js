@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-navigation';
 import { Alert, Linking, AsyncStorage, Dimensions, TouchableOpacity } from 'react-native';
 import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
+import AntDesign from "react-native-vector-icons/AntDesign";
 import TopBanner from '../../components/TopBanner';
 
 
@@ -30,9 +31,9 @@ export default class HomeScreen extends React.Component {
 			/*  
 			userID: username
 			icon: most recent outfit post for a user
-			friendType: restriected to 'add', 'sent', 'friend'
+			friendType: restriected to 'add', 'pending', 'friend'
 			'add' when there is no friend request between 2 users in db
-			'sent' when there exists friend request between 2 users in db, but the its status is false
+			'pending' when there exists friend request between 2 users in db, but the its status is false
 			'friend' when there exists friend request between 2 users in db, and the its status is true
 			*/
 			outfitPostMarkers: [
@@ -41,7 +42,7 @@ export default class HomeScreen extends React.Component {
 					latitude: 35.909995043008486,
 					longitude: -79.05328273773193,
 					icon: require('../../../assets/icon/role-icon/pikachu.png'),
-					friendType: 'add',
+					friendType: '',
 					date: 'Mar 9, 2019',
 				},
 				{
@@ -49,7 +50,7 @@ export default class HomeScreen extends React.Component {
 					latitude: 35.910551182261656,
 					longitude: -79.07154321670532,
 					icon: require('../../../assets/icon/role-icon/trump.jpg'),
-					friendType: 'add',
+					friendType: '',
 					date: 'Mar 12, 2019',
 				},
 			],
@@ -58,7 +59,7 @@ export default class HomeScreen extends React.Component {
 				username: '',
 				icon: '',
 				friendType: '',
-				date:'',
+				date: '',
 			},
 		};
 	}
@@ -120,30 +121,68 @@ export default class HomeScreen extends React.Component {
 		this.setState({ outfitPostViewVisible: false });
 	}
 
+	// function to check the friend status of two users
+	checkFriend = async (username1, username2) => {
+		try {
+			let response = await fetch('http://3.93.183.130:3000/checkfriend/' + username1 + '?user2=' + username2, { method: 'GET' });
+			let responseJson = await response.json();
+			if (responseJson == true) {
+				this.setState({
+					outfitPostInfo: {
+						username: this.state.outfitPostInfo.username,
+						icon: this.state.outfitPostInfo.icon,
+						friendType: 'friend',
+						date: this.state.outfitPostInfo.date,
+					}
+				});
+			} else if (responseJson == false) {
+				this.setState({
+					outfitPostInfo: {
+						username: this.state.outfitPostInfo.username,
+						icon: this.state.outfitPostInfo.icon,
+						friendType: 'pending',
+						date: this.state.outfitPostInfo.date,
+					}
+				});
+			} else {
+				this.setState({
+					outfitPostInfo: {
+						username: this.state.outfitPostInfo.username,
+						icon: this.state.outfitPostInfo.icon,
+						friendType: 'add',
+						date: this.state.outfitPostInfo.date,
+					}
+				});
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	// function to send friend request
 	sendFriendRequest = async (username_from, username_to) => {
 		try {
-			let response = await fetch('http://3.93.183.130:3000/friendrequests/' + username_from, { 
+			let response = await fetch('http://3.93.183.130:3000/friendrequests/' + username_from, {
 				method: 'PUT',
-				headers: {'Content-Type': 'application/json'},
+				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
-					user_to_id: username_to, 
-          status: false,
+					user_to_id: username_to,
+					status: false,
 				}),
 			});
 			let responseJson = await response.json();
 			console.log(responseJson)
-			if (responseJson.inserted == 1){
+			if (responseJson.inserted == 1) {
 				this.setState({
 					outfitPostInfo: {
 						username: this.state.outfitPostInfo.username,
-				    icon: this.state.outfitPostInfo.icon,
-				    friendType: 'sent',
-				    date: this.state.outfitPostInfo.date,
+						icon: this.state.outfitPostInfo.icon,
+						friendType: 'pending',
+						date: this.state.outfitPostInfo.date,
 					}
 				});
 			} else {
-				this.setState({errorMsg: 'Friend Request Already Exist!'})
+				this.setState({ errorMsg: 'Friend Request Already Exist!' })
 			}
 		} catch (error) {
 			console.error(error);
@@ -171,6 +210,7 @@ export default class HomeScreen extends React.Component {
 										key={key}
 										onPress={() => {
 											this.openPost();
+											this.checkFriend(this.state.username, item.userID);
 											this.setState({
 												outfitPostInfo: {
 													username: item.userID,
@@ -196,32 +236,47 @@ export default class HomeScreen extends React.Component {
 								</CloseButtonWrapper>
 								<UserInfoWrapper>
 									<UsernameText> {this.state.outfitPostInfo.username} </UsernameText>
-									<FriendButtonWrapper>
-										{this.state.outfitPostInfo.friendType == 'add' && <TouchableOpacity onPress={() => this.sendFriendRequest(this.state.username, this.state.outfitPostInfo.username)}>
-											<FriendButton>
-												<Entypo name={'plus'} size={20} style={{ marginLeft: 6.5, marginTop: 1 }} />
-												<FriendButtonText style={{paddingLeft: 2.5, paddingRight: 6.5}}> Add </FriendButtonText>
-											</FriendButton>
-										</TouchableOpacity>}
-										{this.state.outfitPostInfo.friendType == 'sent' && <FriendButton>
-											<Entypo name={'check'} size={17.5} style={{ marginLeft: 7.5, marginTop: 2.5 }} />
-											<FriendButtonText style={{paddingLeft: 2.5, paddingRight: 5}}> Sent </FriendButtonText>
-										</FriendButton>}
-										{this.state.outfitPostInfo.friendType == 'friend' && <FriendButton>
-											<Feather name={'users'} size={17.5} style={{ marginLeft: 10 }} />
-											<FriendButtonText style={{paddingLeft: 5, paddingRight: 3.5}}> Friend </FriendButtonText>
-										</FriendButton>}
-									</FriendButtonWrapper>
+									<ButtonArea>
+										<ButtonWrapper style={{ marginRight: 2.5 }}>
+											{this.state.outfitPostInfo.friendType == 'add' &&
+												<TouchableOpacity
+													onPress={() => this.sendFriendRequest(this.state.username, this.state.outfitPostInfo.username)}
+												>
+													<Button style={{backgroundColor: 'gainsboro'}}>
+														<Entypo name={'plus'} size={20} style={{ marginLeft: 6.5, marginTop: 1 }} />
+														<ButtonText style={{ paddingLeft: 2.5, paddingRight: 6.5 }}> Add </ButtonText>
+													</Button>
+												</TouchableOpacity>}
+											{this.state.outfitPostInfo.friendType == 'pending' &&
+												<Button style={{ backgroundColor: 'whitesmoke' }}>
+													<Feather name={'loader'} size={17.5} style={{ marginLeft: 7.5, marginTop: 1 }} />
+													<ButtonText style={{ paddingLeft: 2.5, paddingRight: 5 }}> Pending </ButtonText>
+												</Button>}
+											{this.state.outfitPostInfo.friendType == 'friend' &&
+												<Button style={{ backgroundColor: 'whitesmoke'}}>
+													<Feather name={'users'} size={17.5} style={{ marginLeft: 10 }} />
+													<ButtonText style={{ paddingLeft: 5, paddingRight: 3.5 }}> Friend </ButtonText>
+												</Button>}
+										</ButtonWrapper>
+										<ButtonWrapper style={{ marginLeft: 2.5 }}>
+											<TouchableOpacity>
+												<Button style={{backgroundColor: 'gainsboro'}}>
+													<AntDesign name={'message1'} size={16.5} style={{ marginLeft: 7.5, marginTop: 1.5 }} />
+													<ButtonText> Messaage </ButtonText>
+												</Button>
+											</TouchableOpacity>
+										</ButtonWrapper>
+									</ButtonArea>
 								</UserInfoWrapper>
 								<PhotoWrapper>
 									<Photo source={this.state.outfitPostInfo.icon} />
 								</PhotoWrapper>
 								<MetaInfoWrapper>
-							  	<DateTextWrapper style={{alignItems: 'flex-start'}}>
+									<DateTextWrapper style={{ alignItems: 'flex-start' }}>
 										<DateText>{this.state.outfitPostInfo.date}</DateText>
 									</DateTextWrapper>
-									<MoreTextWrapper style={{alignItems: 'flex-end'}} onPress={() => this.props.navigation.navigate('OutfitPostView', {isMainView: false, postInfo: this.state.outfitPostInfo})}>
-									  <MoreText> . . . </MoreText>
+									<MoreTextWrapper style={{ alignItems: 'flex-end' }} onPress={() => this.props.navigation.navigate('OutfitPostView', { isMainView: false, postInfo: this.state.outfitPostInfo })}>
+										<MoreText> . . . </MoreText>
 									</MoreTextWrapper>
 								</MetaInfoWrapper>
 							</OutfitPostView>
@@ -266,7 +321,7 @@ const OutfitPostView = styled.View`
 		width: 80%;
 		height: 60%;
 	  flexDirection: column;
-		background-color: rgba(255, 255, 255, 0.9);
+		background-color: rgba(255, 255, 255, 0.85);
 		border-radius: 5px;
 		align-items: center;
 `;
@@ -288,9 +343,7 @@ const CloseButton = styled.TouchableOpacity`
 
 const UserInfoWrapper = styled.View`
 	width: 250px;
-	flex-direction: row;
-	align-items: flex-end;
-	justify-content: center;
+	align-items: center
 `;
 
 const UsernameText = styled.Text`
@@ -301,22 +354,27 @@ const UsernameText = styled.Text`
 	padding-bottom: 1px;
 `;
 
-const FriendButtonWrapper = styled.View`
+const ButtonArea = styled.View`
 	height: 25px;
 	justify-content: center;
-	margin-left: 5px;
+	align-items: center;
+	flex-direction: row;
+	margin-top: 10px;
 `;
 
-const FriendButton = styled.View`
-  height: 22.5px;
-	background-color: gainsboro;
+const ButtonWrapper = styled.View`
+	justify-content: center;
+`;
+
+const Button = styled.View`
+  height: 25px;
 	border-radius: 5px;
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
 `;
 
-const FriendButtonText = styled.Text`
+const ButtonText = styled.Text`
   font-family: Gill Sans;
 	font-size: 17.5px;
 `;
@@ -325,6 +383,7 @@ const PhotoWrapper = styled.View`
 	flex: 10;
 	align-items: center;
 	justify-content: center;
+	margin-top: 10px;
 `;
 
 const Photo = styled.Image`
@@ -355,7 +414,7 @@ const DateText = styled.Text`
 	color: gray;
 `;
 
-const MoreText= styled.Text`
+const MoreText = styled.Text`
 	font-size: 15px;
 	font-weight: bold;
   font-family: Georgia;

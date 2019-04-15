@@ -111,35 +111,38 @@ export default class FriendScreen extends React.Component {
 		this.getFriendList();
 	};
 
-		// function to delete friend request
-		deleteFriendRequest = async (id) => {
-			try {
-				let response = await fetch('http://3.93.183.130:3000/friendrequests/' + id, { method: 'DELETE' })
-				let responseJson = await response.json();
-				if (responseJson.deleted == 1) {
-					this.refreshFriendRequests();
-				} else {
-					this.setState({ errorMsg: 'Unable to delete friend request. Please try again.' });
-				}
-			} catch (error) {
-				console.error(error);
+	// function to delete friend request by request id
+	deleteFriendRequest = async (id) => {
+		try {
+			let response = await fetch('http://3.93.183.130:3000/friendrequests/' + id, { method: 'DELETE' })
+			let responseJson = await response.json();
+			if (responseJson.deleted == 1) {
+				this.refreshFriendRequests();
+			} else {
+				this.setState({ errorMsg: 'Unable to delete friend request. Please try again.' });
 			}
-		};
+		} catch (error) {
+			console.error(error);
+		}
+	};
 	
-		// function to comfirm friend request
-		confirmFriendRequest = async (id) => {
-			try {
-				let response = await fetch('http://3.93.183.130:3000/friendrequests/' + id, { method: 'POST' })
-				let responseJson = await response.json();
-				if (responseJson.replaced == 1) {
-					this.refreshFriendRequests();
-				} else {
-					this.setState({ errorMsg: 'Unable to comfirm friend request. Please try again.' });
-				}
-			} catch (error) {
-				console.error(error);
+	// function to comfirm friend request by request id
+	confirmFriendRequest = async (id) => {
+		try {
+			let response = await fetch('http://3.93.183.130:3000/friendrequests/' + id, { method: 'POST' })
+			let responseJson = await response.json();
+			if (responseJson.replaced == 1) {
+				this.refreshFriendRequests();
+			} else {
+				this.setState({ errorMsg: 'Unable to comfirm friend request. Please try again.' });
 			}
-		};
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	// function to delete friend by two usernames
+	deleteFriend = async (username1, username2) => {};
 
 	// rendering
 	render() {
@@ -218,7 +221,7 @@ export default class FriendScreen extends React.Component {
 														<UserNameText>{item.username}</UserNameText>
 													</UserNameWrapper>
 													<ButtonArea>
-														<ButtonWrapper onPress={() => this.deleteFriendRequest(item.requestId)}>
+														<ButtonWrapper onPress={() => this.confirmFriendRequest(item.requestId)}>
 															<ButtonText> COMFIRM </ButtonText>
 														</ButtonWrapper>
 														<ButtonWrapper onPress={() => this.deleteFriendRequest(item.requestId)}>
