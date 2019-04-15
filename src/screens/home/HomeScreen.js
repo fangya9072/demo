@@ -38,7 +38,7 @@ export default class HomeScreen extends React.Component {
 			*/
 			outfitPostMarkers: [
 				{
-					userID: 'hcx',
+					userID: 'fangya',
 					latitude: 35.909995043008486,
 					longitude: -79.05328273773193,
 					icon: require('../../../assets/icon/role-icon/pikachu.png'),
@@ -46,7 +46,7 @@ export default class HomeScreen extends React.Component {
 					date: 'Mar 9, 2019',
 				},
 				{
-					userID: 'SherryPi',
+					userID: 'hcx',
 					latitude: 35.910551182261656,
 					longitude: -79.07154321670532,
 					icon: require('../../../assets/icon/role-icon/trump.jpg'),
@@ -171,7 +171,6 @@ export default class HomeScreen extends React.Component {
 				}),
 			});
 			let responseJson = await response.json();
-			console.log(responseJson)
 			if (responseJson.inserted == 1) {
 				this.setState({
 					outfitPostInfo: {
