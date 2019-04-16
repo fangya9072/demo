@@ -1,7 +1,7 @@
 Since we are currently supporting only IOS version of the app, this document will guide you to run demo on MacOS. If you are developing on a windows machine, please use virtual machine for MacOS instead.
 
 ## Install Node.js
-Make sure you have node 10+ installed. If not, see the following instructions: 
+Make sure you have **node 10+** installed. If not, see the following instructions: 
 
 
 #### Install nvm
@@ -54,8 +54,8 @@ Open the **App Store** on your Mac and then search for **Xcode**. Then just clic
 Another way to run the demo is to use the Expo client app on your iOS device. <br>
 Click [here](https://itunes.apple.com/us/app/expo-client/id982107779?mt=8) to download the latest Expo client app to your iOS device.
 
-## Run our demo
-Now navigate to the demo folder that must be contain package.json file and run the demo:
+## Run demo
+Now navigate to the demo folder that must be contain **package.json** file and run the demo:
 ```
 cd demo
 expo start
