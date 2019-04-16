@@ -17,18 +17,18 @@ command -v nvm
 ``` 
 which should output 'nvm' if the installation was successful. 
 
-#### Install Node.js via NVM
+#### Install Node.js via nvm
 ```
 nvm install node
 ```
 
-#### Verify Node and npm installation
-npm is a tool installed with Node.js, which means that when you download Node.js, you automatically get npm installed on your computer.
+#### Verify Node.js and npm installation
+npm is a package manager for Node.js packages, and it is installed with Node.js, which means that when you download Node.js, you automatically get npm installed on your computer.
 ```
 node -v
 npm -v
 ```
-which should output the version of node and npm on your mac if the installation was successful. 
+which should output the version of Node.js and npm if the installation was successful. 
 
 
 ## Intall Expo CLI
@@ -51,28 +51,28 @@ Once you’re sure you are running the correct version of the mac operating syst
 Open the **App Store** on your Mac and then search for **Xcode**. Then just click the “Get” or “Download” button and start the installation process.
 
 ## Download Expo Mobile Client for IOS
-Another way to run the demo is to use the Expo client app on your iOS device. <br>
+If you are unable to install Xcode, another way to run the demo is to use the Expo client app on your iOS device. <br>
 Click [here](https://itunes.apple.com/us/app/expo-client/id982107779?mt=8) to download the latest Expo client app to your iOS device.
 
 ## Run demo
-Now navigate to the demo folder that must be contain **package.json** file and run the demo:
+Now navigate to the demo folder that must contain **package.json** file and run the demo:
 ```
 cd demo
 expo start
 ```
-You should see a QR code generated in the web browser, then there are two ways to simulate the app:
+You should see a web page popping up in your web browser which contains a QR code, then there are two ways to simulate the app:
 
-#### Using IOS simulator
+#### Using Xcode's IOS simulator
 Click **run on ios simulator** shown on the prompted web browswer, then the Xcode’s built in iOS simulator will be running the demo on your Mac.
 
 #### Using Expo client app
-With iOS 11 or above, open up your camera app, then scan the QR code in our terminal until a notification badge pops on top telling us that we can open it in Expo client.<br>
+With iOS 11 or above, open up your camera app, then scan the QR code in web browser or terminal until a notification badge pops on top telling us that we can open it in Expo client.<br>
 
 However, if you’re not in iOS 11, there’s still an alternative way but not with scanning:
 — Open your Expo client app and sign up/login.
-— Open another new tab in your terminal and navigate to your react-native project directory and run.
+— Open another new tab in your terminal and navigate to our demo directory and run.
 ```
 cd demo
 expo send -s emailyou@usedinexpo.com
 ```
-This will send an email to you with the link, clicking this link will open the app in expo. Then it’ll have your project up and running on your iPhone.
+This will send an email to you with a link, clicking this link will open the app in expo. Then it’ll have your project up and running on your iPhone.
