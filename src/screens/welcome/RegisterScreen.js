@@ -41,7 +41,9 @@ export default class RegisterScreen extends React.Component {
 				}),
 			}).then((response) => {
 				let result = JSON.parse(response._bodyText)
-				if (result.inserted == 1){
+				if (result == false) {
+					this.setState({errorMsg: 'Email Or Phone Already Existed!'})
+				} else if (result.inserted == 1){
 					this.props.navigation.navigate('Login')
 				} else {
 					this.setState({errorMsg: 'Username Already Existed!'})
