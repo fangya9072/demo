@@ -46,7 +46,7 @@ export default class HomeScreen extends React.Component {
 					date: 'Mar 9, 2019',
 				},
 				{
-					userID: 'hcx',
+					userID: 'SherryPi',
 					latitude: 35.910551182261656,
 					longitude: -79.07154321670532,
 					icon: require('../../../assets/icon/role-icon/trump.jpg'),
