@@ -363,9 +363,9 @@ const OutfitPostContainer = styled.View`
 `;
 
 const OutfitPostView = styled.View`
-    top: 7.5%;
+    top: 10%;
 		width: 80%;
-		height: 57.5%;
+		height: 60%;
 	  flexDirection: column;
 		background-color: rgba(255, 255, 255, 0.85);
 		border-radius: 5px;
@@ -390,6 +390,7 @@ const CloseButton = styled.TouchableOpacity`
 const UserInfoWrapper = styled.View`
 	width: 250px;
 	align-items: center;
+	padding-top:5px
 `;
 
 const UsernameText = styled.Text`
