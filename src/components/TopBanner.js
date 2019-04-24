@@ -1,11 +1,12 @@
 import React from 'react';
 import styled from 'styled-components/native';
+import { Dimensions, AsyncStorage } from 'react-native'
 import { withNavigation } from 'react-navigation';
 import TopLeftMenu from '../components/TopLeftMenu';
 import TopLocationMenu from '../components/TopLocationMenu';
 import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
-import { COLORS } from '../constant/color';
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 /* 
 Top banner Component 
@@ -18,6 +19,7 @@ class TopBanner extends React.Component {
 	constructor(props) {
 		super(props); // parent should have passed pageTitle and navigation props to this component
 		this.state = {
+			username: '',
 			userIcon: '',
 			topLeftMenuVisible: false,
 			topLocationMenuVisible: false,
@@ -27,12 +29,53 @@ class TopBanner extends React.Component {
     //rerender top banner expanded sub menu when switching between pages
 	componentDidMount() {
 		this._navListener = this.props.navigation.addListener('willFocus', () => {
+			this.getUserIcon();
 			this.setState({
 				topLeftMenuVisible: false,
 				topLocationMenuVisible: false,
 			})
 		});
 	}
+
+	/* 
+	function to retrive username from persistant storage
+	store retrieved username to this.state.username 
+	*/
+	getUsername = async () => {
+		try {
+			const username = await AsyncStorage.getItem('username');
+			if (username !== null) {
+				this.setState({
+					username: username,
+				})
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	/* 
+	function to get the image of current user's most recent outfit post
+	used to show current user's icon on Top Banner
+	*/
+	getUserIcon = async () => {
+		await this.getUsername();
+		try {
+			let response = await fetch('http://3.93.183.130:3000/recentpost/' + this.state.username, { method: 'GET' })
+			let responseJson = await response.json();
+			if(responseJson.length > 0){
+				this.setState({
+					userIcon: responseJson[0].photo,
+				});
+			} else {
+				this.setState({
+					userIcon: 'empty',
+				});
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
 	//rendering
 	render() {
@@ -41,9 +84,10 @@ class TopBanner extends React.Component {
 	    used to determine what kind of banner should be rendered
 		*/
 		const isMainView = this.props.navigation.getParam('isMainView', true);
+		let width = Dimensions.get('window').width;
 		
 		return (
-			<Container>
+			<Container style={{width: width}}>
 				{/* 
 				main banner
 				*/}
@@ -53,17 +97,14 @@ class TopBanner extends React.Component {
 					</MenuButton>
 					<BannerText> {this.props.pageTitle} </BannerText>
 					<UserButton>
-						{/* 
-					    make API call to rethinkDB to get real user icon picture, then set the user icon url as this.state.userID
-					    replace require('../../assets/icon/role-icon/pikachu.png') with { uri: this.state.userIcon } after setting up state
-					    */}
-						<UserButtonIcon source={require('../../assets/icon/role-icon/pikachu.png')} />
+						{this.state.userIcon != 'empty' && <UserButtonIcon source={{ uri: 'data:image/png;base64,' + this.state.userIcon }} />}
+						{this.state.userIcon == 'empty' && <FontAwesome name='user-circle' size={31} color='lightgray'/>}
 					</UserButton>
 					<RefreshButton onPress={this.props.refreshHandler}>
-						<Entypo name={'cw'} size={30} />
+						<Entypo name={'cw'} size={32.5} />
 					</RefreshButton>
 					<LocationButton onPress={() => { this.setState({ topLocationMenuVisible: !this.state.topLocationMenuVisible, }); }}>
-					    <Entypo name={'location'} size={25} />
+					    <Entypo name={'location'} size={26.5} />
 					</LocationButton>
 				</MainBanner>}
 
@@ -92,7 +133,6 @@ export default withNavigation(TopBanner);
 // css
 const Container = styled.View`
     height: 45px;
-	width: 375px;
 	position: absolute;
 	top: 0px;
 	left: 0px;
@@ -120,7 +160,7 @@ const BannerText = styled.Text`
 const RefreshButton = styled.TouchableOpacity`
     flex: 2;
 	align-items: center;
-	padding-top: 7.5px;
+	padding-top: 6px;
 	padding-left: 5px;
 `;
 
@@ -131,9 +171,9 @@ const UserButton = styled.TouchableOpacity`
 `;
 
 const UserButtonIcon = styled.Image`
-	width: 30px;
-	height: 30px;
-	border-radius: 17.5px;
+	width: 31px;
+	height: 31px;
+	border-radius: 15.5px;
 	resize-mode: stretch;
 `;
 

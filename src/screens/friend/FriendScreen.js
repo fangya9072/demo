@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-navigation';
 import { Keyboard, AsyncStorage, ScrollView, Image, TouchableOpacity } from 'react-native';
 import Feather from "react-native-vector-icons/Feather";
 import Entypo from "react-native-vector-icons/Entypo";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import TopBanner from '../../components/TopBanner';
 
 
@@ -62,10 +63,11 @@ export default class FriendScreen extends React.Component {
 			let response = await fetch('http://3.93.183.130:3000/friendrequests/' + this.state.username, { method: 'GET' })
 			let responseJson = await response.json();
 			for (responseItem of responseJson) {
+				var userIcon = await this.getUserIcon(responseItem.user_from_id);
 				let request = {
 					requestId: responseItem.id,
 					username: responseItem.user_from_id,
-					icon: require('../../../assets/icon/role-icon/pikachu.png'),
+					icon: userIcon,
 				}
 				this.state.friendRequestList.push(request);
 			}
@@ -95,10 +97,10 @@ export default class FriendScreen extends React.Component {
 			let response = await fetch('http://3.93.183.130:3000/friendlist/' + this.state.username, { method: 'GET' })
 			let responseJson = await response.json();
 			for (responseItem of responseJson) {
+				var userIcon = await this.getUserIcon(responseItem);
 				let friend = {
-					// friendId: responseItem.id,
 					username: responseItem,
-					icon: require('../../../assets/icon/role-icon/pikachu.png'),
+					icon: userIcon,
 					metaInfo: 'Meta Information',
 				}
 				this.state.friendList.push(friend);
@@ -193,12 +195,14 @@ export default class FriendScreen extends React.Component {
 						}
 						// check the friend status of each returned user
 						let friendStatus = await this.checkFriend(responseItem.username, this.state.username);
+						// get user icon
+						var userIcon = await this.getUserIcon(responseItem.username);
 						// create user object
 						let user = {
 							username: responseItem.username,
 							searchMode: searchMode,
 							friendStatus: friendStatus,
-							icon: require('../../../assets/icon/role-icon/pikachu.png'),
+							icon: userIcon,
 						}
 						// push the newly created user object it into the its friend status array 
 						if (friendStatus == 'self') {
@@ -295,6 +299,26 @@ export default class FriendScreen extends React.Component {
 		}
 	};
 
+	/* 
+	function to get the image of a user's most recent outfit post by his/her outfit
+	used to show that user's icon
+	return the binary data of outfit photo if it exists, else return nothing
+	*/
+	getUserIcon = async (username) => {
+		await this.getUsername();
+		try {
+			let response = await fetch('http://3.93.183.130:3000/recentpost/' + username, { method: 'GET' })
+			let responseJson = await response.json();
+			if(responseJson.length > 0){
+				return responseJson[0].photo;
+			} else {
+				return;
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	// rendering
 	render() {
 		return (
@@ -376,7 +400,8 @@ export default class FriendScreen extends React.Component {
 										return (
 											<RequestItem key={key}>
 												<UserIconWrapper style={{ flex: 1 }}>
-													<Image source={item.icon} style={{ width: 60, height: 60, borderRadius: 30 }} />
+													{item.icon && <Image source={{ uri: 'data:image/png;base64,' + item.icon }} style={{ width: 60, height: 60, borderRadius: 30 }} />}
+													{!item.icon && <FontAwesome name='user-circle' size={60} color='lightgray'/> }
 												</UserIconWrapper>
 												<UserInfoWrapper style={{ flex: 3.5 }}>
 													<UserNameWrapper>
@@ -412,7 +437,8 @@ export default class FriendScreen extends React.Component {
 											return (
 												<FriendItem key={key}>
 													<UserIconWrapper style={{ flex: 1 }}>
-														<Image source={item.icon} style={{ width: 50, height: 50, borderRadius: 25 }} />
+													    {item.icon && <Image source={{ uri: 'data:image/png;base64,' + item.icon }} style={{ width: 50, height: 50, borderRadius: 25 }} />}
+													    {!item.icon && <FontAwesome name='user-circle' size={50} color='lightgray'/> }
 													</UserIconWrapper>
 													<UserInfoWrapper style={{ flex: 3.5 }}>
 														<UserNameWrapper>
@@ -481,7 +507,8 @@ export default class FriendScreen extends React.Component {
 											return (
 												<SearchItem key={key}>
 													<UserIconWrapper style={{ flex: 1 }}>
-														<Image source={item.icon} style={{ width: 50, height: 50, borderRadius: 25 }} />
+													    {item.icon && <Image source={{ uri: 'data:image/png;base64,' + item.icon }} style={{ width: 50, height: 50, borderRadius: 25 }} />}
+													    {!item.icon && <FontAwesome name='user-circle' size={50} color='lightgray'/> }
 													</UserIconWrapper>
 													<UserInfoWrapper style={{ flex: 2 }}>
 														<UserNameWrapper>

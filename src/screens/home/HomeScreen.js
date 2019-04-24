@@ -390,7 +390,7 @@ const CloseButton = styled.TouchableOpacity`
 const UserInfoWrapper = styled.View`
 	width: 250px;
 	align-items: center;
-	padding-top:5px
+	padding-top: 5px;
 `;
 
 const UsernameText = styled.Text`

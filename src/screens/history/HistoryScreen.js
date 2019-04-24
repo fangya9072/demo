@@ -24,7 +24,9 @@ export default class HistoryScreen extends React.Component {
 
 	// functions that runs whenever HistoryPage is re-rendered in DOM
 	componentWillMount() {
-		this.onRefresh();
+		this._navListener = this.props.navigation.addListener('willFocus', () => {
+			this.onRefresh();
+		});
 	}
 
 	// function to retrive username from persistant storage

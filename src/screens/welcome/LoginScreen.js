@@ -1,11 +1,10 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { KeyboardAvoidingView, AsyncStorage } from 'react-native';
-import { COLORS } from '../../constant/color'
 
 
 export default class LoginScreen extends React.Component {
-	
+
 	// set up navigation
 	static navigationOptions = {
 		title: 'Login',
@@ -18,7 +17,7 @@ export default class LoginScreen extends React.Component {
 			username: '',
 			password: '',
 			errorMsgVisible: false,
-			errorMsg:'',
+			errorMsg: '',
 		};
 	}
 
@@ -27,58 +26,57 @@ export default class LoginScreen extends React.Component {
 		this.removeData('username');
 	}
 
-  	//check login username and password function
-	checkLogin(username, password){
-		fetch('http://3.93.183.130:3000/login?username=' + username + '&password=' +password, {
-			method: 'GET'
-		}).then((response) => {
-			let result = JSON.parse(response._bodyText)
-			if (result == true) {
-				this.storeData('username', this.state.username)
-				this.props.navigation.navigate('Home')
+	//check login username and password function
+	checkLogin = async (username, password) => {
+		try {
+			let response = await fetch('http://3.93.183.130:3000/login?username=' + username + '&password=' + password, { method: 'GET' });
+			let responseJson = await response.json();
+			if (responseJson == true) {
+				this.storeData('username', this.state.username);
+				this.props.navigation.navigate('Home');
 			} else {
-				if (password === '' || username === ''){
-					this.setState({errorMsg: 'Please Enter Your Username Or Password'});
-				} else if (result == null){
-					this.setState({errorMsg: 'No Such User'})
+				if (password === '' || username === '') {
+					this.setState({ errorMsg: 'Please Enter Your Username Or Password' });
+				} else if (result == null) {
+					this.setState({ errorMsg: 'No Such User' })
 				} else {
-					this.setState({errorMsg: 'Password Incorrect!'})
+					this.setState({ errorMsg: 'Password Incorrect!' })
 				}
-				this.setState({errorMsgVisible: true})
+				this.setState({ errorMsgVisible: true })
 			}
-		})
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
-	
-
-	// function to store and remove data(i.e. username, logged in status) in persistant storage
+	// function to store and remove data(i.e. username, userIcon) in persistant storage
 	storeData = async (key, val) => {
 		try {
-		    await AsyncStorage.setItem(key, val);
+			await AsyncStorage.setItem(key, val);
 		} catch (error) {
-		    console.error(error);
+			console.error(error);
 		}
 	};
 	removeData = async (key) => {
 		try {
-		    await AsyncStorage.removeItem(key);
+			await AsyncStorage.removeItem(key);
 		} catch (error) {
-		    console.error(error);
+			console.error(error);
 		}
 	}
 
 	// rendering 
-	render(){
+	render() {
 		return (
 			<Container>
-				<KeyboardAvoidingView style={{height: "75%"}} behavior="padding">
-				<Logo />
-				<InputArea>
-				    <Prompt> Username </Prompt>
-					<Input autoCorrect={false} onChangeText={(username) => this.setState({username: username})} />
-					<Prompt> Password </Prompt>
-					<Input secureTextEntry={true} onChangeText={(password) => this.setState({password: password})} />
-				</InputArea>
+				<KeyboardAvoidingView style={{ height: "75%" }} behavior="padding">
+					<Logo />
+					<InputArea>
+						<Prompt> Username </Prompt>
+						<Input autoCorrect={false} onChangeText={(username) => this.setState({ username: username })} />
+						<Prompt> Password </Prompt>
+						<Input secureTextEntry={true} onChangeText={(password) => this.setState({ password: password })} />
+					</InputArea>
 				</KeyboardAvoidingView>
 				<ErrorMsg>
 					<ErrorMsgText>{this.state.errorMsg}</ErrorMsgText>
@@ -139,10 +137,10 @@ const Input = styled.TextInput`
 
 const ErrorMsg = styled.View`
 	position: absolute;
-	top: 490px;
+	top: 72.5%;
 	height: 25px;
-	width: 275px;
-	margin-left: 50px;
+	width: 75%;
+	margin-left: 12.5%;
 `;
 
 const ErrorMsgText = styled.Text`
@@ -156,7 +154,7 @@ const ButtonArea = styled.View`
 	height: 10%;
 	width: 75%;
 	margin-left: 12.5%;
-	top: 4%;
+	top: 20px;
 `;
 
 const LoginButton = styled.TouchableOpacity`
