@@ -24,7 +24,8 @@ export default class HomeScreen extends React.Component {
 		this.state = {
 			pageTitle: 'HOME',
 			username: '',
-			mapRegion: null,
+			initialMapRegion: null,
+			currentMapRegion: null,
 			coordinate: {
 				longitude: 0,
 				latitude: 0,
@@ -120,7 +121,7 @@ export default class HomeScreen extends React.Component {
 		}
 		let location = await Location.getCurrentPositionAsync({});
 		this.setState({
-			mapRegion: { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 },
+			initialMapRegion: { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 },
 			coordinate: { latitude: location.coords.latitude, longitude: location.coords.longitude }
 		});
 	};
@@ -128,14 +129,6 @@ export default class HomeScreen extends React.Component {
 	// function to reload screen
 	onRefresh = () => {
 		this.getCurrentLocation();
-	}
-
-	// functions to open and close outfit post view
-	openPost() {
-		this.setState({ outfitPostViewVisible: true });
-	}
-	closePost() {
-		this.setState({ outfitPostViewVisible: false });
 	}
 
 	/* 
@@ -222,8 +215,8 @@ export default class HomeScreen extends React.Component {
 						{/* Map */}
 						<MapView 
 						style={{ flex: 1 }} 
-						region={this.state.mapRegion}
-						onRegionChangeComplete={(mapRegion) => this.setState({ mapRegion:mapRegion })}
+						initialRegion={this.state.initialMapRegion}
+						onRegionChangeComplete={(mapRegion) => this.setState({ currentMapRegion:mapRegion })}
 						ref={(mapView) => (this.map = mapView)}
 						>
 							<MapView.Marker
@@ -236,10 +229,9 @@ export default class HomeScreen extends React.Component {
 								return (
 									<MapView.Marker
 										coordinate={{ longitude: Number(item.coordinate.longitude), latitude: Number(item.coordinate.latitude) }}
-										title={item.title}
 										key={key}
 										onPress={() => {
-											this.openPost();
+											this.setState({ outfitPostViewVisible: true })
 											this.checkFriend(this.state.username, item.userID);
 											this.setState({
 												outfitPostInfo: {
@@ -255,7 +247,7 @@ export default class HomeScreen extends React.Component {
 									</MapView.Marker>
 								);
 							})}
-							<CurrentLocationButton onPress={() => this.map.animateToRegion({ latitude: this.state.coordinate.latitude, longitude: this.state.coordinate.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 }) }>
+							<CurrentLocationButton onPress={() => this.map.animateToRegion(this.state.initialMapRegion) }>
 								<MaterialIcons name={'my-location'} color={'black'} size={25} />
 							</CurrentLocationButton>
 						</MapView>
@@ -267,7 +259,7 @@ export default class HomeScreen extends React.Component {
 						{this.state.outfitPostViewVisible && <OutfitPostContainer style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}>
 							<OutfitPostView>
 								<CloseButtonWrapper>
-									<CloseButton onPress={() => this.closePost()} >
+									<CloseButton onPress={() => this.setState({ outfitPostViewVisible: false })} >
 										<Feather name={'x-circle'} size={26.5} style={{ marginTop: -1.5, marginLeft: -1 }} />
 									</CloseButton>
 								</CloseButtonWrapper>

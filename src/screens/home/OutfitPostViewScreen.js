@@ -62,7 +62,7 @@ export default class OutfitPostViewScreen extends React.Component {
         const postInfo = this.props.navigation.getParam('postInfo', null);
         outfitPost = {
             username: postInfo.username,
-            icon: postInfo.icon,
+            image: postInfo.image,
             friendType: postInfo.friendType,
             date: postInfo.date,
         };
@@ -76,7 +76,7 @@ export default class OutfitPostViewScreen extends React.Component {
                                 <OutfitPost>
                                     <PostInfo>
                                         <PostUserIconWrapper>
-                                            <PostUserIcon source={outfitPost.icon}/>
+                                            <PostUserIcon source={outfitPost.image}/>
                                         </PostUserIconWrapper>
                                         <TextInfo>
                                             <PostUsername>
@@ -88,7 +88,7 @@ export default class OutfitPostViewScreen extends React.Component {
                                         </TextInfo>
                                     </PostInfo>
                                     <PostImageWrapper>
-                                        <PostImage source={outfitPost.icon} />
+                                        <PostImage source={outfitPost.image} />
                                     </PostImageWrapper>
                                 </OutfitPost>
                                 <CommentContainer>

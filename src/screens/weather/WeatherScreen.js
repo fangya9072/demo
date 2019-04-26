@@ -1,12 +1,14 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
-import { Alert, Linking } from 'react-native';
+import { Alert, Linking, Dimensions } from 'react-native';
 import TopBanner from '../../components/TopBanner';
 import WeatherForcast from '../../components/WeatherForcast';
 import Entypo from "react-native-vector-icons/Entypo";
 import { Location, Permissions } from "expo";
 import MapView from 'react-native-maps';
+import { ICONS } from '../../constant/icon';
+
 
 export default class WeatherScreen extends React.Component {
 
@@ -22,7 +24,8 @@ export default class WeatherScreen extends React.Component {
 			pageTitle: 'WEATHER',
 			username: '',
 			weatherPostModalViewVisible: false,
-			mapRegion: null,
+			initialMapRegion: null,
+			currentMapRegion: null,
 			coordinate: {
 				latitude: 0,
 				longitude: 0,
@@ -41,31 +44,18 @@ export default class WeatherScreen extends React.Component {
 		    markers below for people nearby are only for test purpose, 
 			make API call to rethinkDB to get real user data
 			*/
-			weatherPostMarkers: [
-				{
-					id: 1,
-					latitude: 35.909995043008486,
-					longitude: -79.05328273773193,
-					src: "https://s3-ap-southeast-1.amazonaws.com/so-srilanka/any/boy.png",
-				},
-				{
-					id: 2,
-					latitude: 35.910551182261656,
-					longitude: -79.07154321670532,
-					src: "https://s3-ap-southeast-1.amazonaws.com/so-srilanka/any/female.png",
-				},
-			],
+			weatherPostMarkers: [],
 			displayMode: {
-				temperature: true,
-				sunshine: false,
+				cloud: true,
 				humidity: false,
+				temperature: false,
 				wind: false,
 			},
 		};
 	}
 
 	// functions that will run whenever WeatherPage is rerendered in DOM
-	componentDidMount() {
+	componentWillMount() {
 		this.getCurrentLocation();
 	}
 
@@ -90,7 +80,7 @@ export default class WeatherScreen extends React.Component {
 		let lat = location.coords.latitude;
 		let log = location.coords.longitude;
 		this.setState({
-			mapRegion: { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 },
+			initialMapRegion: { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 },
 			coordinate: { latitude: location.coords.latitude, longitude: location.coords.longitude }
 		});
 		let locationInfo = await Location.reverseGeocodeAsync(this.state.coordinate); // get city name of current location by coordinates
@@ -111,7 +101,10 @@ export default class WeatherScreen extends React.Component {
 		})
 	};
 
-	//
+	/* 
+	function to calcute coordinate range based on mapRegion parameter
+	return an object with four floats representing the max/min of longitude/latitude
+	*/
 	calculteCoordinateRange = async (mapRegion) => {
 		let min_latitude = mapRegion.latitude - 0.5 * mapRegion.latitudeDelta;
 		let max_latitude = mapRegion.latitude + 0.5 * mapRegion.latitudeDelta;
@@ -122,12 +115,63 @@ export default class WeatherScreen extends React.Component {
 			min_latitude: min_latitude,
 			max_longitude: max_longitude,
 			min_longitude: min_longitude,
+		};
+		return coordinate_range;
+	}
+
+	clearWeatherPost = async() => {
+		this.setState({
+			weatherPostMarkers: [],
+		});
+	}
+
+	/*
+	function to get all weather posts within current map region
+	will run whenever user changed mapRegion of MapView by toggling
+	store rerived weather posts into this.state.weatherPostMarkers
+	*/
+	updateWeatherPostInRange = async (mapRegion) => {
+		await this.clearWeatherPost();
+		let coordinate_range = await this.calculteCoordinateRange(mapRegion);
+		let date = new Date();
+		let dateString = date.getFullYear() + "-" + ("0"+(date.getMonth()+1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2) + "-" + ("0"+date.getHours()).slice(-2) + "-" + ("0" + date.getMinutes()).slice(-2);
+		try {
+			let request = 'http://3.93.183.130:3000/rangeposts?date=' + dateString
+			+ '&min_latitude=' + Number(coordinate_range.min_latitude)
+			+ '&max_latitude=' + Number(coordinate_range.max_latitude)
+			+ '&min_longitude=' + Number(coordinate_range.min_longitude)
+			+ '&max_longitude=' + Number(coordinate_range.max_longitude);
+			let response = await fetch(request, { method: 'GET'});
+			let responseJson = await response.json();
+			if( responseJson.length > 0 ){
+				for (responseItem of responseJson) {
+					weather_post = {
+						weatherPostID: responseItem.weather_post_id,
+						coordinate: {
+							latitude: responseItem.coordinate.latitude,
+							longitude: responseItem.coordinate.longitude,
+						},
+						weatherInfo: {
+							cloud: responseItem.cloud,
+							humidity: responseItem.humidity,
+							temperature: responseItem.temperature,
+							wind: responseItem.wind,
+						},
+					}
+					this.state.weatherPostMarkers.push(weather_post);
+				}
+				this.setState({weatherPostMarkers: this.state.weatherPostMarkers});
+			}
+		} catch (error) {
+			console.error(error);
 		}
 	}
 
+
+
 	// function to reload screen
 	onRefresh = () => {
-		this.getCurrentLocation();
+		this.updateWeatherPostInRange(this.state.currentMapRegion);
 	}
 
 	// functions that open and closes weather post madal view
@@ -146,12 +190,13 @@ export default class WeatherScreen extends React.Component {
 					<MapContainer>
 						<Map>
 							<MapView
-								style={{ flex: 1, flexDirection: 'row' }}
-								region={this.state.mapRegion}
+								style={{ flex: 1 }}
+								initialRegion={this.state.initialMapRegion}
 								onRegionChangeComplete={(mapRegion) => {
-									this.setState({ mapRegion: mapRegion });
-									this.calculteCoordinateRange(mapRegion);
+									this.setState({ currentMapRegion: mapRegion });
+									this.updateWeatherPostInRange(mapRegion);
 								}}
+								ref={(mapView) => (this.map = mapView)}
 							>
 								<MapView.Marker
 									coordinate={{ longitude: this.state.coordinate.longitude, latitude: this.state.coordinate.latitude }}
@@ -162,14 +207,17 @@ export default class WeatherScreen extends React.Component {
 								{this.state.weatherPostMarkers.map((item, key) => {
 									return (
 										<MapView.Marker
-											coordinate={{
-												longitude: Number(item.longitude),
-												latitude: Number(item.latitude)
-											}}
-											title={item.title}
-											key={key}
+										coordinate={{ longitude: Number(item.coordinate.longitude), latitude: Number(item.coordinate.latitude) }}
+										key={key}
 										>
-											<MarkerImage source={{ uri: item.src }} />
+										<MarkerImageWrapper>
+
+									
+											{this.state.displayMode.cloud && <MarkerImage source={ICONS.weatherSlider['cloud' + item.weatherInfo.cloud]} />}
+											{this.state.displayMode.humidity && <MarkerImage source={ICONS.weatherSlider['humidity' + item.weatherInfo.humidity]} />}
+											{this.state.displayMode.temperature && <MarkerImage source={ICONS.weatherSlider['temperature' + item.weatherInfo.temperature]} />}
+											{this.state.displayMode.wind && <MarkerImage source={ICONS.weatherSlider['wind' + item.weatherInfo.wind]} />}
+											</MarkerImageWrapper>
 										</MapView.Marker>
 									);
 								})}
@@ -178,37 +226,37 @@ export default class WeatherScreen extends React.Component {
 								<DisplayModeButton
 									onPress={() => {
 										this.setState({
-											displayMode: { temperature: true, sunshine: false, humidity: false, wind: false }
+											displayMode: { cloud: true, humidity: false, temperature: false, wind: false }
 										});
 									}}
-									style={[this.state.displayMode.temperature ? { backgroundColor: 'lightgray' } : { backgroundColor: 'whitesmoke' }]}
+									style={[this.state.displayMode.cloud ? { backgroundColor: 'lightgray' } : { backgroundColor: 'whitesmoke' }]}
 								>
-									<DisplayModeText>Sunshine</DisplayModeText>
+									<DisplayModeText>Cloud</DisplayModeText>
 								</DisplayModeButton>
 								<DisplayModeButton
 									onPress={() => {
 										this.setState({
-											displayMode: { temperature: false, sunshine: true, humidity: false, wind: false }
+											displayMode: { cloud: false, humidity: true, temperature: false, wind: false }
 										});
 									}}
-									style={[this.state.displayMode.sunshine ? { backgroundColor: 'lightgray' } : { backgroundColor: 'whitesmoke' }]}
+									style={[this.state.displayMode.humidity ? { backgroundColor: 'lightgray' } : { backgroundColor: 'whitesmoke' }]}
 								>
 									<DisplayModeText>Humidity</DisplayModeText>
 								</DisplayModeButton>
 								<DisplayModeButton
 									onPress={() => {
 										this.setState({
-											displayMode: { temperature: false, sunshine: false, humidity: true, wind: false }
+											displayMode: { cloud: false, humidity: false, temperature: true, wind: false }
 										});
 									}}
-									style={[this.state.displayMode.humidity ? { backgroundColor: 'lightgray' } : { backgroundColor: 'whitesmoke' }]}
+									style={[this.state.displayMode.temperature ? { backgroundColor: 'lightgray' } : { backgroundColor: 'whitesmoke' }]}
 								>
 									<DisplayModeText>Temperature</DisplayModeText>
 								</DisplayModeButton>
 								<DisplayModeButton
 									onPress={() => {
 										this.setState({
-											displayMode: { temperature: false, sunshine: false, humidity: false, wind: true }
+											displayMode: { cloud: false, humidity: false, temperature: false, wind: true }
 										});
 									}}
 									style={[this.state.displayMode.wind ? { backgroundColor: 'lightgray' } : { backgroundColor: 'whitesmoke' }]}
@@ -258,16 +306,28 @@ const Map = styled.View`
 	overflow: hidden;
 `
 
+const MarkerImageWrapper = styled.View`
+	width: 40px;
+	height: 40px;
+	border-radius: 20px;
+	background-color: rgba(255, 255, 255, 0.75);
+	align-items: center;
+	justify-content: center;
+`;
+
 const MarkerImage = styled.Image`
 	width: 30px;
 	height: 30px;
+	resize-mode: contain;
 `;
+
 
 const DisplayModeWrapper = styled.View`
 	width: 100%;
 	height: 27.5px;
 	flex-direction: row;
-	opacity: 0.75;
+	borderTopWidth: 0.25px;
+	borderTopColor: gainsboro;
 `;
 
 const DisplayModeButton = styled.TouchableOpacity`
