@@ -37,7 +37,7 @@ export default class LoginScreen extends React.Component {
 			} else {
 				if (password === '' || username === '') {
 					this.setState({ errorMsg: 'Please Enter Your Username Or Password' });
-				} else if (result == null) {
+				} else if (responseJson == null) {
 					this.setState({ errorMsg: 'No Such User' })
 				} else {
 					this.setState({ errorMsg: 'Password Incorrect!' })

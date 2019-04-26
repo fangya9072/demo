@@ -43,7 +43,7 @@ export default class HomeScreen extends React.Component {
 			outfitPostMarkers: [
 				{
 					outfitPostID: 1,
-					userID: 'fangya',
+					userID: 'zhiying',
 					coordinate: {
 						latitude: 35.909995043008486,
 						longitude: -79.05328273773193,
@@ -53,7 +53,7 @@ export default class HomeScreen extends React.Component {
 				},
 				{
 					outfitPostID: 2,
-					userID: 'SherryPi',
+					userID: 'czw',
 					coordinate: {
 						latitude: 35.910551182261656,
 						longitude: -79.07154321670532,

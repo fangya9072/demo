@@ -7,7 +7,6 @@ import WeatherForcast from '../../components/WeatherForcast';
 import Entypo from "react-native-vector-icons/Entypo";
 import { Location, Permissions } from "expo";
 import  MapView  from 'react-native-maps'
-import { Modal } from 'react-native';
 
 export default class WeatherScreen extends React.Component {
 
