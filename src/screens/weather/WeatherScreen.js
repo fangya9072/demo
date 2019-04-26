@@ -1,12 +1,12 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
-import { Alert, Linking, AsyncStorage } from 'react-native';
+import { Alert, Linking } from 'react-native';
 import TopBanner from '../../components/TopBanner';
 import WeatherForcast from '../../components/WeatherForcast';
 import Entypo from "react-native-vector-icons/Entypo";
 import { Location, Permissions } from "expo";
-import  MapView  from 'react-native-maps'
+import MapView from 'react-native-maps';
 
 export default class WeatherScreen extends React.Component {
 
@@ -28,13 +28,13 @@ export default class WeatherScreen extends React.Component {
 				longitude: 0,
 			},
 			cityName: '',
-			cityForcast:{
+			cityForcast: {
 				weatherType: 'Rainy',
 				minTemperature: 45,
 				maxTemperature: 60,
 				currentTemperature: 55,
 			},
-		
+
 			hourInfo: [],
 			errorMessage: null,
 			/*  
@@ -55,28 +55,19 @@ export default class WeatherScreen extends React.Component {
 					src: "https://s3-ap-southeast-1.amazonaws.com/so-srilanka/any/female.png",
 				},
 			],
+			displayMode: {
+				temperature: true,
+				sunshine: false,
+				humidity: false,
+				wind: false,
+			},
 		};
 	}
 
 	// functions that will run whenever WeatherPage is rerendered in DOM
-	componentWillMount() {
-		this.getUsername();
+	componentDidMount() {
 		this.getCurrentLocation();
 	}
-
-	// function to retrive username from persistant storage
-	getUsername = async () => {
-		try {
-			const username = await AsyncStorage.getItem('username');
-			if (username !== null) {
-				this.setState({
-					username: username,
-				})
-			}
-		} catch (error) {
-			console.error(error);
-		}
-	};
 
 	// function to get user's realtime geolocation and weather information
 	getCurrentLocation = async () => {
@@ -107,18 +98,32 @@ export default class WeatherScreen extends React.Component {
 			cityName: locationInfo[0].city,
 		});
 		//let result = await fetch('https://api.openweathermap.org/data/2.5/forecast/hourly?q='+this.state.cityName+',us&units=metric&appid=ac141ae24c04ea59edfa71a5ab109b73').then(response => response.json());
-        //this.setState({hourInfo: result.list});
-        let day = await fetch('https://api.darksky.net/forecast/8c2568f00f593c6a4c4125d386af88f5/'+lat+','+log).then(response => response.json());
-        this.setState({hourInfo: day});
-        this.setState({
-        	cityForcast:{
-        		weatherType: day.currently.summary,
-				minTemperature: ((day.daily.data[0].temperatureHigh-32)/1.8).toFixed(0),
-				maxTemperature: ((day.daily.data[0].temperatureLow-32)/1.8).toFixed(0),
-				currentTemperature: ((day.currently.temperature-32)/1.8).toFixed(0),
-        	}
-        })
+		//this.setState({hourInfo: result.list});
+		let day = await fetch('https://api.darksky.net/forecast/8c2568f00f593c6a4c4125d386af88f5/' + lat + ',' + log).then(response => response.json());
+		this.setState({ hourInfo: day });
+		this.setState({
+			cityForcast: {
+				weatherType: day.currently.summary,
+				minTemperature: ((day.daily.data[0].temperatureHigh - 32) / 1.8).toFixed(0),
+				maxTemperature: ((day.daily.data[0].temperatureLow - 32) / 1.8).toFixed(0),
+				currentTemperature: ((day.currently.temperature - 32) / 1.8).toFixed(0),
+			}
+		})
 	};
+
+	//
+	calculteCoordinateRange = async (mapRegion) => {
+		let min_latitude = mapRegion.latitude - 0.5 * mapRegion.latitudeDelta;
+		let max_latitude = mapRegion.latitude + 0.5 * mapRegion.latitudeDelta;
+		let min_longitude = mapRegion.longitude - 0.5 * mapRegion.longitudeDelta;
+		let max_longitude = mapRegion.longitude + 0.5 * mapRegion.longitudeDelta;
+		let coordinate_range = {
+			max_latitude: max_latitude,
+			min_latitude: min_latitude,
+			max_longitude: max_longitude,
+			min_longitude: min_longitude,
+		}
+	}
 
 	// function to reload screen
 	onRefresh = () => {
@@ -136,16 +141,23 @@ export default class WeatherScreen extends React.Component {
 	// rendering
 	render() {
 		return (
-			<SafeAreaView style={{ backgroundColor: 'whitesmoke', flex: 1}}>
+			<SafeAreaView style={{ backgroundColor: 'whitesmoke', flex: 1 }}>
 				<Container>
 					<MapContainer>
 						<Map>
-							<MapView style={{ flex: 1 }} initialRegion={this.state.mapRegion}>
-							    <MapView.Marker	
-								coordinate={{ longitude: this.state.coordinate.longitude, latitude: this.state.coordinate.latitude }}
-						    	title={"my location"}
-		    					>
-                     				<Entypo name={'location-pin'} size={30} color={'black'} style={{backgroundColor: 'transparent'}}/>
+							<MapView
+								style={{ flex: 1, flexDirection: 'row' }}
+								region={this.state.mapRegion}
+								onRegionChangeComplete={(mapRegion) => {
+									this.setState({ mapRegion: mapRegion });
+									this.calculteCoordinateRange(mapRegion);
+								}}
+							>
+								<MapView.Marker
+									coordinate={{ longitude: this.state.coordinate.longitude, latitude: this.state.coordinate.latitude }}
+									title={"my location"}
+								>
+									<Entypo name={'location-pin'} size={30} color={'black'} style={{ backgroundColor: 'transparent' }} />
 								</MapView.Marker>
 								{this.state.weatherPostMarkers.map((item, key) => {
 									return (
@@ -162,10 +174,52 @@ export default class WeatherScreen extends React.Component {
 									);
 								})}
 							</MapView>
+							<DisplayModeWrapper>
+								<DisplayModeButton
+									onPress={() => {
+										this.setState({
+											displayMode: { temperature: true, sunshine: false, humidity: false, wind: false }
+										});
+									}}
+									style={[this.state.displayMode.temperature ? { backgroundColor: 'lightgray' } : { backgroundColor: 'whitesmoke' }]}
+								>
+									<DisplayModeText>Sunshine</DisplayModeText>
+								</DisplayModeButton>
+								<DisplayModeButton
+									onPress={() => {
+										this.setState({
+											displayMode: { temperature: false, sunshine: true, humidity: false, wind: false }
+										});
+									}}
+									style={[this.state.displayMode.sunshine ? { backgroundColor: 'lightgray' } : { backgroundColor: 'whitesmoke' }]}
+								>
+									<DisplayModeText>Humidity</DisplayModeText>
+								</DisplayModeButton>
+								<DisplayModeButton
+									onPress={() => {
+										this.setState({
+											displayMode: { temperature: false, sunshine: false, humidity: true, wind: false }
+										});
+									}}
+									style={[this.state.displayMode.humidity ? { backgroundColor: 'lightgray' } : { backgroundColor: 'whitesmoke' }]}
+								>
+									<DisplayModeText>Temperature</DisplayModeText>
+								</DisplayModeButton>
+								<DisplayModeButton
+									onPress={() => {
+										this.setState({
+											displayMode: { temperature: false, sunshine: false, humidity: false, wind: true }
+										});
+									}}
+									style={[this.state.displayMode.wind ? { backgroundColor: 'lightgray' } : { backgroundColor: 'whitesmoke' }]}
+								>
+									<DisplayModeText>Wind</DisplayModeText>
+								</DisplayModeButton>
+							</DisplayModeWrapper>
 						</Map>
 					</MapContainer>
 					<WeatherForcastContainer>
-						<WeatherForcast cityName={this.state.cityName} cityForcast={this.state.cityForcast} hourInfo={this.state.hourInfo}/>
+						<WeatherForcast cityName={this.state.cityName} cityForcast={this.state.cityForcast} hourInfo={this.state.hourInfo} />
 					</WeatherForcastContainer>
 					{/* put components with absolute position at the bottom */}
 					<TopBanner pageTitle={this.state.pageTitle} navigation={this.state.navigation} refreshHandler={this.onRefresh.bind(this)} />
@@ -197,7 +251,7 @@ const WeatherForcastContainer = styled.View`
 
 const Map = styled.View`
     top: 1.5%;
-    height: 100%;
+    height: 87.5%;
     width: 96%;
     left: 2%;
     border-radius: 25px;
@@ -207,4 +261,22 @@ const Map = styled.View`
 const MarkerImage = styled.Image`
 	width: 30px;
 	height: 30px;
+`;
+
+const DisplayModeWrapper = styled.View`
+	width: 100%;
+	height: 27.5px;
+	flex-direction: row;
+	opacity: 0.75;
+`;
+
+const DisplayModeButton = styled.TouchableOpacity`
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+`;
+
+const DisplayModeText = styled.Text`
+	font-size: 13.5px;
+	font-family: Gill Sans;
 `;

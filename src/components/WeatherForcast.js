@@ -256,12 +256,18 @@ class WeatherForcast extends React.Component {
 				<ForcastArea>
 					<ForcastTypePicker> 
 						<ButtonArea style={{ alignItems: 'flex-end' }}> 
-							<Button onPress={() => this.setState({forcastType: 'day', dayForcastVisible: true, hourForcastVisible: false})}>
+							<Button 
+							onPress={() => this.setState({forcastType: 'day', dayForcastVisible: true, hourForcastVisible: false})}
+							style={[this.state.dayForcastVisible ? { backgroundColor: 'lightblue' } : { backgroundColor: 'gainsboro' }]}
+							>
 								<ButtonText> Day </ButtonText>
 							</Button>
 						</ButtonArea> 
 						<ButtonArea style={{ alignItems: 'flex-start' }}> 
-							<Button onPress={() => this.setState({forcastType: 'hour', dayForcastVisible: false, hourForcastVisible: true})}>
+							<Button 
+							onPress={() => this.setState({forcastType: 'hour', dayForcastVisible: false, hourForcastVisible: true})}
+							style={[this.state.hourForcastVisible ? { backgroundColor: 'lightblue' } : { backgroundColor: 'gainsboro' }]}
+							>
 								<ButtonText> Hour </ButtonText>
 							</Button>
 						</ButtonArea> 
@@ -397,14 +403,13 @@ const Button = styled.TouchableOpacity`
 	top: 15%;
 	align-items: center;
 	justify-content: center;
-	background-color: lightblue;
 	border: 2.5px aliceblue;
 	border-radius: 5px;
 `;
 
 const ButtonText = styled.Text`
     font-size: 12.5px;
-    font-family: Courier;
+    font-family: Gill Sans;
 `;
 
 const ForcastContent = styled.View `

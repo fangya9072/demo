@@ -158,7 +158,7 @@ export default class WeatherPostScreen extends React.Component {
 		} else {
 			let username = this.state.username;
 			let date = new Date();
-			let dateString = date.getFullYear() + "-" + ("0"+(date.getMonth()+1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2) + "-" + ("0"+date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2);
+			let dateString = date.getFullYear() + "-" + ("0"+(date.getMonth()+1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2) + "-" + ("0"+date.getHours()).slice(-2) + "-" + ("0" + date.getMinutes()).slice(-2);
 		    fetch('http://3.93.183.130:3000/weatherposts/' + username, {
 				method: 'PUT',
 				headers: {'Content-Type': 'application/json'},
