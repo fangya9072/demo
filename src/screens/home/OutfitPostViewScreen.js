@@ -76,7 +76,7 @@ export default class OutfitPostViewScreen extends React.Component {
                                 <OutfitPost>
                                     <PostInfo>
                                         <PostUserIconWrapper>
-                                            <PostUserIcon source={outfitPost.image}/>
+                                            <PostUserIcon source={{ uri: 'data:image/png;base64,' + outfitPost.image }}/>
                                         </PostUserIconWrapper>
                                         <TextInfo>
                                             <PostUsername>
@@ -88,7 +88,7 @@ export default class OutfitPostViewScreen extends React.Component {
                                         </TextInfo>
                                     </PostInfo>
                                     <PostImageWrapper>
-                                        <PostImage source={outfitPost.image} />
+                                        <PostImage source={{ uri: 'data:image/png;base64,' + outfitPost.image }} />
                                     </PostImageWrapper>
                                 </OutfitPost>
                                 <CommentContainer>
