@@ -111,21 +111,20 @@ export default class HomeScreen extends React.Component {
 	//get friends' most recent locations
 	getFriends = async () => {
 		await this.getUsername();
-		console.log(this.state.username);
 		try {
 			let response = await fetch('http://3.93.183.130:3000/friendlist/' + this.state.username, { method: 'GET' });
 			let responseJson = await response.json();
+			var list = [];
+			var l = 1;
 			for (responseItem of responseJson) {
-			 let response_post = await fetch('http://3.93.183.130:3000/allposts/' + responseItem, { method: 'GET' });
+			 let response_post = await fetch('http://3.93.183.130:3000/weatherposts/' + responseItem, { method: 'GET' });
 		     let posts = await response_post.json();
-
 
 	    	   if (posts.length > 0){
 			      let last_post = posts[posts.length-1];
 			      let fromDate = last_post.date.split("-")
 				  let rawDate = new Date(fromDate[0], fromDate[1] - 1, fromDate[2])
 				  let formattedDate = moment(rawDate).format('ll')
-			      console.log(last_post.date);
 				  let friend = {
 				   	username: responseItem,
 					image: last_post.photo,
@@ -134,31 +133,25 @@ export default class HomeScreen extends React.Component {
 				   	coordinate: last_post.coordinate,
 				  };
 				 this.state.friends.push(friend);
+				 list.push({
+                	outfitPostID: l,
+					userID: responseItem,
+					coordinate: {
+						latitude: friend.coordinate.latitude,
+						longitude: friend.coordinate.longitude
+					},
+					image: last_post.photo,
+					date: formattedDate,
+                });
 				}
+				l++;
 			 }
-            
-          if (this.state.friends.length > 0){
 			this.setState({
 				friends: this.state.friends,
 			});
-			//console.log(this.state.friends);
-			let tempList = this.state.friends;
-            let length = this.state.friends.length;
-            var i;
-            var list = [];
-            for (i = 0; i < length; i++){
-               list.push({
-                	outfitPostID: i,
-					userID: tempList[i].username,
-					coordinate: {
-						latitude: tempList[i].coordinate.latitude,
-						longitude:tempList[i].coordinate.longitude,
-					},
-					image: tempList[i].image,
-					date: tempList[i].date,
-                });
             
-            }
+          if (list.length > 0){
+			
             this.setState({
                 outfitPostMarkers: list,
             });
