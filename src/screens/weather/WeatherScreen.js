@@ -90,10 +90,18 @@ export default class WeatherScreen extends React.Component {
 		//let result = await fetch('https://api.openweathermap.org/data/2.5/forecast/hourly?q='+this.state.cityName+',us&units=metric&appid=ac141ae24c04ea59edfa71a5ab109b73').then(response => response.json());
 		//this.setState({hourInfo: result.list});
 		let day = await fetch('https://api.darksky.net/forecast/8c2568f00f593c6a4c4125d386af88f5/' + lat + ',' + log).then(response => response.json());
+		let summary = day.currently.summary;
+		let keyword
+		summary = summary.split(' ')
+		if (summary.length > 1){
+			keyword = summary[summary.length-1];
+		}else{
+			keyword = summary[0];
+		}
 		this.setState({ hourInfo: day });
 		this.setState({
 			cityForcast: {
-				weatherType: day.currently.summary,
+				weatherType: keyword,
 				minTemperature: ((day.daily.data[0].temperatureHigh - 32) / 1.8).toFixed(0),
 				maxTemperature: ((day.daily.data[0].temperatureLow - 32) / 1.8).toFixed(0),
 				currentTemperature: ((day.currently.temperature - 32) / 1.8).toFixed(0),
