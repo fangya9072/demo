@@ -9,7 +9,8 @@ import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import TopBanner from '../../components/TopBanner';
-
+import SocketIOClient from 'socket.io-client';
+import moment from 'moment';
 
 export default class HomeScreen extends React.Component {
 
@@ -26,6 +27,7 @@ export default class HomeScreen extends React.Component {
 			username: '',
 			initialMapRegion: null,
 			currentMapRegion: null,
+			friends: [],
 			coordinate: {
 				longitude: 0,
 				latitude: 0,
@@ -41,28 +43,7 @@ export default class HomeScreen extends React.Component {
 			image: most recent outfit post for a user
 			date: date of user's most recent outfit post
 			*/
-			outfitPostMarkers: [
-				{
-					outfitPostID: 1,
-					userID: 'zhiying',
-					coordinate: {
-						latitude: 35.909995043008486,
-						longitude: -79.05328273773193,
-					},
-					image: require('../../../assets/icon/role-icon/pikachu.png'),
-					date: 'Mar 9, 2019',
-				},
-				{
-					outfitPostID: 2,
-					userID: 'czw',
-					coordinate: {
-						latitude: 35.910551182261656,
-						longitude: -79.07154321670532,
-					},
-					image: require('../../../assets/icon/role-icon/trump.jpg'),
-					date: 'Mar 12, 2019',
-				},
-			],
+			outfitPostMarkers: [],
 			outfitPostViewVisible: false,
 			/*
 			friendType: restriected to 'add', 'pending', 'friend' 
@@ -77,12 +58,37 @@ export default class HomeScreen extends React.Component {
 				date: '',
 			},
 		};
+		this.socket = SocketIOClient('http://3.93.183.130:3001');
+
+
 	}
 
 	// functions that runs whenever HomePage is re-rendered in DOM
 	componentDidMount() {
 		this.getUsername();
 		this.getCurrentLocation();
+		this.getFriends();
+		this.socket.emit('position', {
+			username: this.state.username,
+			location: {
+				latitude: this.state.coordinate.latitude,
+				longitude: this.state.coordinate.longitude
+			}
+		});
+        this.socket.on('friendPositions', (positionsData) => {
+          var x;
+          let markers = this.state.outfitPostMarkers;
+          for(x=0; x<this.state.friends.length; x++){
+          	if (this.state.friends[x].username == positionsData.username){
+          		markers[x].coordinate = {
+          			latitude: positionsData.location.latitude,
+          			longitude: positionsData.location.longitude
+          		};
+          	}
+          }
+          this.setState({outfitPostMarkers: markers,});
+          //console.log("friendPositions:", positionsData);
+        });
 	}
 
 	/* 
@@ -102,6 +108,86 @@ export default class HomeScreen extends React.Component {
 		}
 	};
 
+	//get friends' most recent locations
+	getFriends = async () => {
+		await this.getUsername();
+		console.log(this.state.username);
+		try {
+			let response = await fetch('http://3.93.183.130:3000/friendlist/' + this.state.username, { method: 'GET' });
+			let responseJson = await response.json();
+			for (responseItem of responseJson) {
+			 let response_post = await fetch('http://3.93.183.130:3000/allposts/' + responseItem, { method: 'GET' });
+		     let posts = await response_post.json();
+
+
+	    	   if (posts.length > 0){
+			      let last_post = posts[posts.length-1];
+			      let fromDate = last_post.date.split("-")
+				  let rawDate = new Date(fromDate[0], fromDate[1] - 1, fromDate[2])
+				  let formattedDate = moment(rawDate).format('ll')
+			      console.log(last_post.date);
+				  let friend = {
+				   	username: responseItem,
+					image: last_post.photo,
+					metaInfo: 'Meta Information',
+					date: formattedDate,
+				   	coordinate: last_post.coordinate,
+				  };
+				 this.state.friends.push(friend);
+				}
+			 }
+            
+          if (this.state.friends.length > 0){
+			this.setState({
+				friends: this.state.friends,
+			});
+			//console.log(this.state.friends);
+			let tempList = this.state.friends;
+            let length = this.state.friends.length;
+            var i;
+            var list = [];
+            for (i = 0; i < length; i++){
+               list.push({
+                	outfitPostID: i,
+					userID: tempList[i].username,
+					coordinate: {
+						latitude: tempList[i].coordinate.latitude,
+						longitude:tempList[i].coordinate.longitude,
+					},
+					image: tempList[i].image,
+					date: tempList[i].date,
+                });
+            
+            }
+            this.setState({
+                outfitPostMarkers: list,
+            });
+          }else{
+		    let rawDate = new Date();
+		    let formattedDate = moment(rawDate).format('ll');
+        	this.setState({
+        		outfitPostMarkers:[{
+        			outfitPostID: 0,
+					userID: this.state.username,
+					coordinate: {
+						latitude: this.state.coordinate.latitude,
+						longitude: this.state.coordinate.longitude,
+					},
+					image: require('../../../assets/icon/role-icon/pikachu.png'),
+					date: formattedDate,
+        		}]
+
+        	});
+        }
+        
+      
+
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+
 	// function to get user's realtime geolocation
 	getCurrentLocation = async () => {
 		let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -119,16 +205,20 @@ export default class HomeScreen extends React.Component {
 				],
 			);
 		}
-		let location = await Location.getCurrentPositionAsync({});
+		let location_raw = await Location.getCurrentPositionAsync({});
+		//this.socket.emit('position', 'Hello');
+        console.log(location_raw);
 		this.setState({
-			initialMapRegion: { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 },
-			coordinate: { latitude: location.coords.latitude, longitude: location.coords.longitude }
+			initialMapRegion: { latitude: location_raw.coords.latitude, longitude: location_raw.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 },
+			coordinate: { latitude: location_raw.coords.latitude, longitude: location_raw.coords.longitude }
+
 		});
 	};
 
 	// function to reload screen
 	onRefresh = () => {
 		this.getCurrentLocation();
+		this.getFriends();
 	}
 
 	/* 
@@ -243,7 +333,7 @@ export default class HomeScreen extends React.Component {
 											});
 										}}
 									>
-										<MarkerImage source={item.image} />
+										<MarkerImage source={{ uri: 'data:image/png;base64,' + item.image }} />
 									</MapView.Marker>
 								);
 							})}
@@ -298,7 +388,7 @@ export default class HomeScreen extends React.Component {
 									</ButtonArea>
 								</UserInfoWrapper>
 								<PhotoWrapper>
-									<Photo source={this.state.outfitPostInfo.image} />
+									<Photo source={{ uri: 'data:image/png;base64,' + this.state.outfitPostInfo.image }} />
 								</PhotoWrapper>
 								<MetaInfoWrapper>
 									<DateTextWrapper style={{ alignItems: 'flex-start' }}>
