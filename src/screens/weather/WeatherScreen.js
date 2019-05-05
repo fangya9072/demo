@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
-import { Alert, Linking, Dimensions } from 'react-native';
+import { Alert, Linking } from 'react-native';
 import TopBanner from '../../components/TopBanner';
 import WeatherForcast from '../../components/WeatherForcast';
 import Entypo from "react-native-vector-icons/Entypo";
@@ -83,19 +83,19 @@ export default class WeatherScreen extends React.Component {
 			initialMapRegion: { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 },
 			coordinate: { latitude: location.coords.latitude, longitude: location.coords.longitude }
 		});
+		this.map.animateToRegion(this.state.initialMapRegion);
 		let locationInfo = await Location.reverseGeocodeAsync(this.state.coordinate); // get city name of current location by coordinates
 		this.setState({
 			cityName: locationInfo[0].city,
 		});
-		//let result = await fetch('https://api.openweathermap.org/data/2.5/forecast/hourly?q='+this.state.cityName+',us&units=metric&appid=ac141ae24c04ea59edfa71a5ab109b73').then(response => response.json());
-		//this.setState({hourInfo: result.list});
+		// get weather info of current city
 		let day = await fetch('https://api.darksky.net/forecast/8c2568f00f593c6a4c4125d386af88f5/' + lat + ',' + log).then(response => response.json());
 		let summary = day.currently.summary;
 		let keyword
 		summary = summary.split(' ')
-		if (summary.length > 1){
-			keyword = summary[summary.length-1];
-		}else{
+		if (summary.length > 1) {
+			keyword = summary[summary.length - 1];
+		} else {
 			keyword = summary[0];
 		}
 		this.setState({ hourInfo: day });
@@ -127,7 +127,11 @@ export default class WeatherScreen extends React.Component {
 		return coordinate_range;
 	}
 
-	clearWeatherPost = async() => {
+	/* 
+	function to set this.state.weatherPostMarkers to be empyty
+	will run whenever the app is trying to reload weather posts to be shown on map, or by clicking the refresh button
+	*/
+	clearWeatherPost = async () => {
 		this.setState({
 			weatherPostMarkers: [],
 		});
@@ -135,25 +139,25 @@ export default class WeatherScreen extends React.Component {
 
 	/*
 	function to get all weather posts within current map region
-	will run whenever user changed mapRegion of MapView by toggling
+	will run whenever user changed the mapRegion attribute of MapView by toggling
 	store rerived weather posts into this.state.weatherPostMarkers
 	*/
 	updateWeatherPostInRange = async (mapRegion) => {
 		await this.clearWeatherPost();
 		let coordinate_range = await this.calculteCoordinateRange(mapRegion);
 		let date = new Date();
-		let dateString = date.getFullYear() + "-" + ("0"+(date.getMonth()+1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2) + "-" + ("0"+date.getHours()).slice(-2) + "-" + ("0" + date.getMinutes()).slice(-2);
+		let dateString = date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2) + "-" + ("0" + date.getHours()).slice(-2) + "-" + ("0" + date.getMinutes()).slice(-2);
 		try {
 			let request = 'http://3.93.183.130:3000/rangeposts?date=' + dateString
-			+ '&min_latitude=' + Number(coordinate_range.min_latitude)
-			+ '&max_latitude=' + Number(coordinate_range.max_latitude)
-			+ '&min_longitude=' + Number(coordinate_range.min_longitude)
-			+ '&max_longitude=' + Number(coordinate_range.max_longitude);
-			let response = await fetch(request, { method: 'GET'});
+				+ '&min_latitude=' + Number(coordinate_range.min_latitude)
+				+ '&max_latitude=' + Number(coordinate_range.max_latitude)
+				+ '&min_longitude=' + Number(coordinate_range.min_longitude)
+				+ '&max_longitude=' + Number(coordinate_range.max_longitude);
+			let response = await fetch(request, { method: 'GET' });
 			let responseJson = await response.json();
-			if( responseJson.length > 0 ){
+			if (responseJson.length > 0) {
 				for (responseItem of responseJson) {
-					weather_post = {
+					let weather_post = {
 						weatherPostID: responseItem.weather_post_id,
 						coordinate: {
 							latitude: responseItem.coordinate.latitude,
@@ -168,7 +172,7 @@ export default class WeatherScreen extends React.Component {
 					}
 					this.state.weatherPostMarkers.push(weather_post);
 				}
-				this.setState({weatherPostMarkers: this.state.weatherPostMarkers});
+				this.setState({ weatherPostMarkers: this.state.weatherPostMarkers });
 			}
 		} catch (error) {
 			console.error(error);
@@ -179,7 +183,8 @@ export default class WeatherScreen extends React.Component {
 
 	// function to reload screen
 	onRefresh = () => {
-		this.updateWeatherPostInRange(this.state.currentMapRegion);
+		this.getCurrentLocation();
+		this.updateWeatherPostInRange(this.state.initialMapRegion);
 	}
 
 	// functions that open and closes weather post madal view
@@ -201,8 +206,10 @@ export default class WeatherScreen extends React.Component {
 								style={{ flex: 1 }}
 								initialRegion={this.state.initialMapRegion}
 								onRegionChangeComplete={(mapRegion) => {
-									this.setState({ currentMapRegion: mapRegion });
-									this.updateWeatherPostInRange(mapRegion);
+									if (this.state.initialMapRegion) {
+										this.setState({ currentMapRegion: mapRegion });
+										this.updateWeatherPostInRange(mapRegion);
+									}
 								}}
 								ref={(mapView) => (this.map = mapView)}
 							>
@@ -215,16 +222,16 @@ export default class WeatherScreen extends React.Component {
 								{this.state.weatherPostMarkers.map((item, key) => {
 									return (
 										<MapView.Marker
-										coordinate={{ longitude: Number(item.coordinate.longitude), latitude: Number(item.coordinate.latitude) }}
-										key={key}
+											coordinate={{ longitude: Number(item.coordinate.longitude), latitude: Number(item.coordinate.latitude) }}
+											key={key}
 										>
-										<MarkerImageWrapper>
+											<MarkerImageWrapper>
 
-									
-											{this.state.displayMode.cloud && <MarkerImage source={ICONS.weatherSlider['cloud' + item.weatherInfo.cloud]} />}
-											{this.state.displayMode.humidity && <MarkerImage source={ICONS.weatherSlider['humidity' + item.weatherInfo.humidity]} />}
-											{this.state.displayMode.temperature && <MarkerImage source={ICONS.weatherSlider['temperature' + item.weatherInfo.temperature]} />}
-											{this.state.displayMode.wind && <MarkerImage source={ICONS.weatherSlider['wind' + item.weatherInfo.wind]} />}
+
+												{this.state.displayMode.cloud && <MarkerImage source={ICONS.weatherSlider['cloud' + item.weatherInfo.cloud]} />}
+												{this.state.displayMode.humidity && <MarkerImage source={ICONS.weatherSlider['humidity' + item.weatherInfo.humidity]} />}
+												{this.state.displayMode.temperature && <MarkerImage source={ICONS.weatherSlider['temperature' + item.weatherInfo.temperature]} />}
+												{this.state.displayMode.wind && <MarkerImage source={ICONS.weatherSlider['wind' + item.weatherInfo.wind]} />}
 											</MarkerImageWrapper>
 										</MapView.Marker>
 									);
@@ -237,7 +244,7 @@ export default class WeatherScreen extends React.Component {
 											displayMode: { cloud: true, humidity: false, temperature: false, wind: false }
 										});
 									}}
-									style={[this.state.displayMode.cloud ? { backgroundColor: 'lightgray' } : { backgroundColor: 'whitesmoke' }]}
+									style={[this.state.displayMode.cloud ? { backgroundColor: 'lightblue' } : { backgroundColor: 'gainsboro' }]}
 								>
 									<DisplayModeText>Cloud</DisplayModeText>
 								</DisplayModeButton>
@@ -247,7 +254,7 @@ export default class WeatherScreen extends React.Component {
 											displayMode: { cloud: false, humidity: true, temperature: false, wind: false }
 										});
 									}}
-									style={[this.state.displayMode.humidity ? { backgroundColor: 'lightgray' } : { backgroundColor: 'whitesmoke' }]}
+									style={[this.state.displayMode.humidity ? { backgroundColor: 'lightblue' } : { backgroundColor: 'gainsboro' }]}
 								>
 									<DisplayModeText>Humidity</DisplayModeText>
 								</DisplayModeButton>
@@ -257,7 +264,7 @@ export default class WeatherScreen extends React.Component {
 											displayMode: { cloud: false, humidity: false, temperature: true, wind: false }
 										});
 									}}
-									style={[this.state.displayMode.temperature ? { backgroundColor: 'lightgray' } : { backgroundColor: 'whitesmoke' }]}
+									style={[this.state.displayMode.temperature ? { backgroundColor: 'lightblue' } : { backgroundColor: 'gainsboro' }]}
 								>
 									<DisplayModeText>Temperature</DisplayModeText>
 								</DisplayModeButton>
@@ -267,7 +274,7 @@ export default class WeatherScreen extends React.Component {
 											displayMode: { cloud: false, humidity: false, temperature: false, wind: true }
 										});
 									}}
-									style={[this.state.displayMode.wind ? { backgroundColor: 'lightgray' } : { backgroundColor: 'whitesmoke' }]}
+									style={[this.state.displayMode.wind ? { backgroundColor: 'lightblue' } : { backgroundColor: 'gainsboro' }]}
 								>
 									<DisplayModeText>Wind</DisplayModeText>
 								</DisplayModeButton>
@@ -334,8 +341,6 @@ const DisplayModeWrapper = styled.View`
 	width: 100%;
 	height: 27.5px;
 	flex-direction: row;
-	borderTopWidth: 0.25px;
-	borderTopColor: gainsboro;
 `;
 
 const DisplayModeButton = styled.TouchableOpacity`

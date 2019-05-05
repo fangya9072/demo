@@ -9,7 +9,6 @@ import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import TopBanner from '../../components/TopBanner';
-import SocketIOClient from 'socket.io-client';
 import moment from 'moment';
 
 export default class HomeScreen extends React.Component {
@@ -27,16 +26,12 @@ export default class HomeScreen extends React.Component {
 			username: '',
 			initialMapRegion: null,
 			currentMapRegion: null,
-			friends: [],
 			coordinate: {
 				longitude: 0,
 				latitude: 0,
 			},
 			/*
-			markerDisplayMode is restricted to 'friendOnly' and 'userNearby'
-			*/
-			markerDisplayMode: 'friendOnly',
-			/*  
+			an outfitPostMarker object should indlude the followings:
 			outfitPostID: id of user's most recent outfit post
 			userID: username
 			coordinate: user's real-time geolocation
@@ -58,37 +53,38 @@ export default class HomeScreen extends React.Component {
 				date: '',
 			},
 		};
-		this.socket = SocketIOClient('http://3.93.183.130:3001');
-
-
 	}
 
 	// functions that runs whenever HomePage is re-rendered in DOM
-	componentDidMount() {
+	componentWillMount() {
 		this.getUsername();
 		this.getCurrentLocation();
-		this.getFriends();
-		this.socket.emit('position', {
-			username: this.state.username,
-			location: {
-				latitude: this.state.coordinate.latitude,
-				longitude: this.state.coordinate.longitude
-			}
-		});
-        this.socket.on('friendPositions', (positionsData) => {
-          var x;
-          let markers = this.state.outfitPostMarkers;
-          for(x=0; x<this.state.friends.length; x++){
-          	if (this.state.friends[x].username == positionsData.username){
-          		markers[x].coordinate = {
-          			latitude: positionsData.location.latitude,
-          			longitude: positionsData.location.longitude
-          		};
-          	}
-          }
-          this.setState({outfitPostMarkers: markers,});
-          //console.log("friendPositions:", positionsData);
-        });
+		navigator.geolocation.clearWatch(this.watchId);
+	}
+
+	// functions that runs whenever HomePage finishes re-rendering in DOM
+	componentDidMount() {
+		this.watchId = navigator.geolocation.watchPosition(
+			(position) => {
+				let current_coordinate = {
+					latitude: position.coords.latitude,
+					longitude: position.coords.longitude,
+				}
+				try {
+				  fetch('http://3.93.183.130:3000/users/' + this.state.username, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							location: current_coordinate,
+						}),
+					});
+				} catch (error) {
+					console.error(error);
+				}
+			},
+			(error) => this.setState({ error: error.message }),
+			{ enableHighAccuracy: true, timeout: 30000 },
+		);
 	}
 
 	/* 
@@ -108,80 +104,7 @@ export default class HomeScreen extends React.Component {
 		}
 	};
 
-	//get friends' most recent locations
-	getFriends = async () => {
-		await this.getUsername();
-		try {
-			let response = await fetch('http://3.93.183.130:3000/friendlist/' + this.state.username, { method: 'GET' });
-			let responseJson = await response.json();
-			var list = [];
-			var l = 1;
-			for (responseItem of responseJson) {
-			 let response_post = await fetch('http://3.93.183.130:3000/weatherposts/' + responseItem, { method: 'GET' });
-		     let posts = await response_post.json();
-
-	    	   if (posts.length > 0){
-			      let last_post = posts[posts.length-1];
-			      let fromDate = last_post.date.split("-")
-				  let rawDate = new Date(fromDate[0], fromDate[1] - 1, fromDate[2])
-				  let formattedDate = moment(rawDate).format('ll')
-				  let friend = {
-				   	username: responseItem,
-					image: last_post.photo,
-					metaInfo: 'Meta Information',
-					date: formattedDate,
-				   	coordinate: last_post.coordinate,
-				  };
-				 this.state.friends.push(friend);
-				 list.push({
-                	outfitPostID: l,
-					userID: responseItem,
-					coordinate: {
-						latitude: friend.coordinate.latitude,
-						longitude: friend.coordinate.longitude
-					},
-					image: last_post.photo,
-					date: formattedDate,
-                });
-				}
-				l++;
-			 }
-			this.setState({
-				friends: this.state.friends,
-			});
-            
-          if (list.length > 0){
-			
-            this.setState({
-                outfitPostMarkers: list,
-            });
-          }else{
-		    let rawDate = new Date();
-		    let formattedDate = moment(rawDate).format('ll');
-        	this.setState({
-        		outfitPostMarkers:[{
-        			outfitPostID: 0,
-					userID: this.state.username,
-					coordinate: {
-						latitude: this.state.coordinate.latitude,
-						longitude: this.state.coordinate.longitude,
-					},
-					image: require('../../../assets/icon/role-icon/pikachu.png'),
-					date: formattedDate,
-        		}]
-
-        	});
-        }
-        
-      
-
-		} catch (error) {
-			console.error(error);
-		}
-	};
-
-
-	// function to get user's realtime geolocation
+	// function to get current user's realtime geolocation
 	getCurrentLocation = async () => {
 		let { status } = await Permissions.askAsync(Permissions.LOCATION);
 		if (status !== 'granted') {
@@ -199,19 +122,95 @@ export default class HomeScreen extends React.Component {
 			);
 		}
 		let location_raw = await Location.getCurrentPositionAsync({});
-		//this.socket.emit('position', 'Hello');
-        console.log(location_raw);
 		this.setState({
 			initialMapRegion: { latitude: location_raw.coords.latitude, longitude: location_raw.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 },
 			coordinate: { latitude: location_raw.coords.latitude, longitude: location_raw.coords.longitude }
-
 		});
+		this.map.animateToRegion(this.state.initialMapRegion);
 	};
+
+	/* 
+	function to calcute coordinate range based on mapRegion parameter
+	return an object with four floats representing the max/min of longitude/latitude
+	*/
+	calculteCoordinateRange = async (mapRegion) => {
+		let min_latitude = mapRegion.latitude - 0.5 * mapRegion.latitudeDelta;
+		let max_latitude = mapRegion.latitude + 0.5 * mapRegion.latitudeDelta;
+		let min_longitude = mapRegion.longitude - 0.5 * mapRegion.longitudeDelta;
+		let max_longitude = mapRegion.longitude + 0.5 * mapRegion.longitudeDelta;
+		let coordinate_range = {
+			max_latitude: max_latitude,
+			min_latitude: min_latitude,
+			max_longitude: max_longitude,
+			min_longitude: min_longitude,
+		};
+		return coordinate_range;
+	}
+
+	/* 
+	function to set this.state.outfitPostMarkers to be empyty
+	will run whenever the app is trying to reload nearby users' outfit posts to be shown on map
+	*/
+	clearOutfitPost = async () => {
+		this.setState({
+			outfitPostMarkers: [],
+		});
+	}
+
+	/*
+	function to get all users nearby within the map range, based on their realtime geolocation,
+	and then use the images of their most recent outfit post as marker icon showed on map
+	will run whenever user changed the mapRegion attribute of MapView by toggling, or by clicking the refresh button
+	store rerived outfit posts into this.state.outfitPostMarkers
+	*/
+	updateOutfitPostInRange = async (mapRegion) => {
+		await this.clearOutfitPost();
+		let coordinate_range = await this.calculteCoordinateRange(mapRegion);
+		try {
+			let request = 'http://3.93.183.130:3000/rangeusers?'
+				+ 'min_latitude=' + Number(coordinate_range.min_latitude)
+				+ '&max_latitude=' + Number(coordinate_range.max_latitude)
+				+ '&min_longitude=' + Number(coordinate_range.min_longitude)
+				+ '&max_longitude=' + Number(coordinate_range.max_longitude);
+			let userResponse = await fetch(request, { method: 'GET' });
+			let userResponseJson = await userResponse.json();
+			if (userResponseJson) {
+				for (userResponseItem of userResponseJson) {
+					if (userResponseItem.username != this.state.username) {
+						try {
+							let postResponse = await fetch('http://3.93.183.130:3000/recentpost/' + userResponseItem.username, { method: 'GET' })
+							let postResponseJson = await postResponse.json();
+							if (postResponseJson.length > 0) {
+								for (postResponseItem of postResponseJson) {
+									let fromDate = postResponseItem.date.split("-")
+									let rawDate = new Date(fromDate[0], fromDate[1] - 1, fromDate[2])
+									let formattedDate = moment(rawDate).format('ll')
+									let outfit_post = {
+										userID: userResponseItem.username,
+										coordinate: userResponseItem.location,
+										outfitPostID: postResponseItem.outlook_post_id,
+										image: postResponseItem.photo,
+										date: formattedDate,
+									}
+									this.state.outfitPostMarkers.push(outfit_post);
+								}
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					}
+				}
+			}
+			this.setState({ outfitPostMarkers: this.state.outfitPostMarkers });
+		} catch (error) {
+			console.error(error);
+		}
+	}
 
 	// function to reload screen
 	onRefresh = () => {
 		this.getCurrentLocation();
-		this.getFriends();
+		this.updateOutfitPostInRange(this.state.initialMapRegion);
 	}
 
 	/* 
@@ -296,11 +295,16 @@ export default class HomeScreen extends React.Component {
 				<Container>
 					<Map>
 						{/* Map */}
-						<MapView 
-						style={{ flex: 1 }} 
-						initialRegion={this.state.initialMapRegion}
-						onRegionChangeComplete={(mapRegion) => this.setState({ currentMapRegion:mapRegion })}
-						ref={(mapView) => (this.map = mapView)}
+						<MapView
+							style={{ flex: 1 }}
+							initialRegion={this.state.initialMapRegion}
+							onRegionChangeComplete={(mapRegion) => {
+								if (this.state.initialMapRegion) {
+									this.setState({ currentMapRegion: mapRegion });
+									this.updateOutfitPostInRange(mapRegion);
+								}
+							}}
+							ref={(mapView) => (this.map = mapView)}
 						>
 							<MapView.Marker
 								coordinate={{ longitude: this.state.coordinate.longitude, latitude: this.state.coordinate.latitude }}
@@ -330,9 +334,6 @@ export default class HomeScreen extends React.Component {
 									</MapView.Marker>
 								);
 							})}
-							<CurrentLocationButton onPress={() => this.map.animateToRegion(this.state.initialMapRegion) }>
-								<MaterialIcons name={'my-location'} color={'black'} size={25} />
-							</CurrentLocationButton>
 						</MapView>
 						{/* 
 						Outfit Post View 
@@ -420,15 +421,6 @@ const MarkerImage = styled.Image`
   	width: 30px;
 		height: 30px;
 		border-radius: 15px;
-`;
-
-const CurrentLocationButton = styled.TouchableOpacity`
-    position: absolute;
-    bottom: 20px;
-		right: 15px;
-		padding: 5px 5px 5px 5px;
-		borderRadius: 5;
-		backgroundColor: lightgray;
 `;
 
 const OutfitPostContainer = styled.View`

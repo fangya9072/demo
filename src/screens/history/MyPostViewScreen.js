@@ -428,7 +428,7 @@ const WeatherText = styled.Text`
 const PostImage = styled.Image`
 	width: 100%;
 	aspect-ratio: 1;
-	resize-mode: stretch;
+	resize-mode: contain;
 	border-radius: 5px;
 `;
 
@@ -463,7 +463,7 @@ const UserInfoArea = styled.View`
 const UserIcon = styled.Image`
 	width: 100%;
 	height: 50px;
-	resize-mode: stretch;
+	resize-mode: cover;
 	border-radius: 25px;
 `;
 
